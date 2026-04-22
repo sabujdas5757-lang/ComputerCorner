@@ -1,0 +1,115 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { useState, useEffect } from 'react';
+import { Menu, X, Phone } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Products', href: '#products' },
+    { name: 'Catalog', href: '#products' },
+    { name: 'Workshop', href: '#workshop' },
+    { name: 'AMC', href: '#amc' },
+    { name: 'Contact', href: '#contact' },
+  ];
+
+  return (
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-bg-dark/80 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="flex items-center gap-3 cursor-pointer">
+          <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-white/10">
+            <span className="font-bold text-primary text-xs">CC</span>
+          </div>
+          <div className="flex flex-col leading-none">
+            <span className="text-sm font-bold tracking-tight">Computer</span>
+            <span className="text-sm font-bold tracking-tight text-gray-400">Corner</span>
+          </div>
+        </div>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-10 text-[13px] font-bold uppercase tracking-wider text-gray-400">
+          {navLinks.map((link) => (
+            <a 
+              key={link.name} 
+              href={link.href}
+              className="hover:text-primary transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          <a 
+            href="tel:8167489332"
+            className="btn-accent py-2 px-5 text-xs rounded-lg"
+          >
+            <Phone size={14} />
+            <span>Call Now</span>
+          </a>
+          <button className="p-2 text-gray-400 hover:text-white transition-colors">
+            <Menu size={20} />
+          </button>
+        </div>
+
+        {/* Mobile Toggle */}
+        <div className="md:hidden flex items-center gap-4">
+           <a 
+            href="tel:8167489332"
+            className="btn-accent py-2 px-4 text-xs rounded-lg"
+          >
+            <Phone size={14} />
+            <span>Call</span>
+          </a>
+          <button 
+            className="p-1 text-gray-400"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Nav */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 bg-surface border-b border-white/5 p-8 md:hidden flex flex-col gap-6 text-center"
+          >
+            {navLinks.map((link) => (
+              <a 
+                key={link.name} 
+                href={link.href}
+                className="text-lg font-bold text-white uppercase tracking-widest"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+}

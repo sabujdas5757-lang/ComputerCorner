@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-primary: #00D084; /* Vibrant Green from screenshots */
+  --color-bg-dark: #0A0A0A;
+  --color-surface: #151515;
+  --color-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-bg-dark text-white antialiased;
+  }
+}
+
+@layer components {
+  .btn-accent {
+    @apply bg-primary hover:bg-[#00B875] text-[#0A0A0A] px-6 py-3 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2;
+  }
+  
+  .btn-outline {
+    @apply border border-white/20 hover:bg-white/5 text-white px-6 py-3 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2;
+  }
+  
+  .card-dark {
+    @apply bg-surface border border-white/[0.05] rounded-[2rem] overflow-hidden;
+  }
+
+  .badge {
+    @apply px-3 py-1 bg-white/5 rounded-full text-[10px] uppercase font-bold tracking-widest text-[#888];
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto px-6 py-20 md:py-32;
+  }
+}

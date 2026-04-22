@@ -8,6 +8,7 @@ import Hero from './components/Hero';
 import Brands from './components/Brands';
 import Products from './components/Products';
 import Services from './components/Services';
+import Gallery from './components/Gallery';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
@@ -20,6 +21,7 @@ export default function App() {
         <Brands />
         <Products />
         <Services />
+        <Gallery />
         <Contact />
       </main>
       <Footer />

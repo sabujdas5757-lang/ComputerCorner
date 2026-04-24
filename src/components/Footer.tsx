@@ -4,7 +4,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { MessageSquare, Mail, Phone, MapPin, Instagram, Facebook } from 'lucide-react';
+import { MessageSquare, Mail, Phone, MapPin, Instagram, Facebook, Youtube } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -16,24 +16,27 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-white/10">
-                <span className="font-bold text-primary text-xs">CC</span>
+                <span className="font-bold text-primary text-xs lowercase">cc</span>
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-sm font-bold tracking-tight">Computer</span>
-                <span className="text-sm font-bold tracking-tight text-gray-400">Corner</span>
+                <span className="text-sm font-bold tracking-tight lowercase">computer</span>
+                <span className="text-sm font-bold tracking-tight text-gray-400 lowercase">corner</span>
               </div>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed mb-8">
               Your one-stop destination for premium hardware sales and expert service in Jhargram. Authorized partners for industry-leading brands.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+              <a href="https://www.facebook.com/computercornerjgm/" target="_blank" rel="noopener noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
                 <Facebook size={18} />
               </a>
-              <a href="#" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+              <a href="https://www.instagram.com/computer_corner_15?igsh=MWQ5c2w0aGp2eHdpeQ==" target="_blank" rel="noopener noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
                 <Instagram size={18} />
               </a>
-              <a href="#" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+              <a href="https://www.youtube.com/@computercorner15" target="_blank" rel="noopener noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+                <Youtube size={18} />
+              </a>
+              <a href="mailto:contact@computercornerjgm.com" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
                 <Mail size={18} />
               </a>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, MapPin, Mail, MessageSquare } from 'lucide-react';
+import { Phone, MapPin, Mail, MessageSquare, Facebook, Instagram, Youtube } from 'lucide-react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -85,6 +85,22 @@ export default function Contact() {
                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Email Support</p>
                    <p className="text-lg font-bold text-white">computercorner15@yahoo.in</p>
                 </div>
+              </div>
+
+              {/* Social Media Links */}
+              <div className="pt-8 flex gap-4">
+                <a href="https://www.facebook.com/computercornerjgm/" target="_blank" rel="noopener noreferrer" className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:border-primary/50 hover:text-primary transition-all flex items-center gap-3 group">
+                  <Facebook size={20} />
+                  <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">Facebook</span>
+                </a>
+                <a href="https://www.instagram.com/computer_corner_15?igsh=MWQ5c2w0aGp2eHdpeQ==" target="_blank" rel="noopener noreferrer" className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:border-primary/50 hover:text-primary transition-all flex items-center gap-3 group">
+                  <Instagram size={20} />
+                  <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">Instagram</span>
+                </a>
+                <a href="https://www.youtube.com/@computercorner15" target="_blank" rel="noopener noreferrer" className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:border-primary/50 hover:text-primary transition-all flex items-center gap-3 group">
+                  <Youtube size={20} />
+                  <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">YouTube</span>
+                </a>
               </div>
             </div>
           </div>

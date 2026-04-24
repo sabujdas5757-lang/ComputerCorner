@@ -5,6 +5,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import CategoryBar from './components/CategoryBar';
 import Hero from './components/Hero';
 import Brands from './components/Brands';
 import ProductGallery from './components/ProductGallery';
@@ -16,15 +17,22 @@ import Footer from './components/Footer';
 import QuickAccess from './components/QuickAccess';
 import Catalog from './components/Catalog';
 import ProductDetail from './components/ProductDetail';
+import TechShowcase from './components/TechShowcase';
+import BrandSubCatalogHome from './components/BrandSubCatalogHome';
 
 function HomePage() {
   return (
     <>
-      <Navbar />
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+        <CategoryBar />
+      </header>
       <main>
         <Hero />
         <Brands />
         <Products />
+        <BrandSubCatalogHome />
+        <TechShowcase />
         <ProductGallery />
         <Services />
         <Gallery />

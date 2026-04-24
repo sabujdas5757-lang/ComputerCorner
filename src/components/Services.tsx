@@ -42,7 +42,7 @@ export default function Services() {
              <div className="absolute -inset-4 bg-primary/10 blur-3xl opacity-30 rounded-full" />
              <div className="relative aspect-square rounded-[40px] overflow-hidden border border-white/10">
                 <img 
-                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800" 
+                  src="https://lh3.googleusercontent.com/p/AF1QipMnPhW8VtkCBOFIJdub-AGzX3LlOJeCnCCsb2VF=s680-w680-h510-rw" 
                   alt="Computer Corner Tech Hub" 
                   className="w-full h-full object-cover"
                 />

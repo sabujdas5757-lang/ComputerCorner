@@ -30,20 +30,20 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`transition-all duration-300 ${
         scrolled ? 'bg-bg-dark/95 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <div className="flex items-center gap-3 cursor-pointer">
-          <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-white/10">
+        <Link to="/catalog" className="flex items-center gap-3 cursor-pointer group">
+          <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-white/10 group-hover:border-primary transition-colors">
             <span className="font-bold text-primary text-xs lowercase">cc</span>
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-sm font-bold tracking-tight lowercase">computer</span>
-            <span className="text-sm font-bold tracking-tight text-gray-400 lowercase">corner</span>
+            <span className="text-sm font-bold tracking-tight lowercase group-hover:text-primary transition-colors">computer</span>
+            <span className="text-sm font-bold tracking-tight text-gray-400 lowercase group-hover:text-gray-300 transition-colors">corner</span>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">

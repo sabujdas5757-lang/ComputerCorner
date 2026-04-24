@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Navbar() {
@@ -21,7 +21,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Products', href: '#products' },
-    { name: 'Catalog', href: '#products' },
+    { name: 'Catalog', href: '#catalog' },
     { name: 'Workshop', href: '#workshop' },
     { name: 'AMC', href: '#amc' },
     { name: 'Contact', href: '#contact' },
@@ -30,7 +30,7 @@ export default function Navbar() {
   return (
     <nav 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-bg-dark/80 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'
+        scrolled ? 'bg-bg-dark/95 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
@@ -45,7 +45,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-10 text-[13px] font-bold uppercase tracking-wider text-gray-400">
+        <div className="hidden md:flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
           {navLinks.map((link) => (
             <a 
               key={link.name} 
@@ -60,9 +60,9 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <a 
             href="tel:8167489332"
-            className="btn-accent py-2 px-5 text-xs rounded-lg"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#00D991] text-bg-dark font-black text-xs hover:bg-[#00BD7E] transition-all duration-300 shadow-lg shadow-primary/20"
           >
-            <Phone size={14} />
+            <MessageSquare size={14} fill="currentColor" />
             <span>Call Now</span>
           </a>
           <button className="p-2 text-gray-400 hover:text-white transition-colors">

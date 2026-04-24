@@ -12,9 +12,9 @@ export default function Hero() {
       {/* Background Image with Dark Gradient Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1597733336794-12d05021d510?auto=format&fit=crop&q=80&w=2000" 
-          alt="Technical Background"
-          className="w-full h-full object-cover opacity-30 grayscale"
+          src="input_file_0.png" 
+          alt="Computer Corner Shop Exterior"
+          className="w-full h-full object-cover opacity-40"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-dark via-bg-dark/40 to-transparent" />
       </div>

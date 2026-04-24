@@ -9,10 +9,10 @@ import { AMCFEATURES, TESTIMONIALS, WORKSHOP_LOGS } from '../constants';
 
 export default function Services() {
   return (
-    <section id="workshop" className="py-24 bg-bg-dark border-t border-white/5">
+    <section id="services" className="py-24 bg-bg-dark border-t border-white/5">
       <div className="section-container">
         {/* Workshop Logs */}
-        <div className="mb-32">
+        <div id="workshop" className="mb-32">
           <div className="flex justify-between items-end mb-12">
             <div>
               <p className="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4">Workshop Logs</p>
@@ -24,7 +24,7 @@ export default function Services() {
             {WORKSHOP_LOGS.map((log) => (
               <div key={log.title} className="group cursor-pointer">
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-4 border border-white/5 bg-surface">
-                  <img src={log.image} alt={log.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105" />
+                  <img src={log.image} alt={log.title} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-bg-dark/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="flex items-center gap-3">
@@ -42,9 +42,9 @@ export default function Services() {
              <div className="absolute -inset-4 bg-primary/10 blur-3xl opacity-30 rounded-full" />
              <div className="relative aspect-square rounded-[40px] overflow-hidden border border-white/10">
                 <img 
-                  src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1200" 
-                  alt="AMC Service" 
-                  className="w-full h-full object-cover grayscale"
+                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800" 
+                  alt="Computer Corner Tech Hub" 
+                  className="w-full h-full object-cover"
                 />
              </div>
           </div>
@@ -67,34 +67,47 @@ export default function Services() {
               ))}
             </ul>
 
-            <a href="#contact" className="btn-accent px-10 py-5 text-lg">
+            <a href="#contact" className="w-full py-5 text-lg font-bold rounded-2xl bg-[#00D991] text-bg-dark hover:bg-[#00BD7E] transition-all duration-300 flex items-center justify-center">
               Get an AMC Quote
             </a>
           </div>
         </div>
 
         {/* Testimonials */}
-        <div>
+        <div id="testimonials">
           <div className="text-center mb-16">
-            <p className="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4">From Our Customers</p>
-            <h2 className="text-4xl font-bold tracking-tight">Real stories from Jhargram</h2>
+            <p className="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4">From our customers</p>
+            <h2 className="text-5xl font-bold tracking-tight">Real stories from <span className="text-gray-500">Jhargram</span></h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {TESTIMONIALS.map((t) => (
-              <div key={t.id} className="card-dark p-8 relative">
-                <Quote className="absolute top-6 right-8 text-primary opacity-20" size={40} />
-                <p className="text-lg text-gray-300 mb-8 italic relative z-10 leading-relaxed">"{t.text}"</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {TESTIMONIALS.map((testimonial, idx) => (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="p-8 rounded-[32px] bg-surface border border-white/5 relative group hover:border-primary transition-all duration-500"
+              >
+                <div className="text-primary/20 group-hover:text-primary/40 transition-colors absolute top-8 right-8">
+                  <Quote size={48} fill="currentColor" />
+                </div>
+                
+                <p className="text-lg text-gray-300 mb-8 leading-relaxed italic relative z-10 font-medium">
+                  "{testimonial.text}"
+                </p>
+
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-primary">
-                    {t.initials}
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                    {testimonial.initials}
                   </div>
                   <div>
-                    <p className="font-bold text-white">{t.author}</p>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest">{t.location}</p>
+                    <h4 className="font-bold text-white">{testimonial.author}</h4>
+                    <p className="text-xs text-primary font-bold uppercase tracking-widest">{testimonial.location}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

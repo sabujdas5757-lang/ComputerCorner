@@ -39,16 +39,22 @@ export default function Contact() {
             </p>
 
             <div className="space-y-10">
-              <div className="flex items-start gap-6 group cursor-pointer">
+              <a 
+                href="https://maps.app.goo.gl/WCA8wHJsHJ8CnupcA" 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-start gap-6 group cursor-pointer"
+              >
                 <div className="p-4 bg-white/5 border border-white/10 rounded-2xl group-hover:border-primary/50 group-hover:text-primary transition-all">
                   <MapPin size={24} />
                 </div>
                 <div>
                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Our Location</p>
-                   <p className="text-lg font-bold text-white">Opp. Street of R.B.M. School</p>
+                   <p className="text-lg font-bold text-white group-hover:text-primary transition-colors">Opp. Street of R.B.M. School</p>
                    <p className="text-sm text-gray-400">Near Spandan Diagnostic, Raghunathpur, Jhargram</p>
+                   <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mt-2 block opacity-0 group-hover:opacity-100 transition-all">Open in Google Maps →</span>
                 </div>
-              </div>
+              </a>
 
               <div className="flex items-start gap-6 group cursor-pointer">
                 <div className="p-4 bg-white/5 border border-white/10 rounded-2xl group-hover:border-primary/50 group-hover:text-primary transition-all">

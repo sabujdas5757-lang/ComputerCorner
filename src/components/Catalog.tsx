@@ -217,10 +217,13 @@ function ProductCard({ product, index }: { product: any; index: number; key?: Re
             {product.description}
           </p>
           <div className="flex items-center justify-between pt-6 border-t border-white/5 mt-auto">
-            <div>
-              <span className="text-2xl font-black text-white">{product.price.split(' ')[0]}</span>
+            <div className="flex flex-col">
+              <span className="text-xl font-black text-white leading-tight">{product.price.split(' The')[0]}</span>
+              <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter mt-1">
+                The price may be higher or lower
+              </span>
               {product.oldPrice && (
-                <span className="block text-xs text-gray-600 line-through font-bold">{product.oldPrice}</span>
+                <span className="block text-xs text-gray-600 line-through font-bold mt-1">{product.oldPrice}</span>
               )}
             </div>
             <div 

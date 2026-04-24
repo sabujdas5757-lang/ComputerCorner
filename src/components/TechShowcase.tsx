@@ -103,8 +103,13 @@ function ProductCard({ product, idx, color = "border-primary/20" }: { product: a
           <p className="text-gray-500 text-xs line-clamp-2 leading-relaxed mb-4">{product.description}</p>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-          <span className="text-lg font-black">{product.price.split(' ')[0]}</span>
+        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
+          <div className="flex flex-col">
+            <span className="text-base font-black text-white leading-tight">{product.price.split(' The')[0]}</span>
+            <span className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter mt-0.5 whitespace-nowrap">
+              Price may be higher or lower
+            </span>
+          </div>
           <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-bg-dark transition-all duration-300`}>
             <ArrowRight size={18} />
           </div>

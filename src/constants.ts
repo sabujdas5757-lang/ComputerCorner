@@ -6,7 +6,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'Graphics' | 'Printers' | 'Audio' | 'Storage' | 'Accessories';
+  category: 'Desktops' | 'Laptops' | 'Printers' | 'Cameras' | 'CCTV' | 'Audio' | 'Appliances' | 'Power' | 'Accessories';
   brand: string;
   description: string;
   image?: string;
@@ -62,58 +62,91 @@ export const TESTIMONIALS: Testimonial[] = [
 export const PRODUCTS: Product[] = [
   {
     id: 'p1',
-    name: 'GIGABYTE GeForce RTX 5070',
-    category: 'Graphics',
-    brand: 'GIGABYTE',
-    description: 'Next-gen gaming graphics. Perfect for 1440p & 4K gaming builds.',
-    image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&q=80&w=800',
-    price: '₹62,500',
-    oldPrice: '₹70,000',
-    discount: '11% OFF'
+    name: 'Custom Gaming Assemble Desktop',
+    category: 'Desktops',
+    brand: 'Custom Build',
+    description: 'High-performance gaming PC with RTX 40-series, Liquid Cooling, and RGB. Built for Jhargram gamers.',
+    image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=800',
+    price: '₹45,500',
+    oldPrice: '₹55,000',
+    discount: 'Starting From'
   },
   {
     id: 'p2',
-    name: 'FINGERS RollingParties-110',
-    category: 'Audio',
-    brand: 'FINGERS',
-    description: 'Bluetooth party speaker with mic & guitar inputs — record & play built-in.',
-    image: 'https://images.unsplash.com/photo-1629837943033-05742416f0e4?auto=format&fit=crop&q=80&w=800',
-    price: '₹14,499',
-    oldPrice: '₹16,999',
-    discount: '15% OFF'
+    name: 'ASUS ROG Strix Gaming Laptop',
+    category: 'Laptops',
+    brand: 'ASUS',
+    description: 'Portable power for gaming and creative work. 144Hz display & RGB backlit keyboard.',
+    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    price: '₹72,499',
+    oldPrice: '₹85,000',
+    discount: 'Special Offer'
   },
   {
     id: 'p3',
-    name: 'Canon PIXMA MegaTank G',
+    name: 'Canon PIXMA MegaTank G Series',
     category: 'Printers',
     brand: 'Canon',
-    description: 'Wi-Fi Printer — high-yield ink tank for home & small office printing.',
+    description: 'High-yield ink tank printer. Perfect for home, office, and Xerox services.',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
     price: '₹12,600',
-    oldPrice: '₹13,000',
-    discount: '3% OFF'
+    oldPrice: '₹14,000',
+    discount: '10% OFF'
   },
   {
     id: 'p4',
-    name: 'Kingston XS1000',
-    category: 'Storage',
-    brand: 'Kingston',
-    description: 'USB 3.2 External SSD — pocket-sized, blazing fast file transfers.',
-    image: 'https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?auto=format&fit=crop&q=80&w=800',
-    price: '₹5,000',
-    oldPrice: '₹6,000',
-    discount: '17% OFF'
+    name: 'CP PLUS 4MP CCTV Home Security',
+    category: 'CCTV',
+    brand: 'CP PLUS',
+    description: 'Full HD Wi-Fi camera with night vision and mobile alerts. Protect your home.',
+    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    price: '₹2,499',
+    oldPrice: '₹3,500',
+    discount: 'Best Entry'
   },
   {
     id: 'p5',
-    name: 'Morpho L1 / Mantra L1',
-    category: 'Accessories',
-    brand: 'Morpho',
-    description: 'L1-certified biometric fingerprint devices — ready for Aadhaar services.',
-    image: 'https://images.unsplash.com/photo-1507206130118-b5907f817163?auto=format&fit=crop&q=80&w=800',
-    price: '₹3,850',
-    oldPrice: '₹4,000',
-    discount: '4% OFF'
+    name: 'FINGERS RollingParties-110',
+    category: 'Audio',
+    brand: 'FINGERS',
+    description: 'Bluetooth party speaker with mic & guitar inputs — powerful sound system.',
+    image: 'https://images.unsplash.com/photo-1629837943033-05742416f0e4?auto=format&fit=crop&q=80&w=800',
+    price: '₹14,499',
+    oldPrice: '₹16,999',
+    discount: 'Retail Price'
+  },
+  {
+    id: 'p6',
+    name: 'Microtek Digital Inverter / UPS',
+    category: 'Power',
+    brand: 'Microtek',
+    description: 'Reliable power backup solutions with Online UPS and heavy-duty inverters.',
+    image: 'https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?auto=format&fit=crop&q=80&w=800',
+    price: '₹6,850',
+    oldPrice: '₹8,000',
+    discount: 'Starting'
+  },
+  {
+    id: 'p7',
+    name: 'Nikon D3500 DSLR Kit',
+    category: 'Cameras',
+    brand: 'Nikon',
+    description: 'Professional DSLR camera for photography enthusiasts. 24.2 MP and Full HD video.',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
+    price: '₹48,990',
+    oldPrice: '₹52,000',
+    discount: 'Bundle Deal'
+  },
+  {
+    id: 'p8',
+    name: 'Voltas Adjustable Inverter AC',
+    category: 'Appliances',
+    brand: 'Voltas',
+    description: 'Energy-efficient cooling for your home. Stay comfortable in any weather.',
+    image: 'https://images.unsplash.com/photo-1621619856624-42f7b935e219?auto=format&fit=crop&q=80&w=800',
+    price: '₹32,990',
+    oldPrice: '₹42,000',
+    discount: 'Seasonal Offer'
   }
 ];
 

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS } from '../constants';
 import { MessageSquare, ShoppingCart, Search } from 'lucide-react';
 
-const CATEGORIES = ['All', 'Graphics', 'Printers', 'Audio', 'Storage', 'Accessories'];
+const CATEGORIES = ['All', 'Desktops', 'Laptops', 'Printers', 'Cameras', 'CCTV', 'Audio', 'Appliances', 'Power', 'Accessories'];
 
 export default function Products() {
   const [activeCategory, setActiveCategory] = useState('All');

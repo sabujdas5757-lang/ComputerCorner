@@ -36,7 +36,7 @@ export default function Hero() {
             </h1>
             
             <p className="text-xl text-gray-400 mb-12 max-w-xl leading-relaxed">
-              Desktops, laptops, printers and accessories from HP, ASUS, Dell, Canon, Intel & Epson — sold, serviced and supported by a trusted local team near R.B.M. School, Jhargram.
+              From Custom Gaming PCs and Laptops to CCTV Security, Printers, TVs, and Home Appliances — we sell and service premium technology near R.B.M. School, Jhargram.
             </p>
 
             <div className="flex flex-wrap gap-4">

@@ -4,7 +4,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Menu, X, Phone, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, X, Phone, MessageSquare, LayoutGrid } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Navbar() {
@@ -65,9 +66,13 @@ export default function Navbar() {
             <MessageSquare size={14} fill="currentColor" />
             <span>Call Now</span>
           </a>
-          <button className="p-2 text-gray-400 hover:text-white transition-colors">
-            <Menu size={20} />
-          </button>
+          <Link 
+            to="/quick-access" 
+            className="p-2 text-gray-400 hover:text-primary transition-colors bg-white/5 border border-white/10 rounded-xl"
+            title="Quick Access"
+          >
+            <LayoutGrid size={20} />
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -107,6 +112,13 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
+            <Link 
+              to="/quick-access"
+              className="text-lg font-bold text-primary uppercase tracking-widest border border-primary/20 p-4 rounded-2xl bg-primary/5"
+              onClick={() => setIsOpen(false)}
+            >
+              Quick Access Hub
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

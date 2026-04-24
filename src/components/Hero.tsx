@@ -12,9 +12,9 @@ export default function Hero() {
       {/* Background Image with Dark Gradient Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="input_file_0.png" 
-          alt="Computer Corner Shop Exterior"
-          className="w-full h-full object-cover opacity-40"
+          src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=2000" 
+          alt="Modern Computer Store Interior"
+          className="w-full h-full object-cover opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-dark via-bg-dark/40 to-transparent" />
       </div>
@@ -26,10 +26,15 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 mb-8 p-1.5 pr-4 bg-white/5 border border-white/10 rounded-full group cursor-pointer hover:border-primary/50 transition-colors">
+            <a 
+              href="https://maps.app.goo.gl/bnvqKkYyeE5LaY3z5"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 mb-8 p-1.5 pr-4 bg-white/5 border border-white/10 rounded-full group cursor-pointer hover:border-primary/50 transition-colors"
+            >
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse ml-2" />
               <span className="text-xs font-bold uppercase tracking-widest text-[#888] group-hover:text-primary transition-colors">Jhargram's Trusted Tech Hub</span>
-            </div>
+            </a>
             
             <h1 className="text-6xl md:text-[84px] font-bold leading-[1.05] tracking-tight mb-8">
               Sales, Service & Security Care <span className="text-primary italic">for every computer.</span>

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { Link } from 'react-router-dom';
 import { MessageSquare, Mail, Phone, MapPin, Instagram, Facebook } from 'lucide-react';
 
 export default function Footer() {
@@ -41,18 +42,18 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Store Inventory</h4>
             <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-white">
-              <li><a href="#products" className="hover:text-primary transition-colors">Gaming Desktops & Laptops</a></li>
-              <li><a href="#products" className="hover:text-primary transition-colors">CCTV & DSLR Cameras</a></li>
-              <li><a href="#products" className="hover:text-primary transition-colors">Printers & Xerox</a></li>
-              <li><a href="#products" className="hover:text-primary transition-colors">TV, AC & Sound Systems</a></li>
-              <li><a href="#products" className="hover:text-primary transition-colors">Inverters & Online UPS</a></li>
+              <li><Link to="/catalog/Laptops" className="hover:text-primary transition-colors">Gaming Desktops & Laptops</Link></li>
+              <li><Link to="/catalog/CCTV" className="hover:text-primary transition-colors">CCTV & DSLR Cameras</Link></li>
+              <li><Link to="/catalog/Printers" className="hover:text-primary transition-colors">Printers & Xerox</Link></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">TV, AC & Sound Systems</Link></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">Inverters & Online UPS</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Quick Links</h4>
             <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-white">
-              <li><a href="#products" className="hover:text-primary transition-colors">Digital Catalog</a></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">Digital Catalog</Link></li>
               <li><a href="#workshop" className="hover:text-primary transition-colors">Service Workshop</a></li>
               <li><a href="#amc" className="hover:text-primary transition-colors">AMC Maintenance</a></li>
               <li><a href="#contact" className="hover:text-primary transition-colors">Support Desk</a></li>

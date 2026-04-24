@@ -3,13 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export interface Review {
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   category: 'Desktops' | 'Laptops' | 'Printers' | 'Cameras' | 'CCTV' | 'Audio' | 'Appliances' | 'Power' | 'Accessories';
   brand: string;
   description: string;
-  image?: string;
+  image: string;
+  additionalImages?: string[];
+  specifications?: Record<string, string>;
+  reviews?: Review[];
   price: string;
   oldPrice?: string;
   discount?: string;
@@ -43,6 +53,22 @@ export const PRODUCTS: Product[] = [
     brand: 'Custom Build',
     description: 'High-performance gaming PC with RTX 40-series, Liquid Cooling, and RGB. Built for Jhargram gamers.',
     image: 'https://images.unsplash.com/photo-1624705002806-5d72df19c3ad?auto=format&fit=crop&q=80&w=800',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800'
+    ],
+    specifications: {
+      'Processor': 'Intel Core i7-13700K',
+      'Graphics': 'NVIDIA GeForce RTX 4070 Ti 12GB',
+      'RAM': '32GB DDR5 5200MHz RGB',
+      'Storage': '1TB NVMe Gen4 SSD',
+      'Cooling': '240mm AIO Liquid Cooler',
+      'Cabinet': 'Lian Li O11 Dynamic Dynamic'
+    },
+    reviews: [
+      { user: 'Bikram Das', rating: 5, comment: 'Extreme performance! The build quality is top-notch.', date: '21 March 2024' },
+      { user: 'Sayan Roy', rating: 4, comment: 'Great service. They helped me pick the right parts.', date: '15 Feb 2024' }
+    ],
     price: '₹45,500',
     oldPrice: '₹55,000',
     discount: 'Starting From'
@@ -54,6 +80,19 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Portable power for gaming and creative work. 144Hz display & RGB backlit keyboard.',
     image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800'
+    ],
+    specifications: {
+      'Display': '15.6" FHD 144Hz IPS',
+      'Processor': 'AMD Ryzen 7 6800H',
+      'Graphics': 'RTX 3060 6GB',
+      'Memory': '16GB DDR5',
+      'Storage': '512GB SSD'
+    },
+    reviews: [
+      { user: 'Joydeep Sen', rating: 5, comment: 'Perfect for my college and gaming. Very smooth.', date: 'Jan 2024' }
+    ],
     price: '₹72,499',
     oldPrice: '₹85,000',
     discount: 'Special Offer'
@@ -65,6 +104,15 @@ export const PRODUCTS: Product[] = [
     brand: 'Canon',
     description: 'High-yield ink tank printer. Perfect for home, office, and Xerox services.',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Type': 'Ink Tank All-in-One',
+      'Functions': 'Print, Scan, Copy',
+      'Interface': 'Hi-Speed USB',
+      'Yield': 'Up to 6000 pages (Black)'
+    },
+    reviews: [
+      { user: 'Amit Ghosh', rating: 5, comment: 'Very low printing cost. Highly recommend.', date: '10 Feb 2024' }
+    ],
     price: '₹12,600',
     oldPrice: '₹14,000',
     discount: '10% OFF'
@@ -81,28 +129,6 @@ export const PRODUCTS: Product[] = [
     discount: 'Best Entry'
   },
   {
-    id: 'p5',
-    name: 'FINGERS RollingParties-110',
-    category: 'Audio',
-    brand: 'FINGERS',
-    description: 'Bluetooth party speaker with mic & guitar inputs — powerful sound system.',
-    image: 'https://images.unsplash.com/photo-1589190282375-f40441539e15?auto=format&fit=crop&q=80&w=800',
-    price: '₹14,499',
-    oldPrice: '₹16,999',
-    discount: 'Retail Price'
-  },
-  {
-    id: 'p6',
-    name: 'Microtek Digital Inverter / UPS',
-    category: 'Power',
-    brand: 'Microtek',
-    description: 'Reliable power backup solutions with Online UPS and heavy-duty inverters.',
-    image: 'https://images.unsplash.com/photo-1534224039826-c7aa0bea47fe?auto=format&fit=crop&q=80&w=800',
-    price: '₹6,850',
-    oldPrice: '₹8,000',
-    discount: 'Starting'
-  },
-  {
     id: 'p7',
     name: 'Nikon D3500 DSLR Kit',
     category: 'Cameras',
@@ -115,24 +141,81 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'p8',
-    name: 'Voltas Adjustable Inverter AC',
-    category: 'Appliances',
-    brand: 'Voltas',
-    description: 'Energy-efficient cooling for your home. Stay comfortable in any weather.',
-    image: 'https://images.unsplash.com/photo-1621619856624-42f7b935e219?auto=format&fit=crop&q=80&w=800',
-    price: '₹32,990',
-    oldPrice: '₹42,000',
-    discount: 'Seasonal Offer'
+    name: 'HP Pavilion 15',
+    category: 'Laptops',
+    brand: 'HP',
+    description: 'Powerful performance and stunning visuals. AMD Ryzen 5, 8GB RAM, 512GB SSD.',
+    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    price: '₹54,990',
+    oldPrice: '₹62,000',
+    discount: 'Student Pick'
+  },
+  {
+    id: 'p9',
+    name: 'Epson EcoTank L3210',
+    category: 'Printers',
+    brand: 'Epson',
+    description: 'AIO InkTank printer for cost-effective printing with low cost per page.',
+    image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
+    price: '₹13,800',
+    oldPrice: '₹15,500',
+    discount: 'Top Seller'
+  },
+  {
+    id: 'p10',
+    name: 'Logitech G502 HERO',
+    category: 'Accessories',
+    brand: 'Logitech',
+    description: 'High performance wired gaming mouse with HERO 25K sensor and RGB lighting.',
+    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    price: '₹4,495',
+    oldPrice: '₹5,999',
+    discount: 'Gaming Essential'
+  },
+  {
+    id: 'p11',
+    name: 'Hikvision Turbo HD Kit',
+    category: 'CCTV',
+    brand: 'Hikvision',
+    description: 'Complete 4-camera security system with DVR and remote mobile monitoring.',
+    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    price: '₹8,500',
+    oldPrice: '₹12,000',
+    discount: 'Safety Pack'
   }
 ];
 
 export const GALLERY_IMAGES = [
-  'https://images.unsplash.com/photo-1603481546238-487240415951?auto=format&fit=crop&q=80&w=800',
-  'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&q=80&w=800',
-  'https://images.unsplash.com/photo-1588600878108-578307a3cc9d?auto=format&fit=crop&q=80&w=800',
-  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800',
-  'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
-  'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800'
+  {
+    url: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=800',
+    title: 'Shop Exterior',
+    description: 'TP Computer Corner - Jhargram Tech Hub'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800',
+    title: 'Modern Retail Space',
+    description: 'Explore our wide range of laptops and gadgets'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    title: 'Service Workshop',
+    description: 'Where precision meets repair'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800',
+    title: 'Custom PC Station',
+    description: 'Ready-to-go and custom-built gaming rigs'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800',
+    title: 'Showroom Interior',
+    description: 'The best tech brands under one roof'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800',
+    title: 'Software & Solutions',
+    description: 'Expert software support and licensing'
+  }
 ];
 
 export const WORKSHOP_LOGS = [
@@ -175,21 +258,6 @@ export const PRODUCT_CATEGORIES = [
     title: 'CCTV',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
     description: 'Smart security and 24/7 surveillance systems.'
-  },
-  {
-    title: 'Audio',
-    image: 'https://images.unsplash.com/photo-1589190282375-f40441539e15?auto=format&fit=crop&q=80&w=800',
-    description: 'Premium speakers and cinematic sound setups.'
-  },
-  {
-    title: 'Appliances',
-    image: 'https://images.unsplash.com/photo-1621619856624-42f7b935e219?auto=format&fit=crop&q=80&w=800',
-    description: 'Energy-efficient home comfort solutions.'
-  },
-  {
-    title: 'Power',
-    image: 'https://images.unsplash.com/photo-1534224039826-c7aa0bea47fe?auto=format&fit=crop&q=80&w=800',
-    description: 'Reliable UPS and inverter backup systems.'
   },
   {
     title: 'Accessories',

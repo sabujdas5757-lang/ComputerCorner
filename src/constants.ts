@@ -13,7 +13,7 @@ export interface Review {
 export interface Product {
   id: string;
   name: string;
-  category: 'Desktops' | 'Laptops' | 'Printers' | 'Cameras' | 'CCTV' | 'Audio' | 'Appliances' | 'Power' | 'Accessories' | 'Monitors' | 'Processors' | 'Motherboards' | 'Projectors';
+  category: 'Desktops' | 'Laptops' | 'Printers' | 'Cameras' | 'CCTV' | 'Audio' | 'Appliances' | 'Power' | 'Accessories' | 'Monitors' | 'Processors' | 'Motherboards' | 'Projectors' | 'Keyboard & Mouse';
   brand: string;
   description: string;
   image: string;
@@ -117,76 +117,6 @@ export const PRODUCTS: Product[] = [
     discount: 'Next-Gen'
   },
   {
-    id: 'p8',
-    name: 'HP Pavilion 15',
-    category: 'Laptops',
-    brand: 'HP',
-    description: 'Powerful performance and stunning visuals. AMD Ryzen 5, 8GB RAM, 512GB SSD.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
-    price: '54990 to 56990 The price may be higher or lower',
-    oldPrice: '₹62,000',
-    discount: 'Student Pick'
-  },
-  {
-    id: 'p10',
-    name: 'Logitech G502 HERO',
-    category: 'Accessories',
-    brand: 'Logitech',
-    description: 'High performance wired gaming mouse with HERO 25K sensor and RGB lighting.',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1QBl9gu425_sMq7SR9cPi3OuGG2H-qCvM4A&s',
-    price: '4495 to 6495 The price may be higher or lower',
-    oldPrice: '₹5,999',
-    discount: 'Gaming Essential'
-  },
-  {
-    id: 'p11',
-    name: 'Hikvision Turbo HD Kit',
-    category: 'CCTV',
-    brand: 'Hikvision',
-    description: 'Complete 4-camera security system with DVR and remote mobile monitoring.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
-    price: '8500 to 10500 The price may be higher or lower',
-    oldPrice: '₹12,000',
-    discount: 'Safety Pack'
-  },
-  {
-    id: 'p12',
-    name: 'ASUS Vivobook Go 15 E1504FA',
-    category: 'Laptops',
-    brand: 'ASUS',
-    description: 'Thin and light laptop with a stunning 15.6-inch display, perfect for productivity on the go.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
-    specifications: {
-      'Model': 'E1504FA-BQ2341WS',
-      'Processor': 'AMD Ryzen 3 7320U',
-      'Memory': '16GB LPDDR5',
-      'Storage': '512GB PCIe SSD',
-      'Display': '15.6" FHD (1920x1080)',
-      'Color': 'Mixed Silver'
-    },
-    price: '38990 to 40990 The price may be higher or lower',
-    oldPrice: '₹42,000',
-    discount: 'Great Value'
-  },
-  {
-    id: 'p14',
-    name: 'Dell Inspiron 15 3530',
-    category: 'Laptops',
-    brand: 'DELL',
-    description: 'Reliable performance for everyday tasks with the latest 13th Gen Intel power.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
-    specifications: {
-      'Model': 'ODC1525000401RINS1',
-      'Processor': 'Intel Core i5-1335U (13th Gen)',
-      'Memory': '16GB DDR4',
-      'Storage': '512GB SSD',
-      'Display': '15.6" FHD WVA AG'
-    },
-    price: '56800 to 58800 The price may be higher or lower',
-    oldPrice: '₹64,500',
-    discount: 'Professional'
-  },
-  {
     id: 'p15',
     name: 'HP Victus 15 Gaming',
     category: 'Laptops',
@@ -205,12 +135,30 @@ export const PRODUCTS: Product[] = [
     discount: 'Trending'
   },
   {
+    id: 'p14',
+    name: 'Dell Inspiron 15 3530',
+    category: 'Laptops',
+    brand: 'DELL',
+    description: 'Reliable performance for everyday tasks with the latest 13th Gen Intel power.',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdX2Osq20f70xRmeAUEEdWhnHYY4IJId88_Q&s',
+    specifications: {
+      'Model': 'ODC1525000401RINS1',
+      'Processor': 'Intel Core i5-1335U (13th Gen)',
+      'Memory': '16GB DDR4',
+      'Storage': '512GB SSD',
+      'Display': '15.6" FHD WVA AG'
+    },
+    price: '56800 to 58800 The price may be higher or lower',
+    oldPrice: '₹64,500',
+    discount: 'Professional'
+  },
+  {
     id: 'p16',
     name: 'Lenovo IdeaPad Slim 3',
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Smarter and lighter, the perfect balance of performance and style.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images-cdn.ubuy.qa/641a0b8bfb2d784c8a1f8362-lenovo-thinkpad-t480s-windows-10-pro.jpg',
     specifications: {
       'Model': '82VG00T8IN',
       'Processor': 'AMD Ryzen 3 7320U',
@@ -371,15 +319,68 @@ export const PRODUCTS: Product[] = [
     discount: 'Value Choice'
   },
   {
-    id: 'p30',
-    name: 'HP LaserJet Pro M126a',
-    category: 'Printers',
-    brand: 'HP',
-    description: 'Compact and reliable monochrome laser printer for home and small offices. Stock: 6 PCS',
-    image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Functions': 'Print, Copy, Scan', 'Speed': 'Up to 20 ppm', 'Connectivity': 'USB 2.0' },
-    price: '14950 to 16950 The price may be higher or lower',
-    discount: 'High Demand'
+    id: 'kb100',
+    name: 'Logitech G213 Prodigy',
+    category: 'Keyboard & Mouse',
+    brand: 'Logitech',
+    description: 'Gaming grade performance with tactile feel and spills resistance.',
+    image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Key Type': 'Mech-Dome',
+      'Lighting': 'Lightsync RGB',
+      'Connection': 'USB 2.0 Wired',
+      'Features': 'Spill-resistant, Palm rest'
+    },
+    price: '3495 to 4495 The price may be higher or lower',
+    discount: 'Gamer Choice'
+  },
+  {
+    id: 'kb101',
+    name: 'Logitech G304 Lightspeed',
+    category: 'Keyboard & Mouse',
+    brand: 'Logitech',
+    description: 'Wireless gaming mouse with HERO sensor for 12,000 DPI performance.',
+    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Sensor': 'HERO',
+      'Resolution': '200 – 12,000 dpi',
+      'Max. acceleration': '40 G',
+      'Battery Life': '250 hours'
+    },
+    price: '2800 to 3200 The price may be higher or lower',
+    discount: 'Wireless King'
+  },
+  {
+    id: 'kb102',
+    name: 'Razer DeathAdder V2',
+    category: 'Keyboard & Mouse',
+    brand: 'Razer',
+    description: 'Ergonomic gaming mouse with best-in-class ergonomics and 20K DPI sensor.',
+    image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Sensor': 'Focus+ 20K DPI Optical',
+      'Switches': 'Razer Optical Mouse Switches',
+      'Weight': '82g',
+      'Cable': 'Razer Speedflex'
+    },
+    price: '4500 to 5500 The price may be higher or lower',
+    discount: 'Pro Grade'
+  },
+  {
+    id: 'kb103',
+    name: 'SteelSeries Apex 7 TKL',
+    category: 'Keyboard & Mouse',
+    brand: 'SteelSeries',
+    description: 'Mechanical gaming keyboard with OLED smart display and red switches.',
+    image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Switch Type': 'SteelSeries Red Linear Mechanical',
+      'Display': 'OLED Smart Display',
+      'Material': 'Aircraft Grade Aluminum',
+      'Layout': 'TKL (Tenkeyless)'
+    },
+    price: '12500 to 14500 The price may be higher or lower',
+    discount: 'Elite Build'
   },
   {
     id: 'p31',
@@ -647,7 +648,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: '3-sided borderless display brings a clean and modern aesthetic to any working environment.',
-    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtFaRfOZ2Akn3ijlsEUNT6bQuQ4iywTBAG2Q&s',
     specifications: {
       'Screen Size': '24 Inch',
       'Panel Type': 'IPS',
@@ -664,7 +665,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: 'Borderless 100Hz monitor for smooth gaming and video transitions. Stock: 9 PCS',
-    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
+    image: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2025/03/copy-of-169-19.png?q=49&fit=crop&w=825&dpr=2',
     specifications: {
       'Model': 'LS24C334GAWXXL',
       'Refresh Rate': '100Hz',
@@ -680,7 +681,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: 'Crisp IPS panel with wide viewing angles for office and home use. Stock: 7 PCS',
-    image: 'https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQV74RCYGo8Wq12jmim4fZJXOO3ELucuqV1MA&s',
     price: '8400 to 10400 The price may be higher or lower',
     discount: 'Compact IPS'
   },
@@ -690,7 +691,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: 'Essential monitor for basic computing tasks. Compact and energy-efficient. Stock: 3 PCS',
-    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-eUUFVAua4eZomsQhghiDevIvFNq_yTSR6g&s',
     price: '5900 to 7900 The price may be higher or lower',
     discount: 'Entry Level'
   },
@@ -700,7 +701,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: '22-inch display with reliable performance for work and studies.',
-    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
+    image: 'https://nationalpc.in/image/cache/catalog/product/Monitor/Samsung/Flat/Odyssey-OLED-G8/LS32FG810SWXXL/2-320x320.jpeg.webp',
     price: '7800 to 9800 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -710,7 +711,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: 'Large 27-inch IPS display with 100Hz high refresh rate for immersive experience.',
-    image: 'https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtFaRfOZ2Akn3ijlsEUNT6bQuQ4iywTBAG2Q&s',
     specifications: {
       'Size': '27 Inch',
       'Refresh Rate': '100Hz',
@@ -725,7 +726,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'SAMSUNG',
     description: 'Sleek 27-inch monitor with vivid colors and sharp details.',
-    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    image: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2025/03/copy-of-169-19.png?q=49&fit=crop&w=825&dpr=2',
     price: '13900 to 15900 The price may be higher or lower',
     discount: 'Vivid'
   },
@@ -1985,7 +1986,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: '90m budget-friendly coaxial cable for small residential setups.',
-    image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
+    image: 'https://static1.industrybuying.com/products/it-security/network-components/ethernet-switches/ITS.ETH.331458544_1744795132570.webp',
     price: '1250 to 3250 The price may be higher or lower',
     discount: 'Value Roll'
   },
@@ -2515,7 +2516,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Reliable Lenovo laptop for student and home office work. Model 81WB0190IN.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu0R3bo60qkjNADtSJ1LtpNP-hCHJoHzGjkw&s',
     price: '40352 to 42352 The price may be higher or lower',
     discount: 'Jhargram Special'
   },
@@ -2525,7 +2526,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Thin and light Lenovo laptop with essential features for daily computing.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://5.imimg.com/data5/DG/HJ/MY-43212347/lenovo-laptop-500x500.jpg',
     price: '36633 to 38633 The price may be higher or lower',
     discount: 'Everyday Value'
   },
@@ -2535,7 +2536,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'High-performance configuration with sharp display and fast storage.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://ampro.in/wp-content/uploads/2024/07/Ideapad-Slim-3i-1.png',
     price: '39746 to 41746 The price may be higher or lower',
     discount: 'Smart Buy'
   },
@@ -2545,7 +2546,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Powerful Lenovo laptop for advanced productivity and multitasking.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.lenovo.com/content/dam/lenovo/site-design/lenovo-helix/ftv/bento-it.jpg',
     price: '48403 to 50403 The price may be higher or lower',
     discount: 'Performance'
   },
@@ -2555,7 +2556,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Ryzen 5 5500U powerhouse for creators and students alike.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/311085_0_l9w780.png',
     price: '34500 to 36500 The price may be higher or lower',
     discount: 'Ryzen 5 Power'
   },
@@ -2565,7 +2566,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: '12th Gen Intel i3 performance for modern application speeds.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRplqDzSNCRBjfYyn20OvdjN9dLq1bd9MlLNw&s',
     price: '38000 to 40000 The price may be higher or lower',
     discount: '12th Gen Gen'
   },
@@ -2575,7 +2576,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Efficient Ryzen 3 7000 series laptop for the smart professional.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0KmqtMfPhwzuvNln0BDHpqB7XDUn7QPpCjQ&s',
     price: '32500 to 34500 The price may be higher or lower',
     discount: 'Fresh Tech'
   },
@@ -2585,7 +2586,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Ultra 5 series with 1TB of super-fast storage for professional collections.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images-cdn.ubuy.qa/641a0b8bfb2d784c8a1f8362-lenovo-thinkpad-t480s-windows-10-pro.jpg',
     price: '74500 to 76500 The price may be higher or lower',
     discount: 'Ultra 1TB'
   },
@@ -2595,7 +2596,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Professional grade 13th Gen i5 laptop with 16GB RAM and MSO-24.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu0R3bo60qkjNADtSJ1LtpNP-hCHJoHzGjkw&s',
     price: '55500 to 57500 The price may be higher or lower',
     discount: 'Business Pro'
   },
@@ -2605,7 +2606,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Discreet and powerful 13th Gen i5 laptop for everyday multitasking.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://5.imimg.com/data5/DG/HJ/MY-43212347/lenovo-laptop-500x500.jpg',
     price: '48000 to 50000 The price may be higher or lower',
     discount: 'Pure i5'
   },
@@ -2615,7 +2616,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Gaming and workstation powerhouse with NVIDIA RTX graphics.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://ampro.in/wp-content/uploads/2024/07/Ideapad-Slim-3i-1.png',
     price: '68500 to 70500 The price may be higher or lower',
     discount: 'Gaming Ready'
   },
@@ -2625,7 +2626,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'LENOVO',
     description: 'Balanced entry gaming laptop with 12GB RAM and RTX 2050.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.lenovo.com/content/dam/lenovo/site-design/lenovo-helix/ftv/bento-it.jpg',
     price: '55000 to 57000 The price may be higher or lower',
     discount: 'Budget Gaming'
   },
@@ -2895,7 +2896,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'High-performance G-series gaming laptop with 13th Gen Intel and RTX 3050.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/670/silver-color-dell-laptop-with-15-6-inch-full-hd-screen-8-gb-ram-long-lasting-battery-backup-355.jpg',
     price: '72500 to 74500 The price may be higher or lower',
     discount: 'G-Series Elite'
   },
@@ -2905,7 +2906,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Practical Core 3 laptop for professional work, ready for OS custom setup.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://static.digit.in/Dell-Latitude-7350-Ultralight-Main-Visual-scaled.jpg',
     price: '34000 to 36000 The price may be higher or lower',
     discount: 'Business Ready'
   },
@@ -2915,7 +2916,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Sleek Black Inspiron with Ryzen 5 power for smooth daily multitasking.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ29WyrolmHmkiLMBleRYh2K6IE7JHP6CKwA&s',
     price: '42500 to 44500 The price may be higher or lower',
     discount: 'Sleek Black'
   },
@@ -2925,7 +2926,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Reliable Inspiron 15 with Ryzen 3, perfect for students and home use.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkzXVk1YVWF6xWyuJTFkDZtcAn_502C7JplA&s',
     price: '37500 to 39500 The price may be higher or lower',
     discount: 'Student Value'
   },
@@ -2935,7 +2936,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Premium Silver configuration with 13th Gen i5 and 16GB RAM.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/download_5_2f4884a5-ef63-4ca4-86fb-4b57c7a3bb03_2048x.jpg?v=1622712519',
     price: '56800 to 58800 The price may be higher or lower',
     discount: 'Silver Pro'
   },
@@ -2945,7 +2946,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Modern Core 3 black edition laptop for reliable performance.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdVPtLC9AiF6CsnfX9zdoyJLtBlSMgb8MnSg&s',
     price: '36500 to 38500 The price may be higher or lower',
     discount: 'Core 3 Black'
   },
@@ -2955,7 +2956,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Elegant Silver laptop with latest Core 3 processor for great value.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAj8lq3QCy4KgL9Y7JyG2vswxS9G5fAImzaw&s',
     price: '37000 to 39000 The price may be higher or lower',
     discount: 'Elegant Silver'
   },
@@ -2965,7 +2966,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Powerful Ryzen 5 silver laptop with ample 16GB memory.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdX2Osq20f70xRmeAUEEdWhnHYY4IJId88_Q&s',
     price: '46500 to 48500 The price may be higher or lower',
     discount: 'Ryzen Elite'
   },
@@ -2975,7 +2976,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'High-performance gaming machine with RTX 3050 and 1TB storage.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/670/silver-color-dell-laptop-with-15-6-inch-full-hd-screen-8-gb-ram-long-lasting-battery-backup-355.jpg',
     price: '78000 to 80000 The price may be higher or lower',
     discount: 'G-Series 1TB'
   },
@@ -2985,7 +2986,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Stealthy Black edition i5 laptop for professional mobility.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://static.digit.in/Dell-Latitude-7350-Ultralight-Main-Visual-scaled.jpg',
     price: '44500 to 46500 The price may be higher or lower',
     discount: 'Pro Stealth'
   },
@@ -2995,7 +2996,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Classic Silver i5 laptop with balanced specs for home and office.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ29WyrolmHmkiLMBleRYh2K6IE7JHP6CKwA&s',
     price: '45000 to 47000 The price may be higher or lower',
     discount: 'Office Classic'
   },
@@ -3005,7 +3006,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Compact 14-inch Ryzen 5 laptop with high-speed memory focus.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkzXVk1YVWF6xWyuJTFkDZtcAn_502C7JplA&s',
     price: '48500 to 50500 The price may be higher or lower',
     discount: 'Ryzen Compact'
   },
@@ -3015,7 +3016,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Large 16-inch display with 13th Gen Intel power for clear oversight.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/download_5_2f4884a5-ef63-4ca4-86fb-4b57c7a3bb03_2048x.jpg?v=1622712519',
     price: '55500 to 57500 The price may be higher or lower',
     discount: 'Big Screen i5'
   },
@@ -3025,7 +3026,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Vostro business laptop with proven i5 reliability and MSO.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdVPtLC9AiF6CsnfX9zdoyJLtBlSMgb8MnSg&s',
     price: '46000 to 48000 The price may be higher or lower',
     discount: 'Business Vostro'
   },
@@ -3035,7 +3036,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'DELL',
     description: 'Professional 15.6-inch laptop with efficient Ryzen 5 processing.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAj8lq3QCy4KgL9Y7JyG2vswxS9G5fAImzaw&s',
     price: '43500 to 45500 The price may be higher or lower',
     discount: 'Pro Productivity'
   },
@@ -3045,7 +3046,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'High-quality Lenovo monitor with sharp visuals for office work.',
-    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo9AncdyvL6iCl2v3jSH2cV1fNYw_x1oZfwA&s',
     price: '8950 to 10950 The price may be higher or lower',
     discount: 'Clear View'
   },
@@ -3055,7 +3056,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Sleek design monitor optimized for home entertainment and productivity.',
-    image: 'https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.tanotis.com/cdn/shop/products/1638964875_IMG_1655695_800x.jpg?v=1676513894',
     price: '9450 to 11450 The price may be higher or lower',
     discount: 'Sleek Fit'
   },
@@ -3065,7 +3066,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Large display monitor with wide viewing angles and vivid colors.',
-    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    image: 'https://img-prd-pim.poorvika.com/product/Lenovo-fhd-ips-monitor-l27i-4a-white-27-inch-Front-View.png',
     price: '12800 to 14800 The price may be higher or lower',
     discount: 'Wide Angle'
   },
@@ -3075,7 +3076,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Premium monitor with enhanced color accuracy for design professionals.',
-    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
+    image: 'https://p2-ofp.static.pub/ShareResource/ww/visuals/ThinkVision-T24-40/Gallery/01.png',
     price: '14500 to 16500 The price may be higher or lower',
     discount: 'Pro Color'
   },
@@ -3085,7 +3086,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Reliable everyday monitor with blue-light filter for eye comfort.',
-    image: 'https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ45qOGgae1beoe-1og_uaH56vKMBzAOv6BpQ&s',
     price: '7900 to 9900 The price may be higher or lower',
     discount: 'Eye Care'
   },
@@ -3095,7 +3096,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Compact monitor for space-saving desk setups without quality loss.',
-    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv0sixqIqOS_TZs62-Ay7sF2lKcRe2Cww2aw&s',
     price: '6450 to 8450 The price may be higher or lower',
     discount: 'Space Saver'
   },
@@ -3105,7 +3106,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'High-refresh rate monitor for smooth visual transitions.',
-    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/61+-4gtS0TL._AC_UF1000,1000_QL80_.jpg',
     price: '11900 to 13900 The price may be higher or lower',
     discount: 'High Refresh'
   },
@@ -3115,7 +3116,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Modern borderless monitor for a seamless dual-screen experience.',
-    image: 'https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800',
+    image: 'https://p2-ofp.static.pub//fes/cms/2025/07/18/wu0wbq4pf2p4imnbnwag9y78bkxn2h797134.jpg',
     price: '10500 to 12500 The price may be higher or lower',
     discount: 'Borderless'
   },
@@ -3125,7 +3126,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Versatile monitor with adjustable stand for ergonomic comfort.',
-    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmu6kZKj42bh5D3BKANSk8dGJTCUWhWm120Q&s',
     price: '13200 to 15200 The price may be higher or lower',
     discount: 'Ergo Stand'
   },
@@ -3135,7 +3136,7 @@ export const PRODUCTS: Product[] = [
     category: 'Monitors',
     brand: 'LENOVO',
     description: 'Top-of-the-line Lenovo monitor with ultra-crisp resolution.',
-    image: 'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNyWVK2Tuth_e_MMAoJuowAwicqsTd0UpbsQ&s',
     price: '16800 to 18800 The price may be higher or lower',
     discount: 'Ultra Crisp'
   },
@@ -3692,8 +3693,13 @@ export const PRODUCT_CATEGORIES = [
   },
   {
     title: 'Accessories',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
-    description: 'Keyboards, mice, and essential tech peripherals.'
+    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    description: 'Routers, tech peripherals, and general computer accessories.'
+  },
+  {
+    title: 'Keyboard & Mouse',
+    image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&q=80&w=800',
+    description: 'Mechanical keyboards, gaming mice, and trackpads.'
   },
   {
     title: 'Processors',

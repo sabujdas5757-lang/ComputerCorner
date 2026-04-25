@@ -101,6 +101,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Full HD Wi-Fi camera with night vision and mobile alerts. Protect your home.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2499 to 4499 The price may be higher or lower',
     oldPrice: '₹3,500',
     discount: 'Best Entry'
@@ -112,6 +122,16 @@ export const PRODUCTS: Product[] = [
     brand: 'Sony',
     description: 'The next level of full-frame. 33MP Exmor R CMOS sensor, 4K 60p video, and revolutionary real-time tracking AF.',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New sealed',
+      'Warranty': '2 Years Official Warranty',
+      'Durability': 'Weather-sealed body',
+      'Mount': 'Standard mount compatible',
+      'In the Box': 'Camera, Battery, Charger, Strap, Manual',
+      'Autofocus': 'Fast Hybrid AF',
+      'Sensor Size': 'Full-frame / APS-C',
+      'Storage': 'Dual SD/CFexpress slots'
+    },
     price: '215000 to 225000 The price may be higher or lower',
     oldPrice: '₹2,45,000',
     discount: 'Next-Gen'
@@ -122,7 +142,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Designed for high-performance gaming with an sophisticated aesthetic.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Uo+qAleBL.jpg',
     specifications: {
       'Model': '15-FB3012AX',
       'Processor': 'AMD Ryzen 5 8645HS',
@@ -195,6 +215,16 @@ export const PRODUCTS: Product[] = [
     brand: 'IFOTO',
     description: 'High-quality photopaper for everyday printing. 130GSM, 50 Sheets per pack. Stock: 78 PKT',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '250 to 2250 The price may be higher or lower',
     discount: 'Bulk Available'
   },
@@ -205,6 +235,16 @@ export const PRODUCTS: Product[] = [
     brand: 'IFOTO',
     description: 'Premium photopaper with 180GSM weight for better durability. 20 Sheets. Stock: 134 PCS',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '120 to 2120 The price may be higher or lower',
     discount: 'Top Choice'
   },
@@ -215,6 +255,16 @@ export const PRODUCTS: Product[] = [
     brand: 'IFOTO',
     description: 'Extra value pack with 50 sheets of 180GSM photopaper. Stock: 1 PKT',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '290 to 2290 The price may be higher or lower',
     discount: 'Limited Stock'
   },
@@ -225,6 +275,16 @@ export const PRODUCTS: Product[] = [
     brand: 'IFOTO',
     description: 'Glossy 4R size photopaper for photo printing. 180GSM, 100 Sheets. Stock: 50 PKT',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '180 to 2180 The price may be higher or lower',
     discount: 'Popular'
   },
@@ -235,6 +295,16 @@ export const PRODUCTS: Product[] = [
     brand: 'NOVA',
     description: 'Ultra-premium 270GSM Prismajet photopaper for the best results. 100 Sheets. Stock: 30 PKT',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '380 to 2380 The price may be higher or lower',
     discount: 'Best Quality'
   },
@@ -245,6 +315,16 @@ export const PRODUCTS: Product[] = [
     brand: 'NOVA',
     description: 'A4 size 270GSM Prismajet photopaper. 20 Sheets. Stock: 31 PCS',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '220 to 2220 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -255,6 +335,16 @@ export const PRODUCTS: Product[] = [
     brand: 'NOVA',
     description: 'Nova Professional series 130GSM photopaper. 100 Sheets. Stock: 14 PCS',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '320 to 2320 The price may be higher or lower',
     discount: 'Value Pack'
   },
@@ -265,6 +355,16 @@ export const PRODUCTS: Product[] = [
     brand: 'VMS',
     description: 'Heavyweight A4 photopaper from VMS, 260GSM for professional prints.',
     image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '450 to 2450 The price may be higher or lower',
     discount: 'Heavy Duty'
   },
@@ -389,7 +489,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Wireless ink tank printer with spill-free refill system. Stock: 5 No.s',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Functions': 'Print, Scan, Copy, Wi-Fi', 'Yield': 'Up to 8000 color pages' },
+        specifications: {
+      'Functions': 'Print, Scan, Copy, Wi-Fi', 'Yield': 'Up to 8000 color pages',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '13800 to 15800 The price may be higher or lower',
     discount: 'Wireless'
   },
@@ -400,7 +509,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Multi-function printer designed for low-cost high-yield printing. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Functions': 'Print, Scan, Copy', 'Cartridge': 'HP 47 High Yield' },
+        specifications: {
+      'Functions': 'Print, Scan, Copy', 'Cartridge': 'HP 47 High Yield',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '8900 to 10900 The price may be higher or lower',
     discount: 'Compact'
   },
@@ -411,7 +529,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Cost-effective ink tank printer for volume monochrome and color printing. Stock: 8 No.s',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Connectivity': 'USB 2.0', 'Yield': 'Up to 6000 black pages' },
+        specifications: {
+      'Connectivity': 'USB 2.0', 'Yield': 'Up to 6000 black pages',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '11500 to 13500 The price may be higher or lower',
     discount: 'Valued'
   },
@@ -422,7 +549,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Advanced wireless ink tank printer with high-yield capacity. Stock: 5 No.s',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Features': 'Wi-Fi Direct, Mobile Printing', 'Refill': 'Spill-free system' },
+        specifications: {
+      'Features': 'Wi-Fi Direct, Mobile Printing', 'Refill': 'Spill-free system',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '14200 to 16200 The price may be higher or lower',
     discount: 'Top Rated'
   },
@@ -433,7 +570,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Enterprise-ready monochrome laser printer with wireless networking. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Network': 'Wi-Fi, Ethernet', 'Functions': '3-in-1 MFP' },
+        specifications: {
+      'Network': 'Wi-Fi, Ethernet', 'Functions': '3-in-1 MFP',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '18500 to 20500 The price may be higher or lower',
     discount: 'Office Ready'
   },
@@ -444,7 +590,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Ultra-compact laser printer with wireless capabilities. Stock: 1 No.s',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Size': 'Compact footprint', 'Wi-Fi': 'Built-in' },
+        specifications: {
+      'Size': 'Compact footprint', 'Wi-Fi': 'Built-in',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '15400 to 17400 The price may be higher or lower',
     discount: 'Rare Stock'
   },
@@ -455,7 +611,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'The legendary workhorse for fast, high-quality text documents. Stock: 7 PCS',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Technology': 'Laser', 'Cartridge': 'HP 88A' },
+        specifications: {
+      'Technology': 'Laser', 'Cartridge': 'HP 88A',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '12200 to 14200 The price may be higher or lower',
     discount: 'Durable'
   },
@@ -466,7 +632,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'The most popular all-in-one laser printer in Jhargram. Robust and reliable. Stock: 4 No.s',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Functions': 'Print, Scan, Copy', 'Display': 'LCD' },
+        specifications: {
+      'Functions': 'Print, Scan, Copy', 'Display': 'LCD',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '22500 to 24500 The price may be higher or lower',
     discount: 'Classic'
   },
@@ -477,7 +652,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Modern wireless version of the classic M1005 series. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Wireless': 'Smart App Support', 'Speed': 'Fast Laser' },
+        specifications: {
+      'Wireless': 'Smart App Support', 'Speed': 'Fast Laser',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '24800 to 26800 The price may be higher or lower',
     discount: 'New Arrival'
   },
@@ -488,7 +673,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Next-gen laser tank with ultra-low printing cost and automatic loading. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Type': 'Laser Tank', 'ADF': 'Automatic Document Feeder' },
+        specifications: {
+      'Type': 'Laser Tank', 'ADF': 'Automatic Document Feeder',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '28990 to 30990 The price may be higher or lower',
     discount: 'Premium'
   },
@@ -499,7 +694,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'High-volume laser tank printer with easy refill experience. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Yield': '5000 pages of toner', 'Interface': 'USB 2.0' },
+        specifications: {
+      'Yield': '5000 pages of toner', 'Interface': 'USB 2.0',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '21500 to 23500 The price may be higher or lower',
     discount: 'Eco-Friendly'
   },
@@ -510,7 +715,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Professional wireless MFP with duplex printing for busy environments. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Duplex': 'Automatic', 'Mobile': 'Apple AirPrint Ready' },
+        specifications: {
+      'Duplex': 'Automatic', 'Mobile': 'Apple AirPrint Ready',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '26400 to 28400 The price may be higher or lower',
     discount: 'Business'
   },
@@ -521,7 +736,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Glossy finish all-in-one ink tank with superior color accuracy. Stock: 5 PCS',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Color': 'Vibrant Photo Quality', 'Wi-Fi': 'Dual Band' },
+        specifications: {
+      'Color': 'Vibrant Photo Quality', 'Wi-Fi': 'Dual Band',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '15200 to 17200 The price may be higher or lower',
     discount: 'Photo Specialist'
   },
@@ -532,7 +757,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Integrated ink tank printer with ADF and smart-guided buttons. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'ADF': '35-page capacity', 'Display': 'Hidden touch design' },
+        specifications: {
+      'ADF': '35-page capacity', 'Display': 'Hidden touch design',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '17800 to 19800 The price may be higher or lower',
     discount: 'Full Featured'
   },
@@ -543,7 +778,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Smart tank with automatic dual-sided printing for maximum efficiency. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Duplex': 'Auto-printing', 'Smart App': 'HP Smart' },
+        specifications: {
+      'Duplex': 'Auto-printing', 'Smart App': 'HP Smart',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '20500 to 22500 The price may be higher or lower',
     discount: 'Efficient'
   },
@@ -554,7 +799,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'The ultimate smart tank with advanced security and rapid speeds. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Security': 'Wolf Security Protected', 'Speed': 'Fast Color' },
+        specifications: {
+      'Security': 'Wolf Security Protected', 'Speed': 'Fast Color',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '22400 to 24400 The price may be higher or lower',
     discount: 'Top Tier'
   },
@@ -565,7 +820,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Reliable entry-level ink tank for students and teachers. Stock: 7 No.s',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Focus': 'Simplicity', 'Volume': 'High capacity tanks' },
+        specifications: {
+      'Focus': 'Simplicity', 'Volume': 'High capacity tanks',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '12900 to 14900 The price may be higher or lower',
     discount: 'Best Entry'
   },
@@ -576,7 +841,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'The modern standard for home multi-function ink tank printing. Stock: 17 PCS',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Interface': 'USB 2.0', 'Yield': '6000 pages black' },
+        specifications: {
+      'Interface': 'USB 2.0', 'Yield': '6000 pages black',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '13500 to 15500 The price may be higher or lower',
     discount: 'Massive Stock'
   },
@@ -587,6 +862,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Upgraded version of the 520 with improved print head longevity. Stock: 7 PCS',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '13900 to 15900 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -597,6 +882,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Value pack with 2-year ink supply included in the box. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '14800 to 16800 The price may be higher or lower',
     discount: 'Extended Value'
   },
@@ -607,6 +902,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Professional look with integrated ink sensor alerts. Stock: 14 No.s',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '14500 to 16500 The price may be higher or lower',
     discount: 'Popular Choice'
   },
@@ -617,7 +922,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Our most connected smart tank for seamless smartphone printing. Stock: 9 PCS',
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Wi-Fi': 'Self-healing technology', 'App': 'Best-in-class HP Smart' },
+        specifications: {
+      'Wi-Fi': 'Self-healing technology', 'App': 'Best-in-class HP Smart',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '14990 to 16990 The price may be higher or lower',
     discount: 'Best Connected'
   },
@@ -628,6 +943,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Enhanced color vibrancy for marketing materials and photos. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '15200 to 17200 The price may be higher or lower',
     discount: 'Color Pro'
   },
@@ -638,7 +963,17 @@ export const PRODUCTS: Product[] = [
     brand: 'HP',
     description: 'Exclusive Dark Blue edition with premium build and top wireless features.',
     image: 'https://images.unsplash.com/photo-1549416415-467a35368a62?auto=format&fit=crop&q=80&w=800',
-    specifications: { 'Edition': 'Special Dark Blue', 'Wi-Fi': 'Dual Band' },
+        specifications: {
+      'Edition': 'Special Dark Blue', 'Wi-Fi': 'Dual Band',
+      'Condition': 'Brand New',
+      'Warranty': '1 Year or 30000 pages Warranty',
+      'Functions': 'Print, Scan, Copy',
+      'Connectivity': 'USB, Wi-Fi, Mobile Printing',
+      'Paper Size': 'A4, Letter, Legal',
+      'Print Speed': 'Up to 30 ppm',
+      'Resolution': 'Up to 4800 x 1200 dpi',
+      'Compatibility': 'Windows, macOS, Linux apps'
+    },
     price: '15800 to 17800 The price may be higher or lower',
     discount: 'Premium Look'
   },
@@ -682,6 +1017,17 @@ export const PRODUCTS: Product[] = [
     brand: 'SAMSUNG',
     description: 'Crisp IPS panel with wide viewing angles for office and home use. Stock: 7 PCS',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQV74RCYGo8Wq12jmim4fZJXOO3ELucuqV1MA&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '8400 to 10400 The price may be higher or lower',
     discount: 'Compact IPS'
   },
@@ -692,6 +1038,17 @@ export const PRODUCTS: Product[] = [
     brand: 'SAMSUNG',
     description: 'Essential monitor for basic computing tasks. Compact and energy-efficient. Stock: 3 PCS',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-eUUFVAua4eZomsQhghiDevIvFNq_yTSR6g&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '5900 to 7900 The price may be higher or lower',
     discount: 'Entry Level'
   },
@@ -702,6 +1059,17 @@ export const PRODUCTS: Product[] = [
     brand: 'SAMSUNG',
     description: '22-inch display with reliable performance for work and studies.',
     image: 'https://nationalpc.in/image/cache/catalog/product/Monitor/Samsung/Flat/Odyssey-OLED-G8/LS32FG810SWXXL/2-320x320.jpeg.webp',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '7800 to 9800 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -727,6 +1095,17 @@ export const PRODUCTS: Product[] = [
     brand: 'SAMSUNG',
     description: 'Sleek 27-inch monitor with vivid colors and sharp details.',
     image: 'https://static0.xdaimages.com/wordpress/wp-content/uploads/2025/03/copy-of-169-19.png?q=49&fit=crop&w=825&dpr=2',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '13900 to 15900 The price may be higher or lower',
     discount: 'Vivid'
   },
@@ -737,6 +1116,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Quad-core processor with integrated Radeon graphics. Stock: 10 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '9500 to 11500 The price may be higher or lower',
     discount: 'OEM Pack'
   },
@@ -747,6 +1136,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: '6-core, 12-thread unlocked desktop processor with Wraith Stealth cooler. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '10200 to 12200 The price may be higher or lower',
     discount: 'Best Budget'
   },
@@ -767,6 +1166,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Dual-core entry-level processor for basic productivity. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '4800 to 6800 The price may be higher or lower',
     discount: 'Value'
   },
@@ -777,6 +1186,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Ryzen 3 with Radeon Vega 8 Graphics for smooth casual gaming. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '8900 to 10900 The price may be higher or lower',
     discount: 'Ready'
   },
@@ -787,6 +1206,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'High-speed 6-core processor with integrated graphics. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '12400 to 14400 The price may be higher or lower',
     discount: 'GT Series'
   },
@@ -797,6 +1226,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Advanced 6-core performance for work and play. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '14200 to 16200 The price may be higher or lower',
     discount: 'Performance'
   },
@@ -807,6 +1246,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'The standard for mainstream gaming performance. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '15800 to 17800 The price may be higher or lower',
     discount: 'Gamer Choice'
   },
@@ -817,6 +1266,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Next-gen AM5 socket gaming CPU for modern rigs. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '16900 to 18900 The price may be higher or lower',
     discount: 'AM5 Ready'
   },
@@ -827,6 +1286,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'High-speed Zen 4 architecture for extreme responsiveness. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '20500 to 22500 The price may be higher or lower',
     discount: 'Zen 4'
   },
@@ -837,6 +1306,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Top-tier integrated graphics for a smooth 1080p gaming experience. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '22800 to 24800 The price may be higher or lower',
     discount: 'Elite APU'
   },
@@ -847,6 +1326,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'The latest Zen 5 performance for cutting-edge builds. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '26500 to 28500 The price may be higher or lower',
     discount: 'Future Proof'
   },
@@ -857,6 +1346,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Legendary 8-core, 16-thread processor for multitasking. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '18500 to 20500 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -867,6 +1366,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: '8-core responsiveness with the fastest integrated graphics. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '19800 to 21800 The price may be higher or lower',
     discount: 'G-Series'
   },
@@ -877,6 +1386,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Solid 8-core performance for professional applications. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '17400 to 19400 The price may be higher or lower',
     discount: 'Pro Content'
   },
@@ -887,6 +1406,16 @@ export const PRODUCTS: Product[] = [
     brand: 'AMD',
     description: 'Power-efficient 8-core gaming world champ. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New Retail Box',
+      'Warranty': '3 Years Limited Warranty',
+      'Architecture': 'Latest generation microarchitecture',
+      'Cache': 'High-capacity L2 and L3 Cache',
+      'PCIe Support': 'PCIe Gen 4.0 / 5.0 ready',
+      'Memory Type': 'DDR4 / DDR5 compliant',
+      'TDP': 'Optimized thermal design power',
+      'Cooler': 'Includes standard / premium stock cooler or barebone'
+    },
     price: '18900 to 20900 The price may be higher or lower',
     discount: 'Best 8-Core'
   },
@@ -897,6 +1426,16 @@ export const PRODUCTS: Product[] = [
     brand: 'EZVIZ',
     description: '360-degree coverage with smart tracking and night vision. Stock: 15 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2100 to 4100 The price may be higher or lower',
     discount: 'Popular'
   },
@@ -907,6 +1446,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Efficient 16-channel DVR supporting 1080p Lite resolution. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '7800 to 9800 The price may be higher or lower',
     discount: 'High Capacity'
   },
@@ -917,6 +1466,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Reliable 16-channel power supply for CCTV installations. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2400 to 4400 The price may be higher or lower',
     discount: 'Essential'
   },
@@ -927,6 +1486,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Advanced Turbo HD DVR with facial recognition support. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '14500 to 16500 The price may be higher or lower',
     discount: 'Smart Features'
   },
@@ -937,6 +1506,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Professional IP bullet camera with 30m IR range and PoE. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'IP Camera'
   },
@@ -947,6 +1526,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Long-range IP bullet camera with 50m IR distance. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4800 to 6800 The price may be higher or lower',
     discount: 'Long Range'
   },
@@ -957,6 +1546,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'High-definition analog bullet camera with 50m IR range. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2650 to 4650 The price may be higher or lower',
     discount: 'Analog Pro'
   },
@@ -967,6 +1566,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: '24/7 color imaging even in total darkness with ColorVu technology. Stock: 5 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3100 to 5100 The price may be higher or lower',
     discount: '24/7 Color'
   },
@@ -977,6 +1586,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Audio over coaxial cable with high-quality built-in mic. Stock: 9 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Audio Over Coax'
   },
@@ -987,6 +1606,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Eco-series 2MP bullet camera, perfect for budget installations. Stock: 14 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1450 to 3450 The price may be higher or lower',
     discount: 'Budget'
   },
@@ -997,6 +1626,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Compact 2MP dome camera for indoor security. Stock: 9 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1350 to 3350 The price may be higher or lower',
     discount: 'Indoor'
   },
@@ -1007,6 +1646,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Smart hybrid light with audio support for better identification. Stock: 5 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2250 to 4250 The price may be higher or lower',
     discount: 'Hybrid Light'
   },
@@ -1017,6 +1666,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Dome camera with integrated audio and smart lighting options. Stock: 17 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2150 to 4150 The price may be higher or lower',
     discount: 'Best Seller'
   },
@@ -1027,6 +1686,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'IP bullet camera featuring smart hybrid illumination and AI tracking. Stock: 7 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3900 to 5900 The price may be higher or lower',
     discount: 'Smart IP'
   },
@@ -1037,6 +1706,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Enterprise-grade NVR with 32-channel support and dual SATA bays. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '22500 to 24500 The price may be higher or lower',
     discount: 'Enterprise'
   },
@@ -1047,6 +1726,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Compact 4-channel DVR for home setups. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'Home Pack'
   },
@@ -1057,6 +1746,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Reliable PoE switch for powering up to 4 IP cameras. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2800 to 4800 The price may be higher or lower',
     discount: 'Network'
   },
@@ -1067,6 +1766,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Gigabit PoE switch for high-speed IP data transmission. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Gigabit'
   },
@@ -1077,6 +1786,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Super high-resolution 5MP analog bullet camera with audio. Stock: 7 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: '5MP Audio'
   },
@@ -1087,6 +1806,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Superior 5MP indoor dome camera with integrated audio. Stock: 7 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3100 to 5100 The price may be higher or lower',
     discount: 'High Res'
   },
@@ -1097,6 +1826,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Dedicated 8-channel power adapter for structured cabling. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1650 to 3650 The price may be higher or lower',
     discount: 'Power'
   },
@@ -1107,6 +1846,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Streamlined 8-channel NVR for digital IP surveillance. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '6900 to 8900 The price may be higher or lower',
     discount: 'Digital'
   },
@@ -1117,6 +1866,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Smart 8-channel DVR supporting up to 5MP resolution. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '8200 to 10200 The price may be higher or lower',
     discount: 'HQ Series'
   },
@@ -1127,6 +1886,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Standard 8-channel analog DVR for small businesses. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4900 to 6900 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -1137,6 +1906,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: '4K ready NVR with 8-channel support and high bandwidth. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '12800 to 14800 The price may be higher or lower',
     discount: '4K Ready'
   },
@@ -1147,6 +1926,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: '8-port PoE switch for larger IP deployments. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '5800 to 7800 The price may be higher or lower',
     discount: 'Pro Network'
   },
@@ -1157,6 +1946,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Gigabit PoE switch with SFP fiber uplink ports. Stock: 5 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '9500 to 11500 The price may be higher or lower',
     discount: 'Fiber Ready'
   },
@@ -1167,6 +1966,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Premium quality copper cable for professional signal transmission. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Full Copper'
   },
@@ -1177,6 +1986,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Ultra-high 3K resolution with smart hybrid light and audio. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3800 to 5800 The price may be higher or lower',
     discount: '3K Ultra'
   },
@@ -1187,6 +2006,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Smart IP dome with AI detection and built-in audio mic. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4100 to 6100 The price may be higher or lower',
     discount: 'Smart Dome'
   },
@@ -1197,6 +2026,16 @@ export const PRODUCTS: Product[] = [
     brand: 'HIKVISION',
     description: 'Vivid color images 24/7 with ColorVu IP technology and high protection.',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '5400 to 7400 The price may be higher or lower',
     discount: 'Color Pro'
   },
@@ -1207,6 +2046,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-definition bullet camera with 20m IR range for clear night vision.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1250 to 3250 The price may be higher or lower',
     discount: 'Budget Choice'
   },
@@ -1217,6 +2066,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Compact wireless cube camera for indoor monitoring with 10m range.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2800 to 4800 The price may be higher or lower',
     discount: 'Wireless'
   },
@@ -1227,6 +2086,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '16-channel network video recorder with 1 SATA bay for storage.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '6500 to 8500 The price may be higher or lower',
     discount: 'Standard NVR'
   },
@@ -1237,6 +2106,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Professional 4K 16-channel NVR with dual SATA support for reliability.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '9800 to 11800 The price may be higher or lower',
     discount: '4K Pro'
   },
@@ -1247,6 +2126,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-performance 16-channel NVR for surveillance systems overhead.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '8400 to 10400 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -1257,6 +2146,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Gigabit PoE switch with 16 ports for high-speed IP camera networks.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '12500 to 14500 The price may be higher or lower',
     discount: 'Gigabit PoE'
   },
@@ -1267,6 +2166,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Entry-level 1MP bullet camera for basic security needs.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '950 to 2950 The price may be higher or lower',
     discount: 'Value'
   },
@@ -1277,6 +2186,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '2.4MP high-resolution bullet camera with impressive 30m night focus.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'High Res'
   },
@@ -1287,6 +2206,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Full color 2.4MP bullet camera with audio recording capabilities.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2450 to 4450 The price may be higher or lower',
     discount: 'Full Color + Audio'
   },
@@ -1297,6 +2226,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Smart indoor dome with audio and 24/7 color visibility.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2350 to 4350 The price may be higher or lower',
     discount: 'Smart Interior'
   },
@@ -1307,6 +2246,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Standard 2.4MP bullet camera for everyday outdoor security.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1550 to 3550 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -1317,6 +2266,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Long-range 80m bullet camera for large premises monitoring.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'Long Range'
   },
@@ -1327,6 +2286,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Robust 2.4MP bullet camera with 30m IR and weatherproof design.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Weatherproof'
   },
@@ -1337,6 +2306,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '40m color night vision bullet camera for wide coverage.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Full Coverage'
   },
@@ -1347,6 +2326,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-quality indoor color dome with 20m IR range.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2100 to 4100 The price may be higher or lower',
     discount: 'Clear View'
   },
@@ -1357,6 +2346,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Integrated microphone dome camera with 30m range for audio security.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2400 to 4400 The price may be higher or lower',
     discount: 'Audio + IR'
   },
@@ -1367,6 +2366,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Advanced dual light hybrid dome for superior day and night monitoring.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2750 to 4750 The price may be higher or lower',
     discount: 'Hybrid Light'
   },
@@ -1377,6 +2386,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '60m long-range WDR bullet camera for complex lighting environments.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3800 to 5800 The price may be higher or lower',
     discount: 'WDR Pro'
   },
@@ -1387,6 +2406,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Compact Indigo series bullet camera with sleek design.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1500 to 3500 The price may be higher or lower',
     discount: 'Indigo Edition'
   },
@@ -1397,6 +2426,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Wide Dynamic Range (WDR) 30m bullet for balanced exposure.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2300 to 4300 The price may be higher or lower',
     discount: 'Balanced'
   },
@@ -1407,6 +2446,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Full HD network bullet camera with smart IP monitoring.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Network IP'
   },
@@ -1417,6 +2466,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'IP-based FHD dome camera for professional interior security.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2700 to 4700 The price may be higher or lower',
     discount: 'Professional'
   },
@@ -1427,6 +2486,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Updated V2 network dome with improved sensor and 30m range.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2850 to 4850 The price may be higher or lower',
     discount: 'Upgraded'
   },
@@ -1437,6 +2506,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Meta-data supporting WDR IP bullet for intelligent surveillance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3500 to 5500 The price may be higher or lower',
     discount: 'Smart WDR'
   },
@@ -1447,6 +2526,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Versatile V3 series IP bullet with strong WDR performance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'V3 Series'
   },
@@ -1457,6 +2546,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Dual light GPC series IP bullet for enhanced identification.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3400 to 5400 The price may be higher or lower',
     discount: 'Dual Illumination'
   },
@@ -1467,6 +2566,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'GPC series dual light IP dome with smart color night vision.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3300 to 5300 The price may be higher or lower',
     discount: 'Smart GPC'
   },
@@ -1477,6 +2586,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Audio enabled IP bullet with 30m detection and V3 technology.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3150 to 5150 The price may be higher or lower',
     discount: 'Audio Over IP'
   },
@@ -1487,6 +2606,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Clear audio recording dome with 30m infrared and IP connection.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3050 to 5050 The price may be higher or lower',
     discount: 'Secure Interior'
   },
@@ -1497,6 +2626,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Reliable Y-series IP bullet for long-term security monitoring.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Trust Pack'
   },
@@ -1507,6 +2646,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'IK10 vandal-proof dome for high-risk security areas.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4200 to 6200 The price may be higher or lower',
     discount: 'Vandal Proof'
   },
@@ -1517,6 +2666,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Mid-range 50m network bullet for larger outdoor spaces.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3600 to 5600 The price may be higher or lower',
     discount: 'Outdoor Pro'
   },
@@ -1527,6 +2686,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Long-range reach with 80m IR for massive perimeter security.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Perimeter Star'
   },
@@ -1537,6 +2706,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Guard+ series camera with enhanced day/night sensitivity.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3100 to 5100 The price may be higher or lower',
     discount: 'Guard+'
   },
@@ -1547,6 +2726,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Interactive dome camera with built-in mic and speaker.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3800 to 5800 The price may be higher or lower',
     discount: '2-Way Audio'
   },
@@ -1557,6 +2746,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Interior Guard+ dome for premium indoor surveillance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2950 to 4950 The price may be higher or lower',
     discount: 'Guard+ Interior'
   },
@@ -1567,6 +2766,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-speed 2MP network dome with advanced Y-series optics.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2750 to 4750 The price may be higher or lower',
     discount: 'Elite Tech'
   },
@@ -1577,6 +2786,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-capacity 32-channel NVR with dual SATA for extensive storage.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '14500 to 16500 The price may be higher or lower',
     discount: '32-Channel Pro'
   },
@@ -1587,6 +2806,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '3MP ultra-high resolution EzyKam+ for detailed home monitoring.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3400 to 5400 The price may be higher or lower',
     discount: '3MP Clear'
   },
@@ -1597,6 +2826,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Ultra HD 4K 4-channel DVR for crisp analog recordings.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4500 to 6500 The price may be higher or lower',
     discount: '4K DVR'
   },
@@ -1607,6 +2846,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '5MP support on 4-channels for high-quality surveillance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: '5MP Ready'
   },
@@ -1617,6 +2866,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Compact 5MP 4-channel DVR with smart-record features.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3100 to 5100 The price may be higher or lower',
     discount: 'Eco High-Res'
   },
@@ -1627,6 +2886,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Reliable 4-channel DVR for basic analog surveillance setups.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2450 to 4450 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -1637,6 +2906,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Entry-level 4-channel NVR for IP camera integration.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3400 to 5400 The price may be higher or lower',
     discount: 'IP Ready'
   },
@@ -1647,6 +2926,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Dedicated 4G router for remote CCTV monitoring without broadband.',
     image: 'https://static1.industrybuying.com/products/it-security/network-components/routers-access-point/ITS.ROU.431458386_1744795158164.webp',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '2800 to 4800 The price may be higher or lower',
     discount: 'Remote Access'
   },
@@ -1657,6 +2946,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '4MP high-resolution cosmic series bullet for crystal clear analog feed.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2150 to 4150 The price may be higher or lower',
     discount: '4MP Clear'
   },
@@ -1667,6 +2966,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Smart Wi-Fi 4MP bullet camera for hassle-free home security.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3900 to 5900 The price may be higher or lower',
     discount: 'Smart WiFi'
   },
@@ -1677,6 +2986,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Professional 4MP network bullet for high-end digital surveillance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4200 to 6200 The price may be higher or lower',
     discount: 'Network Pro'
   },
@@ -1687,6 +3006,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Discreet 4MP IP dome with superior night vision capabilities.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3950 to 5950 The price may be higher or lower',
     discount: 'Discreet'
   },
@@ -1697,6 +3026,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Vandal-proof 4MP WDR camera for tough outdoor or public environments.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '5400 to 7400 The price may be higher or lower',
     discount: 'Vandal Guard'
   },
@@ -1707,6 +3046,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Advanced IP bullet with meta-data support for smart identification.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4450 to 6450 The price may be higher or lower',
     discount: 'Meta Smart'
   },
@@ -1717,6 +3066,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-speed 4MP IP dome with wide landscape coverage.',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4100 to 6100 The price may be higher or lower',
     discount: 'Wide Angle'
   },
@@ -1727,6 +3086,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Infrared focused 4MP bullet for dark perimeter security.',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3900 to 5900 The price may be higher or lower',
     discount: 'Night Master'
   },
@@ -1737,6 +3106,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Eco-friendly 4MP solar powered camera for wire-free installations.',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '8500 to 10500 The price may be higher or lower',
     discount: 'Solar Powered'
   },
@@ -1747,6 +3126,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '5MP super high resolution bullet for detailed face and plate identification.',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2650 to 4650 The price may be higher or lower',
     discount: '5MP High-Res'
   },
@@ -1757,6 +3146,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Superior 5MP indoor dome for ultra-clear interior oversight.',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2500 to 4500 The price may be higher or lower',
     discount: 'Top Detail'
   },
@@ -1767,6 +3166,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Indigo series 5MP dome with premium sensor for low light.',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Low Light Pro'
   },
@@ -1777,6 +3186,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Secure 6U wall-mount rack for housing DVRs and networking gear.',
     image: 'https://www.itcareonline.com/wp-content/uploads/2024/12/CP-Plus-Wall-Mount-Rack-Networking-2U-Non-Fitted-Modular-CP-HA-RK3535VM-2U-2.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'Organization'
   },
@@ -1787,6 +3206,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '8-channel 4K NVR for high-definition digital storage.',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '7800 to 9800 The price may be higher or lower',
     discount: '4K Digital'
   },
@@ -1797,6 +3226,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Advanced 8-channel DVR optimized for 5MP camera input.',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4900 to 6900 The price may be higher or lower',
     discount: 'Mid-Range'
   },
@@ -1807,6 +3246,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Reliable 8-channel HD DVR with V4 architecture for stability.',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3850 to 5850 The price may be higher or lower',
     discount: 'Reliable V4'
   },
@@ -1817,6 +3266,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Essential 8-channel network video recorder for small networks.',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4200 to 6200 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -1827,6 +3286,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-performance 8-port Gigabit PoE switch for IP surveillance lines.',
     image: 'https://brandiinnovation.com/wp-content/uploads/2024/02/cp-anw-hpu8h2-n12.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '7200 to 9200 The price may be higher or lower',
     discount: 'Gigabit PoE'
   },
@@ -1837,6 +3306,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Reliable 8-port PoE switch for powering analog-to-IP bridges.',
     image: 'https://brandiinnovation.com/wp-content/uploads/2024/02/cp-anw-hpu8h2-n12.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Essential'
   },
@@ -1847,6 +3326,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Smart Managed 8-port PoE switch for refined network control.',
     image: 'https://brandiinnovation.com/wp-content/uploads/2024/02/cp-anw-hpu8h2-n12.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '6400 to 8400 The price may be higher or lower',
     discount: 'Smart Managed'
   },
@@ -1857,6 +3346,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Official branded laptop/equipment bags for field techs and fans.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBfdBTvoykLHBOgXCOnNislRsaIBlLnOYRPw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '850 to 2850 The price may be higher or lower',
     discount: 'Branded'
   },
@@ -1867,6 +3366,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'V2 Hybrid bullet with dual light support for improved night clarity.',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Hybrid V2'
   },
@@ -1877,6 +3386,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '90m roll of high-grade copper 3+1 coaxial cable for CCTV.',
     image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '1450 to 3450 The price may be higher or lower',
     discount: 'Best Quality'
   },
@@ -1887,6 +3406,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Premium Z-series 4MP camera for high-clarity monitoring.',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3400 to 5400 The price may be higher or lower',
     discount: 'Z-Series'
   },
@@ -1897,6 +3426,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Super long-range IP bullet with refined optics for wide landscapes.',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '5200 to 7200 The price may be higher or lower',
     discount: 'Ultra Focus'
   },
@@ -1907,6 +3446,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Original EzyKam model for simple and effective indoor security.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'Classic'
   },
@@ -1917,6 +3466,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Refined EzyKam with improved Wi-Fi range and cloud support.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Enhanced'
   },
@@ -1927,6 +3486,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-speed pan/tilt EzyKam for comprehensive room coverage.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2400 to 4400 The price may be higher or lower',
     discount: 'PT Monitor'
   },
@@ -1937,6 +3506,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Portable series EzyKam for quick setup and flexible usage.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2100 to 4100 The price may be higher or lower',
     discount: 'Portable'
   },
@@ -1947,6 +3526,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-definition 2.4MP dome with sharp 30m infrared focus.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1900 to 3900 The price may be higher or lower',
     discount: 'HD Dome'
   },
@@ -1957,6 +3546,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '305m industrial grade CAT6 ethernet cable for IP networking.',
     image: 'https://5.imimg.com/data5/SELLER/Default/2024/6/426714665/DR/JM/MA/47224791/cp-plus-cat-6-cable-305mtr.webp',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '6800 to 8800 The price may be higher or lower',
     discount: 'Bulk Pack'
   },
@@ -1967,6 +3566,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '180m high-performance CCTV cable for extensive building wiring.',
     image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Long Roll'
   },
@@ -1977,6 +3586,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '180m premium coaxial cable with improved shielding for interference.',
     image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Premium Shield'
   },
@@ -1987,6 +3606,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '90m budget-friendly coaxial cable for small residential setups.',
     image: 'https://static1.industrybuying.com/products/it-security/network-components/ethernet-switches/ITS.ETH.331458544_1744795132570.webp',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '1250 to 3250 The price may be higher or lower',
     discount: 'Value Roll'
   },
@@ -1997,6 +3626,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Mainstream 2.4MP dome with V3 processing for better color balance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR10_dMEHiiF2mvomOXBANfjQgg8Ax2yZZk4g&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1600 to 3600 The price may be higher or lower',
     discount: 'Popular'
   },
@@ -2007,6 +3646,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Efficient 8-channel DVR without Hard Drive, ready for customization.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3950 to 5950 The price may be higher or lower',
     discount: 'Custom Ready'
   },
@@ -2017,6 +3666,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Comprehensive 16-channel HDCVI DVR for large scale analog coverage.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '7400 to 9400 The price may be higher or lower',
     discount: '16-Port Link'
   },
@@ -2027,6 +3686,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '3MP high-definition Wi-Fi pan/tilt camera with mobile alerts.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2800 to 4800 The price may be higher or lower',
     discount: '3MP Smart'
   },
@@ -2037,6 +3706,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Self-sufficient 4G SIM based camera for areas without Wi-Fi.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'SIM Based'
   },
@@ -2047,6 +3726,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Hybrid series dome with wide 2.4mm lens for corner-to-corner visibility.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2650 to 4650 The price may be higher or lower',
     discount: 'Wide View'
   },
@@ -2057,6 +3746,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: '8 Port PoE + 2 Gigabit Uplink ports for streamlined data management.',
     image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '6900 to 8900 The price may be higher or lower',
     discount: 'High Bandwidth'
   },
@@ -2067,6 +3766,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Mainstream 4-channel HDCVI DVR, solid for residential use.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Home Series'
   },
@@ -2077,6 +3786,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Next-gen smart dual light IP bullet for intelligent motion discovery.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'Smart Discover'
   },
@@ -2087,6 +3806,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-end 4MP IP bullet with dual light hybrid performance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4800 to 6800 The price may be higher or lower',
     discount: '4MP Hybrid'
   },
@@ -2097,6 +3826,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Premium 4MP IP dome with dual illumination for indoor clarity.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Elite Interior'
   },
@@ -2107,6 +3846,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'High-speed 128GB U3 card for 4K video recording on IP cameras.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '1450 to 3450 The price may be higher or lower',
     discount: 'U3 Fast'
   },
@@ -2117,6 +3866,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Reliable 64GB U3 card optimized for continuous surveillance use.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '850 to 2850 The price may be higher or lower',
     discount: 'Value Speed'
   },
@@ -2127,6 +3886,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Smart series 4-port PoE switch with power management.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Smart PoE'
   },
@@ -2137,6 +3906,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Essential 4-port PoE switch for simple IP camera setups.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Essential PoE'
   },
@@ -2147,6 +3926,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Dedicated 5A power supply for up to 4 camera units.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '850 to 2850 The price may be higher or lower',
     discount: '4-Ch Power'
   },
@@ -2157,6 +3946,16 @@ export const PRODUCTS: Product[] = [
     brand: 'CP PLUS',
     description: 'Robust 10A power supply for up to 8 high-power cameras.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '1450 to 3450 The price may be higher or lower',
     discount: '8-Ch Power'
   },
@@ -2167,6 +3966,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Thin and light productivity laptop with Ryzen 3 processing power.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '34000 to 36000 The price may be higher or lower',
     discount: 'Student Edition'
   },
@@ -2177,6 +3987,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: '15.6-inch laptop with 16GB RAM for smooth multitasking.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '38500 to 40500 The price may be higher or lower',
     discount: 'Value + RAM'
   },
@@ -2187,6 +4008,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Powerful Ryzen 5 laptop for demanding home and office work.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '44000 to 46000 The price may be higher or lower',
     discount: 'Mid-Range Power'
   },
@@ -2197,6 +4029,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Ryzen 5 performance in a balanced configuration for daily use.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '39500 to 41500 The price may be higher or lower',
     discount: 'Popular Choice'
   },
@@ -2207,6 +4050,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Efficient Ryzen 5 7000 series laptop for the modern professional.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '41000 to 43000 The price may be higher or lower',
     discount: 'New Gen'
   },
@@ -2217,6 +4071,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'High-speed Ryzen 5 laptop with 16GB RAM for ultimate productivity.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '45500 to 47500 The price may be higher or lower',
     discount: 'Pro Productivity'
   },
@@ -2227,6 +4092,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Balanced Ryzen 3 laptop for essential computing needs.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '35000 to 37000 The price may be higher or lower',
     discount: 'Essential'
   },
@@ -2237,6 +4113,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Entry-level gaming laptop with dedicated RTX 3050 graphics.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '68000 to 70000 The price may be higher or lower',
     discount: 'Gaming Ready'
   },
@@ -2247,6 +4134,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'High-refresh 16-inch gaming laptop with 6GB VRAM.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '88000 to 90000 The price may be higher or lower',
     discount: '6GB RTX'
   },
@@ -2257,6 +4155,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Premium laptop with 13th Gen Intel and DDR5 memory.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '62000 to 64000 The price may be higher or lower',
     discount: 'DDR5 Speed'
   },
@@ -2267,6 +4176,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Cutting-edge AI-enabled Ryzen laptop with large 16-inch display.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '74000 to 76000 The price may be higher or lower',
     discount: 'AI Powered'
   },
@@ -2277,6 +4197,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Thin and powerful 14-inch laptop with latest Core 5 processor.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '58500 to 60500 The price may be higher or lower',
     discount: 'Compact Power'
   },
@@ -2287,6 +4218,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Premium 14-inch laptop optimized for high-performance productivity.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '59000 to 61000 The price may be higher or lower',
     discount: 'Modern Pro'
   },
@@ -2297,6 +4239,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Versatile 2-in-1 touchscreen laptop with 13th Gen Intel H-series.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '64500 to 66500 The price may be higher or lower',
     discount: '2-in-1 Touch'
   },
@@ -2307,6 +4260,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Content creator powerhouse with 144Hz display and RTX 3050.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '78500 to 80500 The price may be higher or lower',
     discount: 'Creator Pro'
   },
@@ -2317,6 +4281,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Ultimate 16-inch creator laptop with NVIDIA RTX 4050 graphics.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '95000 to 97000 The price may be higher or lower',
     discount: 'RTX 4050'
   },
@@ -2327,6 +4302,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Reliable 13th Gen Intel i3 laptop for studies and office.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '36500 to 38500 The price may be higher or lower',
     discount: 'Value i3'
   },
@@ -2337,6 +4323,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Full HD 14-inch laptop with efficient 13th Gen power.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '37000 to 39000 The price may be higher or lower',
     discount: 'FHD Clear'
   },
@@ -2347,6 +4344,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Modern Core 5 laptop with 16GB RAM for snappy performance.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '51500 to 53500 The price may be higher or lower',
     discount: 'Modern Choice'
   },
@@ -2357,6 +4365,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Sleek and powerful Core 5 workstation for home use.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '52000 to 54000 The price may be higher or lower',
     discount: 'Snappy'
   },
@@ -2367,6 +4386,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Budget-friendly 13th Gen i3 laptop for daily tasks.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '35500 to 37500 The price may be higher or lower',
     discount: 'Budget i3'
   },
@@ -2377,6 +4407,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Classic 15.6-inch laptop with efficient Intel performance.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '36000 to 38000 The price may be higher or lower',
     discount: 'Classic View'
   },
@@ -2387,6 +4428,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Enhanced 12GB RAM configuration for better multi-tasking.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '37500 to 39500 The price may be higher or lower',
     discount: '12GB Boost'
   },
@@ -2397,6 +4449,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'High-performance configuration of the popular X15 series.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '39000 to 41000 The price may be higher or lower',
     discount: 'Max RAM'
   },
@@ -2407,6 +4470,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Silver edition X15 with 16GB RAM and fast SSD.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '39500 to 41500 The price may be higher or lower',
     discount: 'Silver Pro'
   },
@@ -2417,6 +4491,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Efficient i3 model with ample 16GB memory for versatile use.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '40000 to 42000 The price may be higher or lower',
     discount: 'Work Ready'
   },
@@ -2427,6 +4512,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'High-end 15.6-inch laptop with latest Gen Core 5 power.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '53500 to 55500 The price may be higher or lower',
     discount: 'Latest Gen'
   },
@@ -2437,6 +4533,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Cool Silver 15.6-inch laptop with high-performance specs.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '54000 to 56000 The price may be higher or lower',
     discount: 'Silver Elite'
   },
@@ -2447,6 +4554,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Powerful 16-inch laptop with H-series Intel i5 for creators.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '58500 to 60500 The price may be higher or lower',
     discount: 'H-Series Power'
   },
@@ -2457,6 +4575,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'High-performance Intel i7 laptop for professional grade work.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '72000 to 74000 The price may be higher or lower',
     discount: 'i7 Master'
   },
@@ -2467,6 +4596,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Next-gen Intel Ultra series laptop with 16-inch display.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '82000 to 84000 The price may be higher or lower',
     discount: 'Ultra Tech'
   },
@@ -2477,6 +4617,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Essential laptop for daily usage with proven design.',
     image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '32500 to 34500 The price may be higher or lower',
     discount: 'Daily Essential'
   },
@@ -2487,6 +4638,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Powerful Ryzen 7 gaming laptop with RTX 3050 and 144Hz screen.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '71500 to 73500 The price may be higher or lower',
     discount: 'TUF Gaming'
   },
@@ -2497,6 +4659,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'TUF Gaming laptop with massive 1TB SSD for games and apps.',
     image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '75500 to 77500 The price may be higher or lower',
     discount: '1TB Storage'
   },
@@ -2507,6 +4680,17 @@ export const PRODUCTS: Product[] = [
     brand: 'ASUS',
     description: 'Elite 16-inch gaming laptop with NVIDIA RTX 4050 graphics.',
     image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '98000 to 100000 The price may be higher or lower',
     discount: 'RTX 4050 Pro'
   },
@@ -2517,6 +4701,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Reliable Lenovo laptop for student and home office work. Model 81WB0190IN.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu0R3bo60qkjNADtSJ1LtpNP-hCHJoHzGjkw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '40352 to 42352 The price may be higher or lower',
     discount: 'Jhargram Special'
   },
@@ -2527,6 +4722,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Thin and light Lenovo laptop with essential features for daily computing.',
     image: 'https://5.imimg.com/data5/DG/HJ/MY-43212347/lenovo-laptop-500x500.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '36633 to 38633 The price may be higher or lower',
     discount: 'Everyday Value'
   },
@@ -2537,6 +4743,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'High-performance configuration with sharp display and fast storage.',
     image: 'https://ampro.in/wp-content/uploads/2024/07/Ideapad-Slim-3i-1.png',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '39746 to 41746 The price may be higher or lower',
     discount: 'Smart Buy'
   },
@@ -2547,6 +4764,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Powerful Lenovo laptop for advanced productivity and multitasking.',
     image: 'https://www.lenovo.com/content/dam/lenovo/site-design/lenovo-helix/ftv/bento-it.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '48403 to 50403 The price may be higher or lower',
     discount: 'Performance'
   },
@@ -2557,6 +4785,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Ryzen 5 5500U powerhouse for creators and students alike.',
     image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/311085_0_l9w780.png',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '34500 to 36500 The price may be higher or lower',
     discount: 'Ryzen 5 Power'
   },
@@ -2567,6 +4806,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: '12th Gen Intel i3 performance for modern application speeds.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRplqDzSNCRBjfYyn20OvdjN9dLq1bd9MlLNw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '38000 to 40000 The price may be higher or lower',
     discount: '12th Gen Gen'
   },
@@ -2577,6 +4827,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Efficient Ryzen 3 7000 series laptop for the smart professional.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0KmqtMfPhwzuvNln0BDHpqB7XDUn7QPpCjQ&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '32500 to 34500 The price may be higher or lower',
     discount: 'Fresh Tech'
   },
@@ -2587,6 +4848,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Ultra 5 series with 1TB of super-fast storage for professional collections.',
     image: 'https://images-cdn.ubuy.qa/641a0b8bfb2d784c8a1f8362-lenovo-thinkpad-t480s-windows-10-pro.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '74500 to 76500 The price may be higher or lower',
     discount: 'Ultra 1TB'
   },
@@ -2597,6 +4869,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Professional grade 13th Gen i5 laptop with 16GB RAM and MSO-24.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu0R3bo60qkjNADtSJ1LtpNP-hCHJoHzGjkw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '55500 to 57500 The price may be higher or lower',
     discount: 'Business Pro'
   },
@@ -2607,6 +4890,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Discreet and powerful 13th Gen i5 laptop for everyday multitasking.',
     image: 'https://5.imimg.com/data5/DG/HJ/MY-43212347/lenovo-laptop-500x500.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '48000 to 50000 The price may be higher or lower',
     discount: 'Pure i5'
   },
@@ -2617,6 +4911,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Gaming and workstation powerhouse with NVIDIA RTX graphics.',
     image: 'https://ampro.in/wp-content/uploads/2024/07/Ideapad-Slim-3i-1.png',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '68500 to 70500 The price may be higher or lower',
     discount: 'Gaming Ready'
   },
@@ -2627,6 +4932,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Balanced entry gaming laptop with 12GB RAM and RTX 2050.',
     image: 'https://www.lenovo.com/content/dam/lenovo/site-design/lenovo-helix/ftv/bento-it.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '55000 to 57000 The price may be higher or lower',
     discount: 'Budget Gaming'
   },
@@ -2636,7 +4952,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Sleek HP 15 series laptop for modern productivity and style.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfIo-Q6LxrQC_V_tzczu6Hs16Ky7Z39Uz7bQ&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '54990 to 56990 The price may be higher or lower',
     discount: 'Premium HP'
   },
@@ -2646,7 +4973,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Victus gaming laptop with Ryzen 5 and dedicated RTX graphics.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://sg-files.apjonlinecdn.com/landingpages/category-family/hp-laptops-family/images/w100_hero_mobile_v2.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '54027 to 56027 The price may be higher or lower',
     discount: 'Victus Gaming'
   },
@@ -2656,7 +4994,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Everyday budget laptop with efficient Ryzen 3 processing.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://i.cdn.newsbytesapp.com/images/l31120210224145453.jpeg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '25436 to 27436 The price may be higher or lower',
     discount: 'Budget Fit'
   },
@@ -2666,7 +5015,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Reliable 13th Gen Intel i3 laptop for studies and office.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/315422_0_dG2jhs86I.png?updatedAt=1763015530951',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '30195 to 32195 The price may be higher or lower',
     discount: 'Value i3'
   },
@@ -2676,7 +5036,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Solid 13th Gen Intel i5 laptop for multi-tasking performance.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://sm.mashable.com/mashable_me/roundup/b/best-hp-la/best-hp-laptops-2024-tested-and-reviewed-by-experts_q7c8.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '39469 to 41469 The price may be higher or lower',
     discount: 'Standard i5'
   },
@@ -2686,7 +5057,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Professional i3 laptop with backlit keyboard and MSO-24.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/858/secure-digital-card-effective-celestial-blue-14-inch-32-gb-ram-hp-laptop--947.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '29258 to 31258 The price may be higher or lower',
     discount: 'Office Ready'
   },
@@ -2696,7 +5078,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Balanced 13th Gen i3 laptop for daily entertainment and work.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://doiqgxrhp4iii.cloudfront.net/15-DK0263TX_9_11zon.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '31361 to 33361 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -2706,7 +5099,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'High-performance Core 5 laptop with 16GB RAM for heavy users.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFXu9vivP7f2C8-thIB8Ho7JAV-iebX1Q2Eg&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '44078 to 46078 The price may be higher or lower',
     discount: 'Top Tier'
   },
@@ -2716,7 +5120,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Professional Core 5 laptop optimized for business productivity.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/826/18-inch-screen-size-display-8gb-ram-512-gb-hdd-au-amd-ryzen-processor-hp-laptop-479.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '45860 to 47860 The price may be higher or lower',
     discount: 'Business Elite'
   },
@@ -2726,7 +5141,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Modern Core 3 laptop for everyday efficiency and reliability.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Uo+qAleBL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '36271 to 38271 The price may be higher or lower',
     discount: 'Core 3 Value'
   },
@@ -2736,7 +5162,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Next-gen Intel Ultra 5 powered laptop for advanced mobile computing.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfIo-Q6LxrQC_V_tzczu6Hs16Ky7Z39Uz7bQ&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '54915 to 56915 The price may be higher or lower',
     discount: 'Ultra Series'
   },
@@ -2746,7 +5183,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Ample 16GB RAM on a Core 3 platform for smooth day-to-day usage.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://sg-files.apjonlinecdn.com/landingpages/category-family/hp-laptops-family/images/w100_hero_mobile_v2.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '35894 to 37894 The price may be higher or lower',
     discount: 'Smart Balance'
   },
@@ -2756,7 +5204,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Power-packed i5 H-series laptop for designers and gamers.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://i.cdn.newsbytesapp.com/images/l31120210224145453.jpeg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '50677 to 52677 The price may be higher or lower',
     discount: 'H-Series Pro'
   },
@@ -2766,7 +5225,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Reliable HP 15s series for student success and office tasks.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/315422_0_dG2jhs86I.png?updatedAt=1763015530951',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '31602 to 33602 The price may be higher or lower',
     discount: 'Student Pick'
   },
@@ -2776,7 +5246,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Classic HP 15s style with modern internal components.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://sm.mashable.com/mashable_me/roundup/b/best-hp-la/best-hp-laptops-2024-tested-and-reviewed-by-experts_q7c8.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '36961 to 38961 The price may be higher or lower',
     discount: 'Daily Driver'
   },
@@ -2786,7 +5267,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Turbo Silver business laptop with reliable Core 3 performance.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/858/secure-digital-card-effective-celestial-blue-14-inch-32-gb-ram-hp-laptop--947.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '29237 to 31237 The price may be higher or lower',
     discount: 'Business Value'
   },
@@ -2796,7 +5288,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Ryzen 7 high-performance machine ready for any OS installation.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://doiqgxrhp4iii.cloudfront.net/15-DK0263TX_9_11zon.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '38559 to 40559 The price may be higher or lower',
     discount: 'Ryzen 7 Pro'
   },
@@ -2806,7 +5309,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'High-end Victus gaming with 13th Gen i7 and massive RTX 4050.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFXu9vivP7f2C8-thIB8Ho7JAV-iebX1Q2Eg&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '81355 to 83355 The price may be higher or lower',
     discount: 'Elite Gaming'
   },
@@ -2816,7 +5330,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Radeon RX6500M powered gaming laptop for unique graphics performance.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/826/18-inch-screen-size-display-8gb-ram-512-gb-hdd-au-amd-ryzen-processor-hp-laptop-479.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '40902 to 42902 The price may be higher or lower',
     discount: 'Radeon Power'
   },
@@ -2826,7 +5351,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Proven R5 and GTX1650 combo for reliable entry-level gaming.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Uo+qAleBL.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '46495 to 48495 The price may be higher or lower',
     discount: 'Gaming Classic'
   },
@@ -2836,7 +5372,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'RTX 3050 powered Victus for smooth competitive gaming.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfIo-Q6LxrQC_V_tzczu6Hs16Ky7Z39Uz7bQ&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '46135 to 48135 The price may be higher or lower',
     discount: 'RTX Deal'
   },
@@ -2846,7 +5393,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: '16GB RAM and 6GB RTX 3050 for heavy duty tasks and gaming.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://sg-files.apjonlinecdn.com/landingpages/category-family/hp-laptops-family/images/w100_hero_mobile_v2.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '60169 to 62169 The price may be higher or lower',
     discount: '6GB VRAM Pro'
   },
@@ -2856,7 +5414,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Latest architecture Victus with 13th Gen Intel and RTX gaming.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://i.cdn.newsbytesapp.com/images/l31120210224145453.jpeg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '52302 to 54302 The price may be higher or lower',
     discount: 'Modern Victus'
   },
@@ -2866,7 +5435,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Massive 24GB RAM and 14th Gen Intel HX power for ultimate speed.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://media-ik.croma.com/prod/https://media.tatacroma.com/Croma%20Assets/Computers%20Peripherals/Laptop/Images/315422_0_dG2jhs86I.png?updatedAt=1763015530951',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '65677 to 67677 The price may be higher or lower',
     discount: '24GB Overkill'
   },
@@ -2876,7 +5456,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Large 16-inch screen and 14th Gen HX performance for gamers.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://sm.mashable.com/mashable_me/roundup/b/best-hp-la/best-hp-laptops-2024-tested-and-reviewed-by-experts_q7c8.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '68400 to 70400 The price may be higher or lower',
     discount: '16-Inch Power'
   },
@@ -2886,7 +5477,18 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Elegant Silver edition laptop with professional look.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://tiimg.tistatic.com/fp/1/007/858/secure-digital-card-effective-celestial-blue-14-inch-32-gb-ram-hp-laptop--947.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '55500 to 57500 The price may be higher or lower',
     discount: 'Elegant'
   },
@@ -2897,6 +5499,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'High-performance G-series gaming laptop with 13th Gen Intel and RTX 3050.',
     image: 'https://tiimg.tistatic.com/fp/1/007/670/silver-color-dell-laptop-with-15-6-inch-full-hd-screen-8-gb-ram-long-lasting-battery-backup-355.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '72500 to 74500 The price may be higher or lower',
     discount: 'G-Series Elite'
   },
@@ -2907,6 +5520,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Practical Core 3 laptop for professional work, ready for OS custom setup.',
     image: 'https://static.digit.in/Dell-Latitude-7350-Ultralight-Main-Visual-scaled.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '34000 to 36000 The price may be higher or lower',
     discount: 'Business Ready'
   },
@@ -2917,6 +5541,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Sleek Black Inspiron with Ryzen 5 power for smooth daily multitasking.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ29WyrolmHmkiLMBleRYh2K6IE7JHP6CKwA&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '42500 to 44500 The price may be higher or lower',
     discount: 'Sleek Black'
   },
@@ -2927,6 +5562,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Reliable Inspiron 15 with Ryzen 3, perfect for students and home use.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkzXVk1YVWF6xWyuJTFkDZtcAn_502C7JplA&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '37500 to 39500 The price may be higher or lower',
     discount: 'Student Value'
   },
@@ -2937,6 +5583,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Premium Silver configuration with 13th Gen i5 and 16GB RAM.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/download_5_2f4884a5-ef63-4ca4-86fb-4b57c7a3bb03_2048x.jpg?v=1622712519',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '56800 to 58800 The price may be higher or lower',
     discount: 'Silver Pro'
   },
@@ -2947,6 +5604,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Modern Core 3 black edition laptop for reliable performance.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdVPtLC9AiF6CsnfX9zdoyJLtBlSMgb8MnSg&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '36500 to 38500 The price may be higher or lower',
     discount: 'Core 3 Black'
   },
@@ -2957,6 +5625,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Elegant Silver laptop with latest Core 3 processor for great value.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAj8lq3QCy4KgL9Y7JyG2vswxS9G5fAImzaw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '37000 to 39000 The price may be higher or lower',
     discount: 'Elegant Silver'
   },
@@ -2967,6 +5646,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Powerful Ryzen 5 silver laptop with ample 16GB memory.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdX2Osq20f70xRmeAUEEdWhnHYY4IJId88_Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '46500 to 48500 The price may be higher or lower',
     discount: 'Ryzen Elite'
   },
@@ -2977,6 +5667,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'High-performance gaming machine with RTX 3050 and 1TB storage.',
     image: 'https://tiimg.tistatic.com/fp/1/007/670/silver-color-dell-laptop-with-15-6-inch-full-hd-screen-8-gb-ram-long-lasting-battery-backup-355.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '78000 to 80000 The price may be higher or lower',
     discount: 'G-Series 1TB'
   },
@@ -2987,6 +5688,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Stealthy Black edition i5 laptop for professional mobility.',
     image: 'https://static.digit.in/Dell-Latitude-7350-Ultralight-Main-Visual-scaled.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '44500 to 46500 The price may be higher or lower',
     discount: 'Pro Stealth'
   },
@@ -2997,6 +5709,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Classic Silver i5 laptop with balanced specs for home and office.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ29WyrolmHmkiLMBleRYh2K6IE7JHP6CKwA&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '45000 to 47000 The price may be higher or lower',
     discount: 'Office Classic'
   },
@@ -3007,6 +5730,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Compact 14-inch Ryzen 5 laptop with high-speed memory focus.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkzXVk1YVWF6xWyuJTFkDZtcAn_502C7JplA&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '48500 to 50500 The price may be higher or lower',
     discount: 'Ryzen Compact'
   },
@@ -3017,6 +5751,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Large 16-inch display with 13th Gen Intel power for clear oversight.',
     image: 'https://www.simplyshopping.in/cdn/shop/products/download_5_2f4884a5-ef63-4ca4-86fb-4b57c7a3bb03_2048x.jpg?v=1622712519',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '55500 to 57500 The price may be higher or lower',
     discount: 'Big Screen i5'
   },
@@ -3027,6 +5772,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Vostro business laptop with proven i5 reliability and MSO.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdVPtLC9AiF6CsnfX9zdoyJLtBlSMgb8MnSg&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '46000 to 48000 The price may be higher or lower',
     discount: 'Business Vostro'
   },
@@ -3037,6 +5793,17 @@ export const PRODUCTS: Product[] = [
     brand: 'DELL',
     description: 'Professional 15.6-inch laptop with efficient Ryzen 5 processing.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAj8lq3QCy4KgL9Y7JyG2vswxS9G5fAImzaw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Onsite Warranty',
+      'Battery Life': 'Up to 8 hours mixed usage',
+      'OS': 'Windows 11 Home Pre-installed',
+      'Keyboard': 'Backlit keyboard with number pad',
+      'Connectivity': 'Wi-Fi 6 + Bluetooth 5.2',
+      'Audio': 'Stereo speakers with Dolby Atmos',
+      'Webcam': '720p/1080p HD camera with privacy shutter',
+      'Security': 'Fingerprint reader / TPM 2.0'
+    },
     price: '43500 to 45500 The price may be higher or lower',
     discount: 'Pro Productivity'
   },
@@ -3047,6 +5814,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'High-quality Lenovo monitor with sharp visuals for office work.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo9AncdyvL6iCl2v3jSH2cV1fNYw_x1oZfwA&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '8950 to 10950 The price may be higher or lower',
     discount: 'Clear View'
   },
@@ -3057,6 +5835,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Sleek design monitor optimized for home entertainment and productivity.',
     image: 'https://www.tanotis.com/cdn/shop/products/1638964875_IMG_1655695_800x.jpg?v=1676513894',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '9450 to 11450 The price may be higher or lower',
     discount: 'Sleek Fit'
   },
@@ -3067,6 +5856,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Large display monitor with wide viewing angles and vivid colors.',
     image: 'https://img-prd-pim.poorvika.com/product/Lenovo-fhd-ips-monitor-l27i-4a-white-27-inch-Front-View.png',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '12800 to 14800 The price may be higher or lower',
     discount: 'Wide Angle'
   },
@@ -3077,6 +5877,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Premium monitor with enhanced color accuracy for design professionals.',
     image: 'https://p2-ofp.static.pub/ShareResource/ww/visuals/ThinkVision-T24-40/Gallery/01.png',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '14500 to 16500 The price may be higher or lower',
     discount: 'Pro Color'
   },
@@ -3087,6 +5898,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Reliable everyday monitor with blue-light filter for eye comfort.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ45qOGgae1beoe-1og_uaH56vKMBzAOv6BpQ&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '7900 to 9900 The price may be higher or lower',
     discount: 'Eye Care'
   },
@@ -3097,6 +5919,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Compact monitor for space-saving desk setups without quality loss.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv0sixqIqOS_TZs62-Ay7sF2lKcRe2Cww2aw&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '6450 to 8450 The price may be higher or lower',
     discount: 'Space Saver'
   },
@@ -3107,6 +5940,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'High-refresh rate monitor for smooth visual transitions.',
     image: 'https://m.media-amazon.com/images/I/61+-4gtS0TL._AC_UF1000,1000_QL80_.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '11900 to 13900 The price may be higher or lower',
     discount: 'High Refresh'
   },
@@ -3117,6 +5961,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Modern borderless monitor for a seamless dual-screen experience.',
     image: 'https://p2-ofp.static.pub//fes/cms/2025/07/18/wu0wbq4pf2p4imnbnwag9y78bkxn2h797134.jpg',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '10500 to 12500 The price may be higher or lower',
     discount: 'Borderless'
   },
@@ -3127,6 +5982,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Versatile monitor with adjustable stand for ergonomic comfort.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmu6kZKj42bh5D3BKANSk8dGJTCUWhWm120Q&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '13200 to 15200 The price may be higher or lower',
     discount: 'Ergo Stand'
   },
@@ -3137,6 +6003,17 @@ export const PRODUCTS: Product[] = [
     brand: 'LENOVO',
     description: 'Top-of-the-line Lenovo monitor with ultra-crisp resolution.',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNyWVK2Tuth_e_MMAoJuowAwicqsTd0UpbsQ&s',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '3 Years Advanced Exchange Service',
+      'Panel Type': 'IPS Anti-glare',
+      'Ports': 'HDMI 2.0, DisplayPort 1.4, USB-C',
+      'Ergonomics': 'Tilt, Swivel, Pivot, Height Adjust',
+      'Eye Care': 'Flicker-free & Low Blue Light',
+      'Refresh Rate': '60Hz / 100Hz / 144Hz options',
+      'Color Gamut': '99% sRGB coverage',
+      'Response Time': '1ms - 5ms (GTG)'
+    },
     price: '16800 to 18800 The price may be higher or lower',
     discount: 'Ultra Crisp'
   },
@@ -3147,6 +6024,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Reliable micro-ATX B550 motherboard for Ryzen processors.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '5475 to 7475 The price may be higher or lower',
     discount: 'Ryzen 5000 Ready'
   },
@@ -3157,6 +6044,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Next-gen B760 motherboard with DDR5 support and built-in WiFi.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '12100 to 14100 The price may be higher or lower',
     discount: 'DDR5 + WiFi'
   },
@@ -3167,6 +6064,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Essential H510 chipset for 10th and 11th Gen Intel CPUs.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '4218 to 6218 The price may be higher or lower',
     discount: 'Budget Intel'
   },
@@ -3177,6 +6084,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Reliable H610 motherboard for 12th, 13th, and 14th Gen Intel.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '5223 to 7223 The price may be higher or lower',
     discount: 'Intel 14th Gen'
   },
@@ -3187,6 +6104,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Full ATX gaming motherboard with robust power delivery and RGB.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '11050 to 13050 The price may be higher or lower',
     discount: 'Gaming Elite'
   },
@@ -3197,6 +6124,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Productivity-focused B650 motherboard for Ryzen 7000/8000/9000.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '7833 to 9833 The price may be higher or lower',
     discount: 'Ryzen 7000'
   },
@@ -3207,6 +6144,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Versatile B650 board with WiFi 6E and DDR5 support.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '12050 to 14050 The price may be higher or lower',
     discount: 'WiFi 6E Ready'
   },
@@ -3217,6 +6164,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'The classic B450 workhorse for AMD Ryzen builds.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '4300 to 6300 The price may be higher or lower',
     discount: 'Value King'
   },
@@ -3227,6 +6184,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'High-performance DDR5 gaming motherboard with military-inspired design.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '9281 to 11281 The price may be higher or lower',
     discount: 'Bomber Edition'
   },
@@ -3237,6 +6204,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Reliable B760 motherboard using affordable DDR4 memory.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '6875 to 8875 The price may be higher or lower',
     discount: 'DDR4 Support'
   },
@@ -3247,6 +6224,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Entry-level B760 DDR5 motherboard for modern Intel builds.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '8000 to 10000 The price may be higher or lower',
     discount: 'Modern Tech'
   },
@@ -3257,6 +6244,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Elite Mortar series with robust VRM and advanced cooling tags.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '15200 to 17200 The price may be higher or lower',
     discount: 'Mortar Elite'
   },
@@ -3267,6 +6264,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Professional B760 series with DDR5 for creative workflows.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '9650 to 11650 The price may be higher or lower',
     discount: 'Pro Series'
   },
@@ -3277,6 +6284,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Optimized gaming motherboard for AM5 platform with WiFi.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '8533 to 10533 The price may be higher or lower',
     discount: 'AM5 Gaming'
   },
@@ -3287,6 +6304,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'Balanced gaming features for Intel 13th and 14th Gen CPUs.',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '9650 to 11650 The price may be higher or lower',
     discount: 'Intel Gamer'
   },
@@ -3297,6 +6324,16 @@ export const PRODUCTS: Product[] = [
     brand: 'MSI',
     description: 'High-end Z790 platform with overclocking support and WiFi.',
     image: 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New in Box',
+      'Warranty': '3 Years Manufacturer Warranty',
+      'Form Factor': 'ATX / Micro-ATX / Mini-ITX',
+      'Memory Support': 'DDR4 / DDR5 up to 128GB',
+      'Storage slots': 'M.2 NVMe, SATA III',
+      'VRM Phase': 'Robust power delivery for overclocking',
+      'Networking': '2.5Gb Ethernet, Wi-Fi 6E (optional)',
+      'Audio': 'High Definition 7.1 Channel Audio'
+    },
     price: '18500 to 20500 The price may be higher or lower',
     discount: 'Enthusiast'
   },
@@ -3307,6 +6344,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Gigabit media converter pair for seamless fiber-to-ethernet transition. Stock: 18 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2400 to 4400 The price may be higher or lower',
     discount: 'Gigabit'
   },
@@ -3317,6 +6364,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Reliable fast ethernet media converter pair for fiber networking. Stock: 9 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1500 to 3500 The price may be higher or lower',
     discount: 'Essential'
   },
@@ -3327,6 +6384,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'High-definition 2MP bullet camera with crisp day/night visibility. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2100 to 4100 The price may be higher or lower',
     discount: 'Classic'
   },
@@ -3337,6 +6404,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Enterprise grade 32-channel NVR with dual SATA support. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '14500 to 16500 The price may be higher or lower',
     discount: 'Enterprise'
   },
@@ -3347,6 +6424,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Advanced 4G PTZ camera with smart linkage for perimeter defense. Stock: 5 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '6800 to 8800 The price may be higher or lower',
     discount: '4G Smart'
   },
@@ -3357,6 +6444,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Reliable 4G pan-tilt camera with protective lens housing. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '4900 to 6900 The price may be higher or lower',
     discount: '4G Ready'
   },
@@ -3367,6 +6464,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Solar-powered dual lens 4G camera for off-grid surveillance. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '9500 to 11500 The price may be higher or lower',
     discount: 'Solar Pro'
   },
@@ -3377,6 +6484,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Compact solar eye duo 4G camera for outdoor security. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '8200 to 10200 The price may be higher or lower',
     discount: 'Eco Power'
   },
@@ -3387,6 +6504,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'High-resolution 4MP IP dome camera with wide field of view. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3600 to 5600 The price may be higher or lower',
     discount: '4MP Sharp'
   },
@@ -3397,6 +6524,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Professional body-worn camera for security and law enforcement. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '12000 to 14000 The price may be higher or lower',
     discount: 'Professional'
   },
@@ -3407,6 +6544,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'High sensitivity handheld metal detector for security screening. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1250 to 3250 The price may be higher or lower',
     discount: 'Safety'
   },
@@ -3417,6 +6564,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Advanced biometric attendance and access control with face recognition. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '8500 to 10500 The price may be higher or lower',
     discount: 'Biometric'
   },
@@ -3427,6 +6584,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Strong 280kg holding force electromagnetic lock for secure doors. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2200 to 4200 The price may be higher or lower',
     discount: 'Security'
   },
@@ -3437,6 +6604,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'High-speed XPON ONU and router with N300 wireless capability. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'Network Hub'
   },
@@ -3447,6 +6624,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Versatile data, voice, and WiFi XPON end-point for modern offices. Stock: 17 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Office Ready'
   },
@@ -3457,6 +6644,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Discreet WiFi pan-tilt camera with smart lens protection. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'WiFi Master'
   },
@@ -3467,6 +6664,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Enhanced duo lens WiFi PTZ camera for comprehensive coverage. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3400 to 5400 The price may be higher or lower',
     discount: 'Duo Lens'
   },
@@ -3477,6 +6684,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Innovative talk-frame camera supporting two-way video communication. Stock: 9 PCS',
     image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '3800 to 5800 The price may be higher or lower',
     discount: 'Video Call'
   },
@@ -3487,6 +6704,16 @@ export const PRODUCTS: Product[] = [
     brand: 'SECUREYE',
     description: 'Updated 2MP IP bullet camera with superior night low-light performance. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Manufacturer Warranty',
+      'Night Vision': 'Up to 30m IR range',
+      'Weatherproof': 'IP67 rated for outdoor use',
+      'Smart Features': 'Motion detection & instant alerts',
+      'Compression': 'H.265+ for efficient storage',
+      'Resolution': 'Full HD 1080p to 4K Ultra HD',
+      'Viewing Angle': 'Wide angle 100°+ lens'
+    },
     price: '2350 to 4350 The price may be higher or lower',
     discount: 'V2.0 Pro'
   },
@@ -3497,6 +6724,16 @@ export const PRODUCTS: Product[] = [
     brand: 'EPSON',
     description: 'High-quality business projector with 3LCD technology for bright and vivid presentations. Stock: 6 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '20800 to 22800 The price may be higher or lower',
     discount: 'Professional'
   },
@@ -3507,6 +6744,16 @@ export const PRODUCTS: Product[] = [
     brand: 'Generic',
     description: 'Manual slow-retraction projector screen, 4x6 feet, with auto-lock mechanism. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '2550 to 4550 The price may be higher or lower',
     discount: 'Auto-Lock'
   },
@@ -3517,6 +6764,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Smart motorized projector screen for effortless home theater setup. Stock: 2 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '4650 to 6650 The price may be higher or lower',
     discount: 'Motorized'
   },
@@ -3527,6 +6784,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'High-brightness LED projector for crisp home entertainment. Stock: 3 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '17750 to 19750 The price may be higher or lower',
     discount: 'LED Bright'
   },
@@ -3537,6 +6804,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Affordable and compact LED projector for entry-level home cinema. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '5400 to 7400 The price may be higher or lower',
     discount: 'Entry Choice'
   },
@@ -3547,6 +6824,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Versatile LED projector with great color reproduction for movies and gaming. Stock: 4 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '12100 to 14100 The price may be higher or lower',
     discount: 'Versatile'
   },
@@ -3557,6 +6844,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Balanced performance projector for everyday home and office use. Stock: 1 PCS',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '15000 to 17000 The price may be higher or lower',
     discount: 'Balanced'
   },
@@ -3567,6 +6864,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Advanced Pixa Play series projector for immersive visual experience.',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '12500 to 14500 The price may be higher or lower',
     discount: 'Popular'
   },
@@ -3577,6 +6884,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Sleek and powerful LED projector with high contrast ratio.',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '10500 to 12500 The price may be higher or lower',
     discount: 'Sleek'
   },
@@ -3587,6 +6904,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'High-resolution gaming projector with low latency and vibrant output.',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '13800 to 15800 The price may be higher or lower',
     discount: 'Gamer Choice'
   },
@@ -3597,6 +6924,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Professional grade home cinema projector for enthusiasts.',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '16500 to 18500 The price may be higher or lower',
     discount: 'Enthusiast'
   },
@@ -3607,6 +6944,16 @@ export const PRODUCTS: Product[] = [
     brand: 'ZEBRONICS',
     description: 'Top-of-the-line Pixa Play model with ultimate brightness and smart features.',
     image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Condition': 'Brand New',
+      'Warranty': '1 Year Standard Warranty',
+      'Quality Assurance': '100% Genuine Product',
+      'Return Policy': '7 days easy replacement',
+      'Delivery': 'Free express shipping',
+      'Support': '24/7 Customer Support',
+      'Packaging': 'Secure multi-layer packaging',
+      'Authenticity': 'Verified OEM product'
+    },
     price: '18900 to 20900 The price may be higher or lower',
     discount: 'Ultimate'
   }

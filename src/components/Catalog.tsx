@@ -4,16 +4,32 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, ShoppingCart, MessageSquare, Filter, LayoutGrid, List } from 'lucide-react';
 import { PRODUCTS, PRODUCT_CATEGORIES } from '../constants';
 
+const getNumericPrice = (priceStr: string) => {
+  const match = priceStr.replace(/,/g, '').match(/\d+/);
+  return match ? parseInt(match[0], 10) : 0;
+};
+
 export default function Catalog() {
   const { categorySlug } = useParams();
+  const [searchParams] = useSearchParams();
+  const usageParam = searchParams.get('usage');
+
   const [activeCategory, setActiveCategory] = useState(categorySlug || 'All');
   const [activeBrand, setActiveBrand] = useState('AllBrands');
   const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grid');
+  
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 200000 });
+
+  React.useEffect(() => {
+    if (categorySlug) {
+      setActiveCategory(categorySlug);
+    }
+  }, [categorySlug]);
 
   const brands = useMemo(() => {
     const uniqueBrands = Array.from(new Set(PRODUCTS.map(p => p.brand))).sort();
@@ -26,9 +42,30 @@ export default function Catalog() {
         p.category.toLowerCase().includes(activeCategory.toLowerCase()) || 
         activeCategory.toLowerCase().includes(p.category.toLowerCase());
       const brandMatch = activeBrand === 'AllBrands' || p.brand === activeBrand;
-      return categoryMatch && brandMatch;
+      
+      const price = getNumericPrice(p.price);
+      const priceMatch = price >= priceRange.min && price <= priceRange.max;
+
+      // Usage based filtering
+      let usageMatch = true;
+      if (usageParam && p.category === 'Laptops') {
+        const name = p.name.toLowerCase();
+        const discount = (p.discount || '').toLowerCase();
+
+        if (usageParam === 'student') {
+          usageMatch = discount.includes('student') || discount.includes('budget') || name.includes('vivobook') || name.includes('ideapad');
+        } else if (usageParam === 'gaming') {
+          usageMatch = name.includes('gaming') || name.includes('rog') || name.includes('tuf') || name.includes('victus');
+        } else if (usageParam === 'office') {
+          usageMatch = (name.includes('inspiron') || name.includes('pavilion') || discount.includes('professional')) && p.brand !== 'APPLE';
+        } else if (usageParam === 'macbook') {
+          usageMatch = p.brand === 'APPLE';
+        }
+      }
+
+      return categoryMatch && brandMatch && priceMatch && usageMatch;
     });
-  }, [activeCategory, activeBrand]);
+  }, [activeCategory, activeBrand, priceRange, usageParam]);
 
   const groupedProducts = useMemo(() => {
     if (viewMode !== 'grouped') return [];
@@ -74,42 +111,88 @@ export default function Catalog() {
         </div>
 
         {/* Filter Section */}
-        <div className="space-y-8 mb-16 p-8 bg-white/5 border border-white/10 rounded-[32px]">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Category</span>
-            <div className="flex flex-wrap gap-3">
-              {['All', ...PRODUCT_CATEGORIES.map(c => c.title)].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
-                    activeCategory === cat 
-                      ? 'bg-primary border-primary text-bg-dark' 
-                      : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 bg-white/5 border border-white/10 rounded-[32px] p-8">
+          <div className="lg:col-span-2 space-y-8">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Category</span>
+              <div className="flex flex-wrap gap-3">
+                {['All', ...PRODUCT_CATEGORIES.map(c => c.title)].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
+                      activeCategory === cat 
+                        ? 'bg-primary border-primary text-bg-dark' 
+                        : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Brand</span>
+              <div className="flex flex-wrap gap-3">
+                {brands.map((brand) => (
+                  <button
+                    key={brand}
+                    onClick={() => setActiveBrand(brand)}
+                    className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
+                      activeBrand === brand 
+                        ? 'bg-blue-500 border-blue-500 text-white' 
+                        : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
+                    }`}
+                  >
+                    {brand === 'AllBrands' ? 'All Brands' : brand}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Brand</span>
-            <div className="flex flex-wrap gap-3">
-              {brands.map((brand) => (
-                <button
-                  key={brand}
-                  onClick={() => setActiveBrand(brand)}
-                  className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
-                    activeBrand === brand 
-                      ? 'bg-blue-500 border-blue-500 text-white' 
-                      : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
-                  }`}
+          <div className="lg:border-l lg:border-white/10 lg:pl-8">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Price Range (₹)</span>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  <label className="text-[9px] font-bold text-gray-600 uppercase block mb-2">Min Price</label>
+                  <input 
+                    type="number" 
+                    value={priceRange.min}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-[9px] font-bold text-gray-600 uppercase block mb-2">Max Price</label>
+                  <input 
+                    type="number" 
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {[5000, 15000, 30000, 50000, 100000].map(p => (
+                  <button 
+                    key={p} 
+                    onClick={() => setPriceRange(prev => ({ ...prev, max: p }))}
+                    className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[9px] font-bold uppercase tracking-wider text-gray-400"
+                  >
+                    Under {p.toLocaleString()}
+                  </button>
+                ))}
+                <button 
+                  onClick={() => setPriceRange({ min: 0, max: 200000 })}
+                  className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[9px] font-bold uppercase tracking-wider text-primary"
                 >
-                  {brand === 'AllBrands' ? 'All Brands' : brand}
+                  Reset
                 </button>
-              ))}
+              </div>
             </div>
           </div>
         </div>
@@ -195,11 +278,13 @@ function ProductCard({ product, index }: { product: any; index: number; key?: Re
         className="bg-white/5 border border-white/5 rounded-[32px] overflow-hidden hover:border-primary/30 transition-all h-full flex flex-col"
       >
         <div className="relative aspect-square overflow-hidden bg-white/5">
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          />
+          {product.image && (
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
+          )}
           {product.discount && (
             <div className="absolute top-4 left-4 px-3 py-1 bg-primary text-bg-dark text-[10px] font-black uppercase tracking-widest rounded-full">
               {product.discount}

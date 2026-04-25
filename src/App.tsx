@@ -19,6 +19,7 @@ import Catalog from './components/Catalog';
 import ProductDetail from './components/ProductDetail';
 import TechShowcase from './components/TechShowcase';
 import BrandSubCatalogHome from './components/BrandSubCatalogHome';
+import LaptopUsageHub from './components/LaptopUsageHub';
 
 function HomePage() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/quick-access" element={<QuickAccess />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:categorySlug" element={<Catalog />} />
+          <Route path="/laptops" element={<LaptopUsageHub />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
         </Routes>
       </div>

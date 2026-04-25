@@ -48,30 +48,27 @@ export const AMCFEATURES: AMCFeature[] = [
 export const PRODUCTS: Product[] = [
   {
     id: 'p1',
-    name: 'Custom Gaming Assemble Desktop',
-    category: 'Desktops',
-    brand: 'Custom Build',
-    description: 'High-performance gaming PC with RTX 40-series, Liquid Cooling, and RGB. Built for Jhargram gamers.',
-    image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=800',
+    name: 'Sony a7iii',
+    category: 'Cameras',
+    brand: 'Sony',
+    description: 'The standard for full-frame mirrorless. 24.2MP, 10fps, 4K HDR. Perfect for professional photography and cinematography.',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
     additionalImages: [
-      'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=800'
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800'
     ],
     specifications: {
-      'Processor': 'Intel Core i7-13700K',
-      'Graphics': 'NVIDIA GeForce RTX 4070 Ti 12GB',
-      'RAM': '32GB DDR5 5200MHz RGB',
-      'Storage': '1TB NVMe Gen4 SSD',
-      'Cooling': '240mm AIO Liquid Cooler',
-      'Cabinet': 'Lian Li O11 Dynamic Dynamic'
+      'Sensor': '24.2MP Full-Frame Exmor R CMOS',
+      'ISO Range': '100-51200 (Expandable to 204800)',
+      'AF Points': '693 Phase-Detection / 425 Contrast-Detection',
+      'Video': '4K 30p, 1080 120p',
+      'Battery Life': 'Approx. 710 shots'
     },
     reviews: [
-      { user: 'Bikram Das', rating: 5, comment: 'Extreme performance! The build quality is top-notch.', date: '21 March 2024' },
-      { user: 'Sayan Roy', rating: 4, comment: 'Great service. They helped me pick the right parts.', date: '15 Feb 2024' }
+      { user: 'Amit Ghosh', rating: 5, comment: 'Simply the best camera in this price range. Incredible autofocus.', date: 'April 2024' }
     ],
-    price: '45500 to 47500 The price may be higher or lower',
-    oldPrice: '₹55,000',
-    discount: 'Starting From'
+    price: '₹1,48,500',
+    oldPrice: '₹1,58,000',
+    discount: 'Top Rated'
   },
   {
     id: 'p2',
@@ -79,7 +76,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Portable power for gaming and creative work. 144Hz display & RGB backlit keyboard.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     additionalImages: [
       'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800'
     ],
@@ -98,46 +95,26 @@ export const PRODUCTS: Product[] = [
     discount: 'Special Offer'
   },
   {
-    id: 'p3',
-    name: 'Canon PIXMA MegaTank G Series',
-    category: 'Printers',
-    brand: 'Canon',
-    description: 'High-yield ink tank printer. Perfect for home, office, and Xerox services.',
-    image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&q=80&w=800',
-    specifications: {
-      'Type': 'Ink Tank All-in-One',
-      'Functions': 'Print, Scan, Copy',
-      'Interface': 'Hi-Speed USB',
-      'Yield': 'Up to 6000 pages (Black)'
-    },
-    reviews: [
-      { user: 'Amit Ghosh', rating: 5, comment: 'Very low printing cost. Highly recommend.', date: '10 Feb 2024' }
-    ],
-    price: '12600 to 14600 The price may be higher or lower',
-    oldPrice: '₹14,000',
-    discount: '10% OFF'
-  },
-  {
     id: 'p4',
     name: 'CP PLUS 4MP CCTV Home Security',
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Full HD Wi-Fi camera with night vision and mobile alerts. Protect your home.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2499 to 4499 The price may be higher or lower',
     oldPrice: '₹3,500',
     discount: 'Best Entry'
   },
   {
     id: 'p7',
-    name: 'Nikon D3500 DSLR Kit',
+    name: 'Sony a7 IV Mirrorless Camera',
     category: 'Cameras',
-    brand: 'Nikon',
-    description: 'Professional DSLR camera for photography enthusiasts. 24.2 MP and Full HD video.',
+    brand: 'Sony',
+    description: 'The next level of full-frame. 33MP Exmor R CMOS sensor, 4K 60p video, and revolutionary real-time tracking AF.',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
-    price: '48990 to 50990 The price may be higher or lower',
-    oldPrice: '₹52,000',
-    discount: 'Bundle Deal'
+    price: '215000 to 225000 The price may be higher or lower',
+    oldPrice: '₹2,45,000',
+    discount: 'Next-Gen'
   },
   {
     id: 'p8',
@@ -145,21 +122,10 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'HP',
     description: 'Powerful performance and stunning visuals. AMD Ryzen 5, 8GB RAM, 512GB SSD.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     price: '54990 to 56990 The price may be higher or lower',
     oldPrice: '₹62,000',
     discount: 'Student Pick'
-  },
-  {
-    id: 'p9',
-    name: 'Epson EcoTank L3210',
-    category: 'Printers',
-    brand: 'Epson',
-    description: 'AIO InkTank printer for cost-effective printing with low cost per page.',
-    image: 'https://images.unsplash.com/photo-1589739900243-4b53b1b46f5c?auto=format&fit=crop&q=80&w=800',
-    price: '13800 to 15800 The price may be higher or lower',
-    oldPrice: '₹15,500',
-    discount: 'Top Seller'
   },
   {
     id: 'p10',
@@ -167,7 +133,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'Logitech',
     description: 'High performance wired gaming mouse with HERO 25K sensor and RGB lighting.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1QBl9gu425_sMq7SR9cPi3OuGG2H-qCvM4A&s',
     price: '4495 to 6495 The price may be higher or lower',
     oldPrice: '₹5,999',
     discount: 'Gaming Essential'
@@ -189,7 +155,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Thin and light laptop with a stunning 15.6-inch display, perfect for productivity on the go.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     specifications: {
       'Model': 'E1504FA-BQ2341WS',
       'Processor': 'AMD Ryzen 3 7320U',
@@ -203,31 +169,12 @@ export const PRODUCTS: Product[] = [
     discount: 'Great Value'
   },
   {
-    id: 'p13',
-    name: 'ASUS TUF Gaming A15',
-    category: 'Laptops',
-    brand: 'ASUS',
-    description: 'Military-grade durability meets high-speed gaming performance.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
-    specifications: {
-      'Model': 'FA506NCG-HN200WS',
-      'Processor': 'AMD Ryzen 7 7445HS',
-      'Graphics': 'NVIDIA RTX 3050 4GB',
-      'Memory': '16GB DDR5',
-      'Storage': '512GB NVMe SSD',
-      'Display': '15.6" 144Hz Refresh Rate'
-    },
-    price: '68490 to 70490 The price may be higher or lower',
-    oldPrice: '₹75,000',
-    discount: 'Gaming Ready'
-  },
-  {
     id: 'p14',
     name: 'Dell Inspiron 15 3530',
     category: 'Laptops',
     brand: 'DELL',
     description: 'Reliable performance for everyday tasks with the latest 13th Gen Intel power.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     specifications: {
       'Model': 'ODC1525000401RINS1',
       'Processor': 'Intel Core i5-1335U (13th Gen)',
@@ -276,6 +223,24 @@ export const PRODUCTS: Product[] = [
     discount: 'Budget Friendly'
   },
   {
+    id: 'p64',
+    name: 'Apple MacBook Air M2',
+    category: 'Laptops',
+    brand: 'APPLE',
+    description: 'The redefined MacBook Air with M2 chip. Performance meets portability with up to 18 hours of battery life.',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    specifications: {
+      'Chip': 'Apple M2 Chip',
+      'Display': '13.6-inch Liquid Retina',
+      'Memory': '8GB Unified Memory',
+      'Storage': '256GB SSD',
+      'Battery': 'Up to 18 hours'
+    },
+    price: '89900 to 94900 The price may be higher or lower',
+    oldPrice: '₹99,900',
+    discount: 'Professional Choice'
+  },
+  {
     id: 'p17',
     name: 'IFOTO A4 130GSM 50 SHEET',
     category: 'Accessories',
@@ -291,7 +256,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'IFOTO',
     description: 'Premium photopaper with 180GSM weight for better durability. 20 Sheets. Stock: 134 PCS',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     price: '120 to 2120 The price may be higher or lower',
     discount: 'Top Choice'
   },
@@ -311,19 +276,9 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'IFOTO',
     description: 'Glossy 4R size photopaper for photo printing. 180GSM, 100 Sheets. Stock: 50 PKT',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     price: '180 to 2180 The price may be higher or lower',
     discount: 'Popular'
-  },
-  {
-    id: 'p21',
-    name: 'NOVA PRISMAJET PG 4R (4*6) 254GSM',
-    category: 'Accessories',
-    brand: 'NOVA',
-    description: 'Professional grade 254GSM Prismajet photopaper. 100 Sheets. Stock: 16 PKT',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
-    price: '350 to 2350 The price may be higher or lower',
-    discount: 'Professional'
   },
   {
     id: 'p22',
@@ -331,7 +286,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'NOVA',
     description: 'Ultra-premium 270GSM Prismajet photopaper for the best results. 100 Sheets. Stock: 30 PKT',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     price: '380 to 2380 The price may be higher or lower',
     discount: 'Best Quality'
   },
@@ -351,19 +306,9 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'NOVA',
     description: 'Nova Professional series 130GSM photopaper. 100 Sheets. Stock: 14 PCS',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     price: '320 to 2320 The price may be higher or lower',
     discount: 'Value Pack'
-  },
-  {
-    id: 'p25',
-    name: 'VMS 4*6 100 SHEETS (180GSM)',
-    category: 'Accessories',
-    brand: 'VMS',
-    description: 'VMS brand 4x6 photopaper, 180GSM weight. 100 Sheets. Stock: 11 PCS',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
-    price: '165 to 2165 The price may be higher or lower',
-    discount: 'Reliable'
   },
   {
     id: 'p26',
@@ -371,7 +316,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'VMS',
     description: 'Heavyweight A4 photopaper from VMS, 260GSM for professional prints.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
     price: '450 to 2450 The price may be higher or lower',
     discount: 'Heavy Duty'
   },
@@ -805,7 +750,7 @@ export const PRODUCTS: Product[] = [
     discount: 'Best Budget'
   },
   {
-    id: 'p64',
+    id: 'p64_amd',
     name: 'AMD RYZEN 7 5800X',
     category: 'Processors',
     brand: 'AMD',
@@ -1260,7 +1205,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-definition bullet camera with 20m IR range for clear night vision.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1250 to 3250 The price may be higher or lower',
     discount: 'Budget Choice'
   },
@@ -1270,7 +1215,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Compact wireless cube camera for indoor monitoring with 10m range.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2800 to 4800 The price may be higher or lower',
     discount: 'Wireless'
   },
@@ -1280,7 +1225,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '16-channel network video recorder with 1 SATA bay for storage.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '6500 to 8500 The price may be higher or lower',
     discount: 'Standard NVR'
   },
@@ -1290,7 +1235,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Professional 4K 16-channel NVR with dual SATA support for reliability.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '9800 to 11800 The price may be higher or lower',
     discount: '4K Pro'
   },
@@ -1300,7 +1245,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-performance 16-channel NVR for surveillance systems overhead.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '8400 to 10400 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -1310,7 +1255,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Gigabit PoE switch with 16 ports for high-speed IP camera networks.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '12500 to 14500 The price may be higher or lower',
     discount: 'Gigabit PoE'
   },
@@ -1320,7 +1265,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Entry-level 1MP bullet camera for basic security needs.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '950 to 2950 The price may be higher or lower',
     discount: 'Value'
   },
@@ -1330,7 +1275,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '2.4MP high-resolution bullet camera with impressive 30m night focus.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'High Res'
   },
@@ -1340,7 +1285,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Full color 2.4MP bullet camera with audio recording capabilities.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2450 to 4450 The price may be higher or lower',
     discount: 'Full Color + Audio'
   },
@@ -1350,7 +1295,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Smart indoor dome with audio and 24/7 color visibility.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2350 to 4350 The price may be higher or lower',
     discount: 'Smart Interior'
   },
@@ -1360,7 +1305,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Standard 2.4MP bullet camera for everyday outdoor security.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1550 to 3550 The price may be higher or lower',
     discount: 'Standard'
   },
@@ -1370,7 +1315,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Long-range 80m bullet camera for large premises monitoring.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'Long Range'
   },
@@ -1380,7 +1325,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Robust 2.4MP bullet camera with 30m IR and weatherproof design.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Weatherproof'
   },
@@ -1390,7 +1335,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '40m color night vision bullet camera for wide coverage.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Full Coverage'
   },
@@ -1400,7 +1345,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-quality indoor color dome with 20m IR range.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2100 to 4100 The price may be higher or lower',
     discount: 'Clear View'
   },
@@ -1410,7 +1355,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Integrated microphone dome camera with 30m range for audio security.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2400 to 4400 The price may be higher or lower',
     discount: 'Audio + IR'
   },
@@ -1420,7 +1365,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Advanced dual light hybrid dome for superior day and night monitoring.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2750 to 4750 The price may be higher or lower',
     discount: 'Hybrid Light'
   },
@@ -1430,7 +1375,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '60m long-range WDR bullet camera for complex lighting environments.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3800 to 5800 The price may be higher or lower',
     discount: 'WDR Pro'
   },
@@ -1440,7 +1385,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Compact Indigo series bullet camera with sleek design.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1500 to 3500 The price may be higher or lower',
     discount: 'Indigo Edition'
   },
@@ -1450,7 +1395,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Wide Dynamic Range (WDR) 30m bullet for balanced exposure.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2300 to 4300 The price may be higher or lower',
     discount: 'Balanced'
   },
@@ -1460,7 +1405,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Full HD network bullet camera with smart IP monitoring.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Network IP'
   },
@@ -1470,7 +1415,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'IP-based FHD dome camera for professional interior security.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2700 to 4700 The price may be higher or lower',
     discount: 'Professional'
   },
@@ -1480,7 +1425,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Updated V2 network dome with improved sensor and 30m range.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2850 to 4850 The price may be higher or lower',
     discount: 'Upgraded'
   },
@@ -1490,7 +1435,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Meta-data supporting WDR IP bullet for intelligent surveillance.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3500 to 5500 The price may be higher or lower',
     discount: 'Smart WDR'
   },
@@ -1500,7 +1445,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Versatile V3 series IP bullet with strong WDR performance.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'V3 Series'
   },
@@ -1510,7 +1455,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Dual light GPC series IP bullet for enhanced identification.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3400 to 5400 The price may be higher or lower',
     discount: 'Dual Illumination'
   },
@@ -1520,7 +1465,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'GPC series dual light IP dome with smart color night vision.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3300 to 5300 The price may be higher or lower',
     discount: 'Smart GPC'
   },
@@ -1530,7 +1475,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Audio enabled IP bullet with 30m detection and V3 technology.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3150 to 5150 The price may be higher or lower',
     discount: 'Audio Over IP'
   },
@@ -1540,7 +1485,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Clear audio recording dome with 30m infrared and IP connection.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3050 to 5050 The price may be higher or lower',
     discount: 'Secure Interior'
   },
@@ -1550,7 +1495,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Reliable Y-series IP bullet for long-term security monitoring.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Trust Pack'
   },
@@ -1560,7 +1505,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'IK10 vandal-proof dome for high-risk security areas.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4200 to 6200 The price may be higher or lower',
     discount: 'Vandal Proof'
   },
@@ -1570,7 +1515,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Mid-range 50m network bullet for larger outdoor spaces.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3600 to 5600 The price may be higher or lower',
     discount: 'Outdoor Pro'
   },
@@ -1580,7 +1525,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Long-range reach with 80m IR for massive perimeter security.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Perimeter Star'
   },
@@ -1590,7 +1535,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Guard+ series camera with enhanced day/night sensitivity.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3100 to 5100 The price may be higher or lower',
     discount: 'Guard+'
   },
@@ -1600,7 +1545,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Interactive dome camera with built-in mic and speaker.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3800 to 5800 The price may be higher or lower',
     discount: '2-Way Audio'
   },
@@ -1610,7 +1555,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Interior Guard+ dome for premium indoor surveillance.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2950 to 4950 The price may be higher or lower',
     discount: 'Guard+ Interior'
   },
@@ -1620,7 +1565,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-speed 2MP network dome with advanced Y-series optics.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2750 to 4750 The price may be higher or lower',
     discount: 'Elite Tech'
   },
@@ -1630,7 +1575,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-capacity 32-channel NVR with dual SATA for extensive storage.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '14500 to 16500 The price may be higher or lower',
     discount: '32-Channel Pro'
   },
@@ -1640,7 +1585,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '3MP ultra-high resolution EzyKam+ for detailed home monitoring.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3400 to 5400 The price may be higher or lower',
     discount: '3MP Clear'
   },
@@ -1650,7 +1595,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Ultra HD 4K 4-channel DVR for crisp analog recordings.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4500 to 6500 The price may be higher or lower',
     discount: '4K DVR'
   },
@@ -1660,7 +1605,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '5MP support on 4-channels for high-quality surveillance.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3200 to 5200 The price may be higher or lower',
     discount: '5MP Ready'
   },
@@ -1670,7 +1615,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Compact 5MP 4-channel DVR with smart-record features.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3100 to 5100 The price may be higher or lower',
     discount: 'Eco High-Res'
   },
@@ -1680,7 +1625,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Reliable 4-channel DVR for basic analog surveillance setups.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2450 to 4450 The price may be higher or lower',
     discount: 'Reliable'
   },
@@ -1690,7 +1635,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Entry-level 4-channel NVR for IP camera integration.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3400 to 5400 The price may be higher or lower',
     discount: 'IP Ready'
   },
@@ -1700,7 +1645,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Dedicated 4G router for remote CCTV monitoring without broadband.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://static1.industrybuying.com/products/it-security/network-components/routers-access-point/ITS.ROU.431458386_1744795158164.webp',
     price: '2800 to 4800 The price may be higher or lower',
     discount: 'Remote Access'
   },
@@ -1710,7 +1655,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '4MP high-resolution cosmic series bullet for crystal clear analog feed.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2150 to 4150 The price may be higher or lower',
     discount: '4MP Clear'
   },
@@ -1720,7 +1665,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Smart Wi-Fi 4MP bullet camera for hassle-free home security.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3900 to 5900 The price may be higher or lower',
     discount: 'Smart WiFi'
   },
@@ -1730,7 +1675,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Professional 4MP network bullet for high-end digital surveillance.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4200 to 6200 The price may be higher or lower',
     discount: 'Network Pro'
   },
@@ -1740,7 +1685,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Discreet 4MP IP dome with superior night vision capabilities.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3950 to 5950 The price may be higher or lower',
     discount: 'Discreet'
   },
@@ -1750,7 +1695,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Vandal-proof 4MP WDR camera for tough outdoor or public environments.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '5400 to 7400 The price may be higher or lower',
     discount: 'Vandal Guard'
   },
@@ -1760,7 +1705,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Advanced IP bullet with meta-data support for smart identification.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4450 to 6450 The price may be higher or lower',
     discount: 'Meta Smart'
   },
@@ -1830,7 +1775,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Secure 6U wall-mount rack for housing DVRs and networking gear.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.itcareonline.com/wp-content/uploads/2024/12/CP-Plus-Wall-Mount-Rack-Networking-2U-Non-Fitted-Modular-CP-HA-RK3535VM-2U-2.jpg',
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'Organization'
   },
@@ -1880,7 +1825,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'High-performance 8-port Gigabit PoE switch for IP surveillance lines.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://brandiinnovation.com/wp-content/uploads/2024/02/cp-anw-hpu8h2-n12.jpg',
     price: '7200 to 9200 The price may be higher or lower',
     discount: 'Gigabit PoE'
   },
@@ -1890,7 +1835,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Reliable 8-port PoE switch for powering analog-to-IP bridges.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://brandiinnovation.com/wp-content/uploads/2024/02/cp-anw-hpu8h2-n12.jpg',
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Essential'
   },
@@ -1900,7 +1845,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Smart Managed 8-port PoE switch for refined network control.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://brandiinnovation.com/wp-content/uploads/2024/02/cp-anw-hpu8h2-n12.jpg',
     price: '6400 to 8400 The price may be higher or lower',
     discount: 'Smart Managed'
   },
@@ -1910,7 +1855,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Official branded laptop/equipment bags for field techs and fans.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBfdBTvoykLHBOgXCOnNislRsaIBlLnOYRPw&s',
     price: '850 to 2850 The price may be higher or lower',
     discount: 'Branded'
   },
@@ -1930,7 +1875,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: '90m roll of high-grade copper 3+1 coaxial cable for CCTV.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
     price: '1450 to 3450 The price may be higher or lower',
     discount: 'Best Quality'
   },
@@ -1960,7 +1905,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Original EzyKam model for simple and effective indoor security.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1850 to 3850 The price may be higher or lower',
     discount: 'Classic'
   },
@@ -1970,7 +1915,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Refined EzyKam with improved Wi-Fi range and cloud support.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Enhanced'
   },
@@ -1980,7 +1925,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-speed pan/tilt EzyKam for comprehensive room coverage.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2400 to 4400 The price may be higher or lower',
     discount: 'PT Monitor'
   },
@@ -1990,7 +1935,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Portable series EzyKam for quick setup and flexible usage.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2100 to 4100 The price may be higher or lower',
     discount: 'Portable'
   },
@@ -2000,7 +1945,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-definition 2.4MP dome with sharp 30m infrared focus.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1900 to 3900 The price may be higher or lower',
     discount: 'HD Dome'
   },
@@ -2010,7 +1955,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: '305m industrial grade CAT6 ethernet cable for IP networking.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://5.imimg.com/data5/SELLER/Default/2024/6/426714665/DR/JM/MA/47224791/cp-plus-cat-6-cable-305mtr.webp',
     price: '6800 to 8800 The price may be higher or lower',
     discount: 'Bulk Pack'
   },
@@ -2020,7 +1965,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: '180m high-performance CCTV cable for extensive building wiring.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Long Roll'
   },
@@ -2030,7 +1975,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: '180m premium coaxial cable with improved shielding for interference.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Premium Shield'
   },
@@ -2040,7 +1985,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: '90m budget-friendly coaxial cable for small residential setups.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://aplusproducts.in/wp-content/uploads/2023/05/02-1.jpg',
     price: '1250 to 3250 The price may be higher or lower',
     discount: 'Value Roll'
   },
@@ -2050,7 +1995,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Mainstream 2.4MP dome with V3 processing for better color balance.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR10_dMEHiiF2mvomOXBANfjQgg8Ax2yZZk4g&s',
     price: '1600 to 3600 The price may be higher or lower',
     discount: 'Popular'
   },
@@ -2060,7 +2005,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Efficient 8-channel DVR without Hard Drive, ready for customization.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3950 to 5950 The price may be higher or lower',
     discount: 'Custom Ready'
   },
@@ -2070,7 +2015,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Comprehensive 16-channel HDCVI DVR for large scale analog coverage.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '7400 to 9400 The price may be higher or lower',
     discount: '16-Port Link'
   },
@@ -2080,7 +2025,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: '3MP high-definition Wi-Fi pan/tilt camera with mobile alerts.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2800 to 4800 The price may be higher or lower',
     discount: '3MP Smart'
   },
@@ -2090,7 +2035,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Self-sufficient 4G SIM based camera for areas without Wi-Fi.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'SIM Based'
   },
@@ -2100,7 +2045,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Hybrid series dome with wide 2.4mm lens for corner-to-corner visibility.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2650 to 4650 The price may be higher or lower',
     discount: 'Wide View'
   },
@@ -2120,7 +2065,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Mainstream 4-channel HDCVI DVR, solid for residential use.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2900 to 4900 The price may be higher or lower',
     discount: 'Home Series'
   },
@@ -2130,7 +2075,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Next-gen smart dual light IP bullet for intelligent motion discovery.',
-    image: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '3200 to 5200 The price may be higher or lower',
     discount: 'Smart Discover'
   },
@@ -2140,7 +2085,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'High-end 4MP IP bullet with dual light hybrid performance.',
-    image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4800 to 6800 The price may be higher or lower',
     discount: '4MP Hybrid'
   },
@@ -2150,7 +2095,7 @@ export const PRODUCTS: Product[] = [
     category: 'CCTV',
     brand: 'CP PLUS',
     description: 'Premium 4MP IP dome with dual illumination for indoor clarity.',
-    image: 'https://images.unsplash.com/photo-1521111624683-1e5b30441460?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '4500 to 6500 The price may be higher or lower',
     discount: 'Elite Interior'
   },
@@ -2160,7 +2105,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'High-speed 128GB U3 card for 4K video recording on IP cameras.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1450 to 3450 The price may be higher or lower',
     discount: 'U3 Fast'
   },
@@ -2170,7 +2115,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Reliable 64GB U3 card optimized for continuous surveillance use.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '850 to 2850 The price may be higher or lower',
     discount: 'Value Speed'
   },
@@ -2180,7 +2125,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Smart series 4-port PoE switch with power management.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '2600 to 4600 The price may be higher or lower',
     discount: 'Smart PoE'
   },
@@ -2190,7 +2135,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Essential 4-port PoE switch for simple IP camera setups.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1950 to 3950 The price may be higher or lower',
     discount: 'Essential PoE'
   },
@@ -2200,7 +2145,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Dedicated 5A power supply for up to 4 camera units.',
-    image: 'https://images.unsplash.com/photo-1541140134513-85a161dc4a00?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '850 to 2850 The price may be higher or lower',
     discount: '4-Ch Power'
   },
@@ -2210,7 +2155,7 @@ export const PRODUCTS: Product[] = [
     category: 'Accessories',
     brand: 'CP PLUS',
     description: 'Robust 10A power supply for up to 8 high-power cameras.',
-    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTar1kyH1GDREuNz_qGkzNRS2VhST2lbmg2Q&s',
     price: '1450 to 3450 The price may be higher or lower',
     discount: '8-Ch Power'
   },
@@ -2220,7 +2165,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Thin and light productivity laptop with Ryzen 3 processing power.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '34000 to 36000 The price may be higher or lower',
     discount: 'Student Edition'
   },
@@ -2230,7 +2175,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: '15.6-inch laptop with 16GB RAM for smooth multitasking.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '38500 to 40500 The price may be higher or lower',
     discount: 'Value + RAM'
   },
@@ -2240,7 +2185,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Powerful Ryzen 5 laptop for demanding home and office work.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '44000 to 46000 The price may be higher or lower',
     discount: 'Mid-Range Power'
   },
@@ -2250,7 +2195,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Ryzen 5 performance in a balanced configuration for daily use.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '39500 to 41500 The price may be higher or lower',
     discount: 'Popular Choice'
   },
@@ -2260,7 +2205,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Efficient Ryzen 5 7000 series laptop for the modern professional.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '41000 to 43000 The price may be higher or lower',
     discount: 'New Gen'
   },
@@ -2270,7 +2215,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'High-speed Ryzen 5 laptop with 16GB RAM for ultimate productivity.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '45500 to 47500 The price may be higher or lower',
     discount: 'Pro Productivity'
   },
@@ -2280,7 +2225,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Balanced Ryzen 3 laptop for essential computing needs.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '35000 to 37000 The price may be higher or lower',
     discount: 'Essential'
   },
@@ -2290,7 +2235,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Entry-level gaming laptop with dedicated RTX 3050 graphics.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '68000 to 70000 The price may be higher or lower',
     discount: 'Gaming Ready'
   },
@@ -2300,7 +2245,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'High-refresh 16-inch gaming laptop with 6GB VRAM.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '88000 to 90000 The price may be higher or lower',
     discount: '6GB RTX'
   },
@@ -2310,7 +2255,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Premium laptop with 13th Gen Intel and DDR5 memory.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '62000 to 64000 The price may be higher or lower',
     discount: 'DDR5 Speed'
   },
@@ -2320,7 +2265,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Cutting-edge AI-enabled Ryzen laptop with large 16-inch display.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '74000 to 76000 The price may be higher or lower',
     discount: 'AI Powered'
   },
@@ -2330,7 +2275,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Thin and powerful 14-inch laptop with latest Core 5 processor.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '58500 to 60500 The price may be higher or lower',
     discount: 'Compact Power'
   },
@@ -2340,7 +2285,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Premium 14-inch laptop optimized for high-performance productivity.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '59000 to 61000 The price may be higher or lower',
     discount: 'Modern Pro'
   },
@@ -2350,7 +2295,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Versatile 2-in-1 touchscreen laptop with 13th Gen Intel H-series.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '64500 to 66500 The price may be higher or lower',
     discount: '2-in-1 Touch'
   },
@@ -2360,7 +2305,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Content creator powerhouse with 144Hz display and RTX 3050.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '78500 to 80500 The price may be higher or lower',
     discount: 'Creator Pro'
   },
@@ -2370,7 +2315,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Ultimate 16-inch creator laptop with NVIDIA RTX 4050 graphics.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '95000 to 97000 The price may be higher or lower',
     discount: 'RTX 4050'
   },
@@ -2380,7 +2325,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Reliable 13th Gen Intel i3 laptop for studies and office.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '36500 to 38500 The price may be higher or lower',
     discount: 'Value i3'
   },
@@ -2390,7 +2335,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Full HD 14-inch laptop with efficient 13th Gen power.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '37000 to 39000 The price may be higher or lower',
     discount: 'FHD Clear'
   },
@@ -2400,7 +2345,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Modern Core 5 laptop with 16GB RAM for snappy performance.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '51500 to 53500 The price may be higher or lower',
     discount: 'Modern Choice'
   },
@@ -2410,7 +2355,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Sleek and powerful Core 5 workstation for home use.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '52000 to 54000 The price may be higher or lower',
     discount: 'Snappy'
   },
@@ -2420,7 +2365,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Budget-friendly 13th Gen i3 laptop for daily tasks.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '35500 to 37500 The price may be higher or lower',
     discount: 'Budget i3'
   },
@@ -2430,7 +2375,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Classic 15.6-inch laptop with efficient Intel performance.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '36000 to 38000 The price may be higher or lower',
     discount: 'Classic View'
   },
@@ -2440,7 +2385,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Enhanced 12GB RAM configuration for better multi-tasking.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '37500 to 39500 The price may be higher or lower',
     discount: '12GB Boost'
   },
@@ -2450,7 +2395,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'High-performance configuration of the popular X15 series.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '39000 to 41000 The price may be higher or lower',
     discount: 'Max RAM'
   },
@@ -2460,7 +2405,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Silver edition X15 with 16GB RAM and fast SSD.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '39500 to 41500 The price may be higher or lower',
     discount: 'Silver Pro'
   },
@@ -2470,7 +2415,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Efficient i3 model with ample 16GB memory for versatile use.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '40000 to 42000 The price may be higher or lower',
     discount: 'Work Ready'
   },
@@ -2480,7 +2425,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'High-end 15.6-inch laptop with latest Gen Core 5 power.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '53500 to 55500 The price may be higher or lower',
     discount: 'Latest Gen'
   },
@@ -2490,7 +2435,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Cool Silver 15.6-inch laptop with high-performance specs.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '54000 to 56000 The price may be higher or lower',
     discount: 'Silver Elite'
   },
@@ -2500,7 +2445,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Powerful 16-inch laptop with H-series Intel i5 for creators.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '58500 to 60500 The price may be higher or lower',
     discount: 'H-Series Power'
   },
@@ -2510,7 +2455,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'High-performance Intel i7 laptop for professional grade work.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '72000 to 74000 The price may be higher or lower',
     discount: 'i7 Master'
   },
@@ -2520,7 +2465,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Next-gen Intel Ultra series laptop with 16-inch display.',
-    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '82000 to 84000 The price may be higher or lower',
     discount: 'Ultra Tech'
   },
@@ -2530,7 +2475,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Essential laptop for daily usage with proven design.',
-    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+    image: 'https://blogs.windows.com/wp-content/uploads/sites/2/2017/05/3e113d479b176c0a2bc08f1185d6e5e0.jpg',
     price: '32500 to 34500 The price may be higher or lower',
     discount: 'Daily Essential'
   },
@@ -2540,7 +2485,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Powerful Ryzen 7 gaming laptop with RTX 3050 and 144Hz screen.',
-    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.simplyshopping.in/cdn/shop/products/61EKP1WS_kL._SL1500_2048x2048.jpg?v=1623815790',
     price: '71500 to 73500 The price may be higher or lower',
     discount: 'TUF Gaming'
   },
@@ -2550,7 +2495,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'TUF Gaming laptop with massive 1TB SSD for games and apps.',
-    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800',
+    image: 'https://www.laptopstoreindia.in/wp-content/uploads/2022/02/asus-laptop-6.jpg',
     price: '75500 to 77500 The price may be higher or lower',
     discount: '1TB Storage'
   },
@@ -2560,7 +2505,7 @@ export const PRODUCTS: Product[] = [
     category: 'Laptops',
     brand: 'ASUS',
     description: 'Elite 16-inch gaming laptop with NVIDIA RTX 4050 graphics.',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://m.media-amazon.com/images/I/71Hy5SYr3tL.jpg',
     price: '98000 to 100000 The price may be higher or lower',
     discount: 'RTX 4050 Pro'
   },
@@ -3673,7 +3618,7 @@ export const GALLERY_IMAGES = [
     description: 'Our primary hub at Raghunathpur, Jhargram'
   },
   {
-    url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800',
+    url: 'https://lh3.googleusercontent.com/p/AF1QipNeJnS_zpvNJ12H8rh8vAieEVypX72oae6RGWh-=s680-w680-h510-rw',
     title: 'Gaming Zone',
     description: 'Latest gaming assemblies ready for action'
   },

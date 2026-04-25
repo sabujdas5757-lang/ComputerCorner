@@ -16,10 +16,17 @@ export default function CategoryBar() {
         <div className="flex items-center gap-6 md:gap-10 overflow-x-auto py-4 no-scrollbar hide-scrollbar">
           {categories.map((category, index) => {
             const isCatalogLink = category === 'Shop All';
-            const Component = isCatalogLink ? Link : motion.a;
-            const props = isCatalogLink 
-              ? { to: '/catalog' } 
-              : { href: `#${category.toLowerCase().replace(/\s+/g, '-')}` };
+            const isLaptopLink = category === 'Laptops';
+            const Component = (isCatalogLink || isLaptopLink) ? Link : motion.a;
+            
+            let props = {};
+            if (isCatalogLink) {
+              props = { to: '/catalog' };
+            } else if (isLaptopLink) {
+              props = { to: '/laptops' };
+            } else {
+              props = { href: `#${category.toLowerCase().replace(/\s+/g, '-')}` };
+            }
 
             return (
               <Component

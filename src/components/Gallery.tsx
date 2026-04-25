@@ -25,11 +25,13 @@ export default function Gallery() {
               viewport={{ once: true }}
               className="group relative aspect-[4/3] rounded-[32px] overflow-hidden bg-surface border border-white/5"
             >
-              <img 
-                src={image.url} 
-                alt={image.title} 
-                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
-              />
+              {image.url && (
+                <img 
+                  src={image.url} 
+                  alt={image.title} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-bg-dark via-bg-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8">
                 <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                   Shop Showcase

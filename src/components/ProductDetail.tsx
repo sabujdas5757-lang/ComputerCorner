@@ -14,7 +14,7 @@ import Footer from './Footer';
 export default function ProductDetail() {
   const { productId } = useParams();
   const product = PRODUCTS.find(p => p.id === productId);
-  const [activeImage, setActiveImage] = useState('');
+  const [activeImage, setActiveImage] = useState(product?.image || '');
 
   useEffect(() => {
     if (product) {
@@ -33,7 +33,7 @@ export default function ProductDetail() {
     );
   }
 
-  const allImages = [product.image, ...(product.additionalImages || [])];
+  const allImages = [product.image, ...(product.additionalImages || [])].filter(Boolean);
 
   return (
     <div className="min-h-screen bg-bg-dark text-white selection:bg-primary selection:text-bg-dark">
@@ -53,11 +53,13 @@ export default function ProductDetail() {
                 layoutId={`img-${product.id}`}
                 className="aspect-square rounded-[40px] overflow-hidden bg-white/5 border border-white/10"
               >
-                <img 
-                  src={activeImage} 
-                  alt={product.name} 
-                  className="w-full h-full object-cover"
-                />
+                {activeImage && (
+                  <img 
+                    src={activeImage} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </motion.div>
               
               {allImages.length > 1 && (

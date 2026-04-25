@@ -6,10 +6,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Monitor, Laptop, MessageCircle } from 'lucide-react';
+import { ArrowRight, Monitor, MessageCircle } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 
-const laptopProducts = PRODUCTS.filter(p => p.category === 'Laptops').slice(0, 4);
 const monitorProducts = PRODUCTS.filter(p => p.category === 'Monitors').slice(0, 4);
 
 export default function TechShowcase() {
@@ -17,30 +16,6 @@ export default function TechShowcase() {
     <section className="py-24 bg-bg-dark border-t border-white/5">
       <div className="section-container">
         
-        {/* Laptops Section */}
-        <div id="laptops" className="mb-24">
-          <div className="flex items-center justify-between mb-12">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                <Laptop size={24} />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight">Featured <span className="text-primary italic">Laptops</span></h2>
-                <p className="text-gray-500 text-sm">Best performance for work and play</p>
-              </div>
-            </div>
-            <Link to="/catalog/Laptops" className="group flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-white transition-colors">
-              View All <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {laptopProducts.map((product, idx) => (
-              <ProductCard key={product.id} product={product} idx={idx} />
-            ))}
-          </div>
-        </div>
-
         {/* Monitors Section */}
         <div id="monitor">
           <div className="flex items-center justify-between mb-12">
@@ -81,11 +56,13 @@ function ProductCard({ product, idx, color = "border-primary/20" }: { product: a
         className="bg-surface rounded-3xl p-4 border border-white/5 hover:border-white/10 transition-all duration-300 h-full flex flex-col"
       >
         <div className="relative aspect-video rounded-2xl overflow-hidden mb-6 bg-black/40">
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          />
+          {product.image && (
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          )}
           {product.discount && (
             <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white text-bg-dark text-[10px] font-black uppercase tracking-tight">
               {product.discount}

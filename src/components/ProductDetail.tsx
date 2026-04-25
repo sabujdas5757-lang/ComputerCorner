@@ -7,11 +7,12 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, MessageSquare, Star, Shield, Truck, RotateCcw } from 'lucide-react';
-import { PRODUCTS } from '../constants';
+import { useProducts } from '../contexts/ProductContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
 export default function ProductDetail() {
+  const { products: PRODUCTS } = useProducts();
   const { productId } = useParams();
   const product = PRODUCTS.find(p => p.id === productId);
   const [activeImage, setActiveImage] = useState(product?.image || '');

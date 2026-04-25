@@ -5,12 +5,16 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Phone, MessageSquare, LayoutGrid, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Menu, X, Phone, MessageSquare, LayoutGrid, Facebook, Instagram, Youtube, User as UserIcon, LogOut, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '../contexts/AuthContext';
+import AuthModal from './AuthModal';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,6 +93,34 @@ export default function Navbar() {
             </a>
           </div>
           <div className="flex items-center gap-4">
+            {user ? (
+              <div className="flex flex-row items-center gap-2">
+                {user.email === 'computercorner@gmail.com' && (
+                  <Link 
+                    to="/admin"
+                    className="flex items-center justify-center p-2 text-primary hover:text-white transition-colors bg-white/5 border border-white/10 rounded-xl"
+                    title="Admin Portal"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 p-2 text-gray-400 hover:text-red-400 transition-colors bg-white/5 border border-white/10 rounded-xl"
+                  title="Sign Out"
+                >
+                  <LogOut size={20} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-2 p-2 text-gray-400 hover:text-primary transition-colors bg-white/5 border border-white/10 rounded-xl"
+                title="Sign In"
+              >
+                <UserIcon size={20} />
+              </button>
+            )}
             <a 
               href="tel:8167489332"
               className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#00D991] text-bg-dark font-black text-xs hover:bg-[#00BD7E] transition-all duration-300 shadow-lg shadow-primary/20"
@@ -96,6 +128,13 @@ export default function Navbar() {
               <MessageSquare size={14} fill="currentColor" />
               <span>Call Now</span>
             </a>
+            <Link 
+              to="/catalog" 
+              className="p-2 text-gray-400 hover:text-primary transition-colors bg-white/5 border border-white/10 rounded-xl"
+              title="Search"
+            >
+              <Search size={20} />
+            </Link>
             <Link 
               to="/quick-access" 
               className="p-2 text-gray-400 hover:text-primary transition-colors bg-white/5 border border-white/10 rounded-xl"
@@ -144,12 +183,51 @@ export default function Navbar() {
               </a>
             ))}
             <Link 
+              to="/catalog"
+              className="text-lg font-bold text-primary uppercase tracking-widest border border-primary/20 p-4 rounded-2xl bg-primary/5 flex items-center justify-center gap-2"
+              onClick={() => setIsOpen(false)}
+            >
+              <Search size={20} /> Search
+            </Link>
+            <Link 
               to="/quick-access"
               className="text-lg font-bold text-primary uppercase tracking-widest border border-primary/20 p-4 rounded-2xl bg-primary/5"
               onClick={() => setIsOpen(false)}
             >
               Quick Access Hub
             </Link>
+
+            {user?.email === 'computercorner@gmail.com' && (
+              <Link 
+                to="/admin"
+                className="text-lg font-bold text-primary uppercase tracking-widest border border-primary/20 p-4 rounded-2xl bg-primary/5"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin Portal
+              </Link>
+            )}
+
+            {user ? (
+              <button
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+                className="text-lg font-bold text-red-400 uppercase tracking-widest border border-red-500/20 p-4 rounded-2xl bg-red-500/5 mx-auto w-full flex justify-center items-center gap-2"
+              >
+                <LogOut size={20} /> Sign Out
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setIsAuthModalOpen(true);
+                  setIsOpen(false);
+                }}
+                className="text-lg font-bold text-white uppercase tracking-widest border border-white/20 p-4 rounded-2xl bg-white/5 mx-auto w-full flex justify-center items-center gap-2"
+              >
+                <UserIcon size={20} /> Sign In
+              </button>
+            )}
             
             <div className="flex justify-center gap-8 pt-4 border-t border-white/5">
               <a href="https://www.facebook.com/computercornerjgm/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
@@ -165,6 +243,8 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Auth Modal */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </nav>
   );
 }

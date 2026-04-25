@@ -20,6 +20,8 @@ import ProductDetail from './components/ProductDetail';
 import TechShowcase from './components/TechShowcase';
 import BrandSubCatalogHome from './components/BrandSubCatalogHome';
 import LaptopUsageHub from './components/LaptopUsageHub';
+import AdminRoute from './components/AdminRoute';
+import AdminDashboard from './components/AdminDashboard';
 
 function HomePage() {
   return (
@@ -50,6 +52,7 @@ export default function App() {
       <div className="min-h-screen bg-bg-dark text-white selection:bg-primary selection:text-bg-dark">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/quick-access" element={<QuickAccess />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:categorySlug" element={<Catalog />} />

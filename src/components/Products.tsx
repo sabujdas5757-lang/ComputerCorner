@@ -6,9 +6,10 @@
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
-import { PRODUCTS } from '../constants';
+import { useProducts } from '../contexts/ProductContext';
 
 export default function Products() {
+  const { products: PRODUCTS } = useProducts();
   return (
     <section id="products" className="py-24 bg-surface">
       <div className="section-container">

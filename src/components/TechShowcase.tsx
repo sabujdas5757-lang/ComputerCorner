@@ -7,11 +7,12 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Monitor, MessageCircle } from 'lucide-react';
-import { PRODUCTS } from '../constants';
-
-const monitorProducts = PRODUCTS.filter(p => p.category === 'Monitors').slice(0, 4);
+import { useProducts } from '../contexts/ProductContext';
 
 export default function TechShowcase() {
+  const { products: PRODUCTS } = useProducts();
+  const monitorProducts = PRODUCTS.filter(p => p.category === 'Monitors').slice(0, 4);
+
   return (
     <section className="py-24 bg-bg-dark border-t border-white/5">
       <div className="section-container">

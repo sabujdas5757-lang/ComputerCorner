@@ -6,9 +6,10 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Home, Phone, ShoppingBag, MapPin, MessageSquare, Heart } from 'lucide-react';
-import { PRODUCTS } from '../constants';
+import { useProducts } from '../contexts/ProductContext';
 
 export default function QuickAccess() {
+  const { products: PRODUCTS } = useProducts();
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white p-6 md:p-12">
       <div className="max-w-2xl mx-auto">

@@ -7,7 +7,8 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, ShoppingCart, MessageSquare, Filter, LayoutGrid, List } from 'lucide-react';
-import { PRODUCTS, PRODUCT_CATEGORIES } from '../constants';
+import { PRODUCT_CATEGORIES } from '../constants';
+import { useProducts } from '../contexts/ProductContext';
 
 const getNumericPrice = (priceStr: string) => {
   const match = priceStr.replace(/,/g, '').match(/\d+/);
@@ -15,6 +16,7 @@ const getNumericPrice = (priceStr: string) => {
 };
 
 export default function Catalog() {
+  const { products: PRODUCTS } = useProducts();
   const { categorySlug } = useParams();
   const [searchParams] = useSearchParams();
   const usageParam = searchParams.get('usage');

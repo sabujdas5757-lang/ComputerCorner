@@ -4,6 +4,7 @@ import path from "path";
 import { Client, Storage, ID } from "node-appwrite";
 import { InputFile } from "node-appwrite/file";
 import multer from "multer";
+import cors from "cors";
 import 'dotenv/config';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -12,6 +13,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
   
+  app.use(cors());
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -25,7 +27,7 @@ async function startServer() {
   const upload = multer({ 
     storage: multer.memoryStorage(),
     limits: { fileSize: 50 * 1024 * 1024 } 
-  });
+  }).single('file');
 
   app.use((req, res, next) => {
     console.log(`REQ: ${req.method} ${req.path}`);
@@ -104,34 +106,44 @@ async function startServer() {
     }
   });
 
-  app.post("/api/upload-file", upload.single('file'), async (req, res) => {
+  app.post("/api/upload-file", (req, res) => {
     console.log("POST /api/upload-file received");
-    try {
-      const file = req.file;
-      if (!file) {
-        console.log("No file in request");
-        return res.status(400).json({ error: "No file uploaded" });
+    upload(req, res, async (err) => {
+      if (err instanceof multer.MulterError) {
+        console.error("Multer Error:", err);
+        return res.status(400).json({ error: `Upload error: ${err.message}` });
+      } else if (err) {
+        console.error("Unknown Upload Error:", err);
+        return res.status(500).json({ error: `Unknown upload error: ${err.message}` });
       }
       
-      console.log("Starting Appwrite upload...");
+      try {
+        const file = req.file;
+        if (!file) {
+          console.log("No file in request");
+          return res.status(400).json({ error: "No file uploaded" });
+        }
+        
+        console.log("Starting Appwrite upload...");
 
-      if (!process.env.APPWRITE_BUCKET_ID) {
-         return res.status(500).json({ error: "APPWRITE_BUCKET_ID is not configured." });
+        if (!process.env.APPWRITE_BUCKET_ID) {
+           return res.status(500).json({ error: "APPWRITE_BUCKET_ID is not configured." });
+        }
+
+        const inputFile = InputFile.fromBuffer(file.buffer, file.originalname || 'image.png');
+
+        const result = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
+        
+        const fileUrl = `/api/images/${result.$id}`;
+        
+        console.log("Appwrite upload successful:", fileUrl);
+        res.json({ secure_url: fileUrl });
+        
+      } catch (error: any) {
+        console.error("Server API upload error:", error);
+        res.status(500).json({ error: error.message });
       }
-
-      const inputFile = InputFile.fromBuffer(file.buffer, file.originalname || 'image.png');
-
-      const result = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
-      
-      const fileUrl = `/api/images/${result.$id}`;
-      
-      console.log("Appwrite upload successful:", fileUrl);
-      res.json({ secure_url: fileUrl });
-      
-    } catch (error: any) {
-      console.error("Server API upload error:", error);
-      res.status(500).json({ error: error.message });
-    }
+    });
   });
 
   // API health

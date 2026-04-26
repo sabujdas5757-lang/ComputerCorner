@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/upload-file",
+      "destination": "/upload-file"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

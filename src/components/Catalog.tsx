@@ -23,6 +23,7 @@ export default function Catalog() {
 
   const [activeCategory, setActiveCategory] = useState(categorySlug || 'All');
   const [activeBrand, setActiveBrand] = useState('AllBrands');
+  const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grid');
   
   const [priceRange, setPriceRange] = useState({ min: 0, max: 200000 });
@@ -47,6 +48,9 @@ export default function Catalog() {
       
       const price = getNumericPrice(p.price);
       const priceMatch = price >= priceRange.min && price <= priceRange.max;
+      const searchMatch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          p.brand.toLowerCase().includes(searchQuery.toLowerCase());
 
       // Usage based filtering
       let usageMatch = true;
@@ -65,9 +69,9 @@ export default function Catalog() {
         }
       }
 
-      return categoryMatch && brandMatch && priceMatch && usageMatch;
+      return categoryMatch && brandMatch && priceMatch && searchMatch && usageMatch;
     });
-  }, [activeCategory, activeBrand, priceRange, usageParam]);
+  }, [activeCategory, activeBrand, priceRange, usageParam, searchQuery]);
 
   const groupedProducts = useMemo(() => {
     if (viewMode !== 'grouped') return [];
@@ -115,6 +119,16 @@ export default function Catalog() {
         {/* Filter Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 bg-white/5 border border-white/10 rounded-[32px] p-8">
           <div className="lg:col-span-2 space-y-8">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Search Catalog</span>
+              <input 
+                type="text" 
+                placeholder="Search by name, brand or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 text-white"
+              />
+            </div>
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Category</span>
               <div className="flex flex-wrap gap-3">

@@ -3,9 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Trash2, Edit2, Image as ImageIcon, Plus, Save, Search } from 'lucide-react';
+import { Trash2, Edit2, Image as ImageIcon, Plus, Save, Search, Upload } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
+
+const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'Macbook'];
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
@@ -20,6 +23,67 @@ export default function AdminDashboard() {
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(null), 3000);
+  };
+
+  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const row of json) {
+        // Helper to find value despite potentially different casing
+        const getValue = (keys: string[]) => {
+          for (const k of keys) {
+            if (row[k] !== undefined) return row[k];
+          }
+          return undefined;
+        };
+
+        try {
+          const product = {
+            name: getValue(['name', 'Name', 'NAME']) || 'Unnamed Product',
+            brand: getValue(['brand', 'Brand', 'BRAND']) || 'Unknown',
+            category: getValue(['category', 'Category', 'CATEGORY']) || 'Laptops',
+            description: getValue(['description', 'Description', 'DESCRIPTION']) || '',
+            price: String(getValue(['price', 'Price', 'PRICE']) || '0'),
+            oldPrice: String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || ''),
+            discount: String(getValue(['discount', 'Discount', 'DISCOUNT']) || ''),
+            usageTags: getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS']) 
+              ? String(getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS'])).split(',').map(tag => tag.trim()) 
+              : [],
+            image: getValue(['image', 'Image', 'IMAGE']) || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+            specifications: {}
+          };
+          await addProduct(product);
+          successCount++;
+        } catch (err) {
+          console.error("Error adding product row:", row, err);
+          errorCount++;
+        }
+      }
+      
+      if (errorCount > 0) {
+        showFeedback(`Added ${successCount} products, but ${errorCount} failed. Check console for details.`);
+      } else {
+        showFeedback(`Successfully added ${successCount} products!`);
+      }
+    } catch (err: any) {
+      showFeedback(`Error uploading bulk products: ${err.message}`);
+    } finally {
+      setLoading(false);
+      // Reset input
+      e.target.value = '';
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -39,7 +103,8 @@ export default function AdminDashboard() {
     description: '',
     price: '',
     oldPrice: '',
-    discount: ''
+    discount: '',
+    usageTags: [] as string[]
   });
 
   const [specs, setSpecs] = useState<{ key: string; value: string }[]>([]);
@@ -65,6 +130,7 @@ export default function AdminDashboard() {
   };
 
   const handleEdit = (product: any) => {
+    console.log("Editing product:", product);
     setEditingId(product.id);
     setFormData({
       name: product.name,
@@ -73,7 +139,8 @@ export default function AdminDashboard() {
       description: product.description,
       price: product.price,
       oldPrice: product.oldPrice || '',
-      discount: product.discount || ''
+      discount: product.discount || '',
+      usageTags: Array.isArray(product.usageTags) ? product.usageTags : []
     });
 
     if (product.specifications) {
@@ -94,7 +161,8 @@ export default function AdminDashboard() {
       description: '',
       price: '',
       oldPrice: '',
-      discount: ''
+      discount: '',
+      usageTags: []
     });
     setSpecs([]);
     setImageFile(null);
@@ -191,11 +259,20 @@ export default function AdminDashboard() {
                 {editingId ? <Edit2 size={24} className="text-primary" /> : <Plus size={24} className="text-primary" />} 
                 {editingId ? 'Edit Product' : 'Add New Product'}
               </h2>
-              {editingId && (
-                <button onClick={handleCancelEdit} className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Cancel
-                </button>
-              )}
+              <div className="flex gap-2">
+                {!editingId && (
+                  <label className="text-sm bg-white/5 border border-white/10 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-2">
+                    <Upload size={16} className="text-primary" />
+                    <span>Bulk Upload</span>
+                    <input type="file" accept=".xlsx, .xls, .csv" onChange={handleBulkUpload} className="hidden" />
+                  </label>
+                )}
+                {editingId && (
+                  <button onClick={handleCancelEdit} className="text-sm text-gray-400 hover:text-white transition-colors">
+                    Cancel
+                  </button>
+                )}
+              </div>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -233,6 +310,28 @@ export default function AdminDashboard() {
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Discount/Badge (Optional)</label>
                 <input type="text" placeholder="e.g. Best Seller" value={formData.discount} onChange={e => setFormData({...formData, discount: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Usage Tags</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {USAGE_OPTIONS.map(tag => (
+                    <label key={tag} className="flex items-center gap-2 cursor-pointer text-sm">
+                      <input 
+                        type="checkbox" 
+                        checked={formData.usageTags.some(t => t.toLowerCase() === tag.toLowerCase())}
+                        onChange={(e) => {
+                          const newTags = e.target.checked 
+                            ? [...formData.usageTags, tag]
+                            : formData.usageTags.filter(t => t.toLowerCase() !== tag.toLowerCase());
+                          setFormData({...formData, usageTags: newTags});
+                        }}
+                        className="rounded border-white/10 text-primary focus:ring-primary bg-bg-dark"
+                      />
+                      {tag}
+                    </label>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Product Image {editingId && '(Optional to keep current)'}</label>

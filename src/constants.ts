@@ -23,6 +23,7 @@ export interface Product {
   price: string;
   oldPrice?: string;
   discount?: string;
+  usageTags?: string[];
 }
 
 export interface Testimonial {

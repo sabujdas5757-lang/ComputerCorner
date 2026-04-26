@@ -211,17 +211,22 @@ export default function AdminDashboard() {
     try {
       let imageUrl = '';
       if (imageFile) {
-        console.log("Uploading file to Cloudinary:", imageFile.name);
-        const formDataUpload = new FormData();
-        formDataUpload.append('file', imageFile);
+        console.log("Uploading file to API:", imageFile.name);
         
+        // Convert to base64
+        const reader = new FileReader();
+        const base64Image = await new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(imageFile);
+        });
+
         console.log("Starting fetch to /api/upload-file...");
         let response;
         try {
-          console.log("FormData file:", imageFile);
           response = await fetch('/api/upload-file', {
             method: 'POST',
-            body: formDataUpload
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: base64Image })
           });
           console.log("Response status:", response.status);
         } catch (fetchError) {

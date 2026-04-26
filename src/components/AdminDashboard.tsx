@@ -170,14 +170,19 @@ export default function AdminDashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Submitting form, editingId:", editingId);
     setLoading(true);
     try {
       let imageUrl = '';
       if (imageFile) {
+        console.log("Uploading file:", imageFile.name);
         const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
         const snapshot = await uploadBytes(storageRef, imageFile);
+        console.log("Upload snapshot:", snapshot);
         imageUrl = await getDownloadURL(snapshot.ref);
+        console.log("Image URL:", imageUrl);
       }
+      console.log("imageUrl:", imageUrl);
 
       const formattedSpecs = specs.reduce((acc, curr) => {
         if (curr.key.trim()) {

@@ -23,8 +23,8 @@ async function startServer() {
     next();
   });
 
-  app.post("/api/upload", upload.single("file"), async (req, res) => {
-    console.log("POST /api/upload hit, method:", req.method, "file:", req.file ? req.file.originalname : "none");
+  app.post("/upload-file", upload.single("file"), async (req, res) => {
+    console.log("POST /upload-file hit, method:", req.method, "file:", req.file ? req.file.originalname : "none");
     try {
       if (!req.file) {
         console.log("No file in request");
@@ -32,8 +32,15 @@ async function startServer() {
       }
       
       console.log("Starting Cloudinary upload...");
-      
-      cloudinary.uploader.upload_stream({ resource_type: "auto" }, (error, result) => {
+
+      if (!process.env.VITE_CLOUDINARY_UPLOAD_PRESET) {
+         return res.status(500).json({ error: "VITE_CLOUDINARY_UPLOAD_PRESET is not configured." });
+      }
+
+      cloudinary.uploader.upload_stream({ 
+        resource_type: "auto",
+        upload_preset: process.env.VITE_CLOUDINARY_UPLOAD_PRESET 
+      }, (error, result) => {
         if (error) {
           console.error("Cloudinary error:", error);
           return res.status(500).json({ error: error.message });

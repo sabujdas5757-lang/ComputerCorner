@@ -177,10 +177,17 @@ export default function AdminDashboard() {
         const formDataUpload = new FormData();
         formDataUpload.append('file', imageFile);
         
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formDataUpload
-        });
+        console.log("Starting fetch to /upload-file...");
+        let response;
+        try {
+          response = await fetch('/upload-file', {
+            method: 'POST',
+            body: formDataUpload
+          });
+        } catch (fetchError) {
+          console.error("Fetch failed:", fetchError);
+          throw new Error(`Fetch failed: ${fetchError}`);
+        }
         
         if (!response.ok) {
           const errorText = await response.text();

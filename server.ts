@@ -23,11 +23,8 @@ async function startServer() {
     next();
   });
 
-  app.all("/api/upload(/)?", upload.single("file"), async (req, res) => {
-    console.log("REQ /api/upload hit, method:", req.method, "file:", req.file ? req.file.originalname : "none");
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: "Method not allowed" });
-    }
+  app.post("/api/upload", upload.single("file"), async (req, res) => {
+    console.log("POST /api/upload hit, method:", req.method, "file:", req.file ? req.file.originalname : "none");
     try {
       if (!req.file) {
         console.log("No file in request");

@@ -12,7 +12,8 @@ export default function AdminDashboard() {
   const { logout } = useAuth();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrapeUrl, setScrapeUrl] = useState('');
@@ -179,7 +180,8 @@ export default function AdminDashboard() {
       setSpecs([]);
     }
 
-    setImageUrl(''); // Clear pending new image
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleCancelEdit = () => {
@@ -195,7 +197,8 @@ export default function AdminDashboard() {
       usageTags: []
     });
     setSpecs([]);
-    setImageUrl('');
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -204,16 +207,17 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       let finalImageUrl = '';
-      if (imageUrl && imageUrl.startsWith('data:')) {
-        console.log("Uploading base64 image to API");
+      if (imageFile) {
+        console.log("Uploading file via FormData");
         
-        console.log("Starting fetch to /api/upload-file...");
+        const uploadData = new FormData();
+        uploadData.append('file', imageFile);
+
         let response;
         try {
           response = await fetch('/api/upload-file', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ file: imageUrl })
+            body: uploadData
           });
           console.log("Response status:", response.status);
         } catch (fetchError) {
@@ -233,8 +237,6 @@ export default function AdminDashboard() {
         } else {
           throw new Error(data.error?.message || 'Failed to upload image');
         }
-      } else if (imageUrl) {
-         finalImageUrl = imageUrl;
       }
       console.log("finalImageUrl:", finalImageUrl);
 
@@ -407,7 +409,7 @@ export default function AdminDashboard() {
                 <label className="flex items-center gap-3 w-full bg-bg-dark border border-dashed border-white/20 rounded-xl px-4 py-6 cursor-pointer hover:border-primary transition-colors">
                   <ImageIcon size={24} className="text-gray-500" />
                   <span className="text-gray-400 text-sm">
-                    {imageUrl && imageUrl.startsWith('data:') ? 'New image selected' : (editingId ? 'Click to upload new image' : 'Click to upload preview image')}
+                    {imagePreview ? 'New image selected' : (editingId ? 'Click to upload new image' : 'Click to upload preview image')}
                   </span>
                   <input 
                     type="file" 
@@ -415,11 +417,8 @@ export default function AdminDashboard() {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setImageUrl(reader.result as string);
-                        };
-                        reader.readAsDataURL(file);
+                        setImageFile(file);
+                        setImagePreview(URL.createObjectURL(file));
                       }
                     }} 
                     className="hidden" 

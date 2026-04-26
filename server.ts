@@ -24,7 +24,7 @@ async function startServer() {
 
   const upload = multer({ 
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 } 
+    limits: { fileSize: 50 * 1024 * 1024 } 
   });
 
   app.use((req, res, next) => {
@@ -92,7 +92,7 @@ async function startServer() {
       );
       
       const contentType = response.headers['content-type'];
-      if (contentType) {
+      if (typeof contentType === 'string') {
         res.setHeader('Content-Type', contentType);
       }
       
@@ -104,10 +104,10 @@ async function startServer() {
     }
   });
 
-  app.post("/api/upload-file", async (req, res) => {
+  app.post("/api/upload-file", upload.single('file'), async (req, res) => {
     console.log("POST /api/upload-file received");
     try {
-      const { file } = req.body;
+      const file = req.file;
       if (!file) {
         console.log("No file in request");
         return res.status(400).json({ error: "No file uploaded" });
@@ -119,12 +119,7 @@ async function startServer() {
          return res.status(500).json({ error: "APPWRITE_BUCKET_ID is not configured." });
       }
 
-      // Convert base64 to buffer
-      const [header, base64] = file.split(',');
-      const buffer = Buffer.from(base64, 'base64');
-      const mimeType = header.split(':')[1].split(';')[0];
-      const extension = mimeType.split('/')[1];
-      const inputFile = InputFile.fromBuffer(buffer, `image.${extension}`);
+      const inputFile = InputFile.fromBuffer(file.buffer, file.originalname || 'image.png');
 
       const result = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
       

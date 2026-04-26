@@ -40,12 +40,22 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <Link to="/catalog" className="flex items-center gap-3 cursor-pointer group">
-          <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-white/10 group-hover:border-primary transition-colors">
-            <span className="font-bold text-primary text-xs lowercase">cc</span>
+          <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-white/10 group-hover:border-primary transition-colors">
+            <img 
+              src="/logo.jpg" 
+              alt="Computer Corner" 
+              className="w-full h-full object-contain p-1"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                // Fallback concentric C logo if image not uploaded yet
+                target.src = 'data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M 80 25 A 35 35 0 1 0 80 75" fill="none" stroke="%235eb133" stroke-width="14" stroke-linecap="square" /><path d="M 66 38 A 18 18 0 1 0 66 62" fill="none" stroke="%230f0f0f" stroke-width="14" stroke-linecap="square" /></svg>';
+              }}
+            />
           </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-sm font-bold tracking-tight lowercase group-hover:text-primary transition-colors">computer</span>
-            <span className="text-sm font-bold tracking-tight text-gray-400 lowercase group-hover:text-gray-300 transition-colors">corner</span>
+          <div className="hidden sm:flex flex-col leading-none">
+            <span className="text-lg font-extrabold tracking-tight text-white group-hover:text-primary transition-colors" style={{ fontFamily: 'Inter, sans-serif' }}>Computer</span>
+            <span className="text-lg font-extrabold tracking-tight text-[#5eb133] group-hover:text-green-400 transition-colors" style={{ fontFamily: 'Inter, sans-serif' }}>Corner</span>
           </div>
         </Link>
 

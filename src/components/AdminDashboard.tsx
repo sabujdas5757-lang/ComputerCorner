@@ -15,8 +15,46 @@ export default function AdminDashboard() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [scrapeUrl, setScrapeUrl] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+
+  const handleScrapeProduct = async () => {
+    if (!scrapeUrl) return;
+    setLoading(true);
+    try {
+      const response = await fetch('/api/scrape-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: scrapeUrl })
+      });
+      const productData = await response.json();
+      
+      if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
+
+      const product = {
+        name: productData.name || 'Unnamed Product',
+        brand: 'Unknown',
+        category: 'Laptops',
+        description: productData.description || '',
+        price: productData.price || '0',
+        oldPrice: '',
+        discount: '',
+        usageTags: [],
+        image: productData.image || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+        specifications: {}
+      };
+      
+      await addProduct(product);
+      
+      showFeedback('Product automatically added to inventory!');
+      setScrapeUrl('');
+    } catch (err: any) {
+      showFeedback(`Error scraping/adding product: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
@@ -177,13 +215,16 @@ export default function AdminDashboard() {
         const formDataUpload = new FormData();
         formDataUpload.append('file', imageFile);
         
-        console.log("Starting fetch to /upload-file...");
+        console.log("Starting fetch to /api/upload-file...");
         let response;
         try {
-          response = await fetch('/upload-file', {
+          console.log("FormData file:", imageFile);
+          response = await fetch(window.location.origin + '/api/upload-file', {
             method: 'POST',
-            body: formDataUpload
+            body: formDataUpload,
+            credentials: 'include'
           });
+          console.log("Response status:", response.status);
         } catch (fetchError) {
           console.error("Fetch failed:", fetchError);
           throw new Error(`Fetch failed: ${fetchError}`);
@@ -299,6 +340,18 @@ export default function AdminDashboard() {
                 )}
               </div>
             </div>
+            
+            {/* Scrapper tool */}
+            {!editingId && (
+              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
+                <p className="text-sm text-gray-400">Import from URL</p>
+                <div className="flex gap-2">
+                  <input type="text" value={scrapeUrl} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+                  <button onClick={handleScrapeProduct} className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors">Import</button>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Product Name</label>

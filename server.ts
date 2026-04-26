@@ -1,8 +1,8 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { Client, Storage, ID } from "appwrite";
-import { InputFile } from "appwrite/file";
+import { Client, Storage, ID } from "node-appwrite";
+import { InputFile } from "node-appwrite/file";
 import multer from "multer";
 import 'dotenv/config';
 import axios from 'axios';
@@ -12,7 +12,8 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
   
-  app.use(express.json());
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
   // Appwrite configuration
   const client = new Client()
@@ -71,6 +72,38 @@ async function startServer() {
     }
   });
 
+  // API proxy for appwrite images
+  app.get("/api/images/:fileId", async (req, res) => {
+    try {
+      const fileId = req.params.fileId;
+      if (!process.env.APPWRITE_ENDPOINT || !process.env.APPWRITE_PROJECT_ID || !process.env.APPWRITE_API_KEY || !process.env.APPWRITE_BUCKET_ID) {
+        return res.status(500).send("Appwrite configuration missing");
+      }
+      
+      const response = await axios.get(
+        `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${fileId}/view?project=${process.env.APPWRITE_PROJECT_ID}`, 
+        {
+          headers: {
+            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+            'X-Appwrite-Key': process.env.APPWRITE_API_KEY
+          },
+          responseType: 'arraybuffer'
+        }
+      );
+      
+      const contentType = response.headers['content-type'];
+      if (contentType) {
+        res.setHeader('Content-Type', contentType);
+      }
+      
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+      res.send(response.data);
+    } catch (err: any) {
+      console.error("Image proxy error:", err.message);
+      res.status(err.response?.status || 500).send(err.message);
+    }
+  });
+
   app.post("/api/upload-file", async (req, res) => {
     console.log("POST /api/upload-file received");
     try {
@@ -95,9 +128,10 @@ async function startServer() {
 
       const result = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
       
-      const fileView = storage.getFileView(process.env.APPWRITE_BUCKET_ID, result.$id);
-      console.log("Appwrite upload successful:", fileView.href);
-      res.json({ secure_url: fileView.href });
+      const fileUrl = `/api/images/${result.$id}`;
+      
+      console.log("Appwrite upload successful:", fileUrl);
+      res.json({ secure_url: fileUrl });
       
     } catch (error: any) {
       console.error("Server API upload error:", error);

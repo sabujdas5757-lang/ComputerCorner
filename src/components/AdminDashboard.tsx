@@ -204,8 +204,8 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       let finalImageUrl = '';
-      if (imageUrl) {
-        console.log("Uploading URL to API:", imageUrl);
+      if (imageUrl && imageUrl.startsWith('data:')) {
+        console.log("Uploading base64 image to API");
         
         console.log("Starting fetch to /api/upload-file...");
         let response;
@@ -233,9 +233,8 @@ export default function AdminDashboard() {
         } else {
           throw new Error(data.error?.message || 'Failed to upload image');
         }
-      } else if (editingId) {
-          // If editing and no new image URL, it will keep existing one anyway logic-wise?
-          // The previous code didn't update image if !imageUrl = ''
+      } else if (imageUrl) {
+         finalImageUrl = imageUrl;
       }
       console.log("finalImageUrl:", finalImageUrl);
 
@@ -404,8 +403,28 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Product Image URL</label>
-                <input type="text" placeholder="https://example.com/image.jpg" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+                <label className="block text-sm text-gray-400 mb-1">Product Image {editingId && '(Optional to keep current)'}</label>
+                <label className="flex items-center gap-3 w-full bg-bg-dark border border-dashed border-white/20 rounded-xl px-4 py-6 cursor-pointer hover:border-primary transition-colors">
+                  <ImageIcon size={24} className="text-gray-500" />
+                  <span className="text-gray-400 text-sm">
+                    {imageUrl && imageUrl.startsWith('data:') ? 'New image selected' : (editingId ? 'Click to upload new image' : 'Click to upload preview image')}
+                  </span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setImageUrl(reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }} 
+                    className="hidden" 
+                  />
+                </label>
               </div>
 
               {/* Specifications Section */}

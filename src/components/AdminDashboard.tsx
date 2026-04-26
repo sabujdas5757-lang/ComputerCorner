@@ -181,6 +181,12 @@ export default function AdminDashboard() {
           method: 'POST',
           body: formDataUpload
         });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to upload image: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        
         const data = await response.json();
         if (data.secure_url) {
           imageUrl = data.secure_url;

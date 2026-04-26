@@ -24,14 +24,19 @@ async function startServer() {
         return res.status(400).json({ error: "No file uploaded" });
       }
       
+      console.log("Starting Cloudinary upload...");
+      
       cloudinary.uploader.upload_stream({ resource_type: "auto" }, (error, result) => {
         if (error) {
+          console.error("Cloudinary error:", error);
           return res.status(500).json({ error: error.message });
         }
+        console.log("Cloudinary upload successful:", result?.secure_url);
         res.json({ secure_url: result?.secure_url });
       }).end(req.file.buffer);
       
     } catch (error: any) {
+      console.error("Server API upload error:", error);
       res.status(500).json({ error: error.message });
     }
   });

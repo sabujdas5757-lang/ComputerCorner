@@ -19,8 +19,10 @@ async function startServer() {
   const upload = multer({ storage: multer.memoryStorage() });
 
   app.post("/api/upload", upload.single("file"), async (req, res) => {
+    console.log("POST /api/upload hit, file:", req.file ? req.file.originalname : "none");
     try {
       if (!req.file) {
+        console.log("No file in request");
         return res.status(400).json({ error: "No file uploaded" });
       }
       

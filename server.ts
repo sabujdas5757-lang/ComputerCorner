@@ -1,13 +1,13 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { Client, Storage, ID } from "node-appwrite";
-import { InputFile } from "node-appwrite/file";
-import multer from "multer";
 import cors from "cors";
 import 'dotenv/config';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import multer from "multer";
+import { Client, Storage, ID } from "node-appwrite";
+import { InputFile } from "node-appwrite/file";
 
 async function startServer() {
   const app = express();
@@ -16,18 +16,6 @@ async function startServer() {
   app.use(cors());
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-  // Appwrite configuration
-  const client = new Client()
-    .setEndpoint(process.env.APPWRITE_ENDPOINT || "")
-    .setProject(process.env.APPWRITE_PROJECT_ID || "")
-    .setKey(process.env.APPWRITE_API_KEY || "");
-  const storage = new Storage(client);
-
-  const upload = multer({ 
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 50 * 1024 * 1024 } 
-  }).single('file');
 
   app.use((req, res, next) => {
     console.log(`REQ: ${req.method} ${req.path}`);
@@ -74,7 +62,7 @@ async function startServer() {
     }
   });
 
-  // API proxy for appwrite images
+  // API proxy for appwrite images (for backwards compatibility with old products)
   app.get("/api/images/:fileId", async (req, res) => {
     try {
       const fileId = req.params.fileId;
@@ -106,37 +94,40 @@ async function startServer() {
     }
   });
 
+  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } 
+  }).single('file');
+
   app.post("/api/upload-file", (req, res) => {
-    console.log("POST /api/upload-file received");
-    upload(req, res, async (err) => {
-      if (err instanceof multer.MulterError) {
-        console.error("Multer Error:", err);
+    upload(req, res, async (err: any) => {
+      if (err) {
+        console.error("Upload error:", err);
         return res.status(400).json({ error: `Upload error: ${err.message}` });
-      } else if (err) {
-        console.error("Unknown Upload Error:", err);
-        return res.status(500).json({ error: `Unknown upload error: ${err.message}` });
       }
       
       try {
-        const file = req.file;
+        const file = (req as any).file;
         if (!file) {
-          console.log("No file in request");
           return res.status(400).json({ error: "No file uploaded" });
         }
-        
-        console.log("Starting Appwrite upload...");
 
-        if (!process.env.APPWRITE_BUCKET_ID) {
-           return res.status(500).json({ error: "APPWRITE_BUCKET_ID is not configured." });
+        if (!process.env.APPWRITE_ENDPOINT || !process.env.APPWRITE_PROJECT_ID || !process.env.APPWRITE_API_KEY || !process.env.APPWRITE_BUCKET_ID) {
+           return res.status(500).json({ error: "Appwrite Server configuration is missing" });
         }
+
+        const client = new Client()
+          .setEndpoint(process.env.APPWRITE_ENDPOINT)
+          .setProject(process.env.APPWRITE_PROJECT_ID)
+          .setKey(process.env.APPWRITE_API_KEY);
+        
+        const appwriteStorage = new Storage(client);
 
         const inputFile = InputFile.fromBuffer(file.buffer, file.originalname || 'image.png');
 
-        const result = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
+        const result = await appwriteStorage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
         
         const fileUrl = `/api/images/${result.$id}`;
-        
-        console.log("Appwrite upload successful:", fileUrl);
         res.json({ secure_url: fileUrl });
         
       } catch (error: any) {
@@ -149,6 +140,11 @@ async function startServer() {
   // API health
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  // Fallback for missing API routes to ensure they return JSON, not HTML
+  app.all("/api/*", (req, res) => {
+    res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
   });
 
   // Vite middleware for development
@@ -166,9 +162,12 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  // Only start listening if not running in a serverless environment like Vercel
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+  }
 }
 
 startServer();

@@ -208,34 +208,44 @@ export default function AdminDashboard() {
     try {
       let finalImageUrl = '';
       if (imageFile) {
-        console.log("Uploading file via FormData");
+        console.log("Uploading file via Server API");
         
-        const uploadData = new FormData();
-        uploadData.append('file', imageFile);
-
-        let response;
         try {
-          response = await fetch('/api/upload-file', {
+          const uploadData = new FormData();
+          uploadData.append('file', imageFile);
+
+          const response = await fetch('/api/upload-file', {
             method: 'POST',
             body: uploadData
           });
-          console.log("Response status:", response.status);
-        } catch (fetchError) {
-          console.error("Fetch failed:", fetchError);
-          throw new Error(`Fetch failed: ${fetchError}`);
-        }
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to upload image: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-        
-        const data = await response.json();
-        if (data.secure_url) {
-          finalImageUrl = data.secure_url;
-          console.log("Image URL:", finalImageUrl);
-        } else {
-          throw new Error(data.error?.message || 'Failed to upload image');
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            let errorMessage = `Server returned ${response.status}: ${errorText}`;
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.error || errorMessage;
+            } catch (e) {}
+            throw new Error(errorMessage);
+          }
+          
+          const contentType = response.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Expected JSON but got:', text);
+            throw new Error('Server returned an unexpected non-JSON response. This might be a security check or a configuration issue.');
+          }
+
+          const data = await response.json();
+          if (data.secure_url) {
+            finalImageUrl = data.secure_url;
+            console.log("Upload successful:", finalImageUrl);
+          } else {
+            throw new Error(data.error || 'Failed to upload image');
+          }
+        } catch (uploadError: any) {
+          console.error("Upload failed:", uploadError);
+          throw new Error(`Failed to upload file: ${uploadError.message}`);
         }
       }
       console.log("finalImageUrl:", finalImageUrl);

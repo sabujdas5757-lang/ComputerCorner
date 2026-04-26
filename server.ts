@@ -18,8 +18,16 @@ async function startServer() {
 
   const upload = multer({ storage: multer.memoryStorage() });
 
-  app.post("/api/upload", upload.single("file"), async (req, res) => {
-    console.log("POST /api/upload hit, file:", req.file ? req.file.originalname : "none");
+  app.use((req, res, next) => {
+    console.log(`REQ: ${req.method} ${req.path}`);
+    next();
+  });
+
+  app.all("/api/upload(/)?", upload.single("file"), async (req, res) => {
+    console.log("REQ /api/upload hit, method:", req.method, "file:", req.file ? req.file.originalname : "none");
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
     try {
       if (!req.file) {
         console.log("No file in request");

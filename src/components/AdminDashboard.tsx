@@ -219,10 +219,9 @@ export default function AdminDashboard() {
         let response;
         try {
           console.log("FormData file:", imageFile);
-          response = await fetch(window.location.origin + '/api/upload-file', {
+          response = await fetch('/api/upload-file', {
             method: 'POST',
-            body: formDataUpload,
-            credentials: 'include'
+            body: formDataUpload
           });
           console.log("Response status:", response.status);
         } catch (fetchError) {

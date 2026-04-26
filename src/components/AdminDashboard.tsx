@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   const { logout } = useAuth();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [loading, setLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrapeUrl, setScrapeUrl] = useState('');
@@ -159,12 +159,6 @@ export default function AdminDashboard() {
     setSpecs(newSpecs);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
-    }
-  };
-
   const handleEdit = (product: any) => {
     console.log("Editing product:", product);
     setEditingId(product.id);
@@ -185,7 +179,7 @@ export default function AdminDashboard() {
       setSpecs([]);
     }
 
-    setImageFile(null); // Clear any pending new image
+    setImageUrl(''); // Clear pending new image
   };
 
   const handleCancelEdit = () => {
@@ -201,7 +195,7 @@ export default function AdminDashboard() {
       usageTags: []
     });
     setSpecs([]);
-    setImageFile(null);
+    setImageUrl('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -209,24 +203,17 @@ export default function AdminDashboard() {
     console.log("Submitting form, editingId:", editingId);
     setLoading(true);
     try {
-      let imageUrl = '';
-      if (imageFile) {
-        console.log("Uploading file to API:", imageFile.name);
+      let finalImageUrl = '';
+      if (imageUrl) {
+        console.log("Uploading URL to API:", imageUrl);
         
-        // Convert to base64
-        const reader = new FileReader();
-        const base64Image = await new Promise<string>((resolve) => {
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(imageFile);
-        });
-
         console.log("Starting fetch to /api/upload-file...");
         let response;
         try {
           response = await fetch('/api/upload-file', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ file: base64Image })
+            body: JSON.stringify({ file: imageUrl })
           });
           console.log("Response status:", response.status);
         } catch (fetchError) {
@@ -241,13 +228,16 @@ export default function AdminDashboard() {
         
         const data = await response.json();
         if (data.secure_url) {
-          imageUrl = data.secure_url;
-          console.log("Image URL:", imageUrl);
+          finalImageUrl = data.secure_url;
+          console.log("Image URL:", finalImageUrl);
         } else {
           throw new Error(data.error?.message || 'Failed to upload image');
         }
+      } else if (editingId) {
+          // If editing and no new image URL, it will keep existing one anyway logic-wise?
+          // The previous code didn't update image if !imageUrl = ''
       }
-      console.log("imageUrl:", imageUrl);
+      console.log("finalImageUrl:", finalImageUrl);
 
       const formattedSpecs = specs.reduce((acc, curr) => {
         if (curr.key.trim()) {
@@ -257,23 +247,21 @@ export default function AdminDashboard() {
       }, {} as Record<string, string>);
 
       if (editingId) {
-        // Update product
         const updateData: any = {
           ...formData,
           category: formData.category as any,
           specifications: formattedSpecs
         };
-        if (imageUrl) {
-          updateData.image = imageUrl; // Only update image if a new one was uploaded
+        if (finalImageUrl) {
+          updateData.image = finalImageUrl;
         }
         await updateProduct(editingId, updateData);
         showFeedback('Product updated successfully!');
       } else {
-        // Add product
         await addProduct({
           ...formData,
           category: formData.category as any,
-          image: imageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+          image: finalImageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
           specifications: formattedSpecs
         });
         showFeedback('Product added successfully!');
@@ -416,14 +404,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Product Image {editingId && '(Optional to keep current)'}</label>
-                <label className="flex items-center gap-3 w-full bg-bg-dark border border-dashed border-white/20 rounded-xl px-4 py-6 cursor-pointer hover:border-primary transition-colors">
-                  <ImageIcon size={24} className="text-gray-500" />
-                  <span className="text-gray-400 text-sm">
-                    {imageFile ? imageFile.name : (editingId ? 'Click to upload new image' : 'Click to upload preview image')}
-                  </span>
-                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Product Image URL</label>
+                <input type="text" placeholder="https://example.com/image.jpg" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
               </div>
 
               {/* Specifications Section */}

@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { storage } from '../firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Trash2, Edit2, Image as ImageIcon, Plus, Save, Search, Upload } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
@@ -175,12 +173,21 @@ export default function AdminDashboard() {
     try {
       let imageUrl = '';
       if (imageFile) {
-        console.log("Uploading file:", imageFile.name);
-        const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        console.log("Upload snapshot:", snapshot);
-        imageUrl = await getDownloadURL(snapshot.ref);
-        console.log("Image URL:", imageUrl);
+        console.log("Uploading file to Cloudinary:", imageFile.name);
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', imageFile);
+        
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formDataUpload
+        });
+        const data = await response.json();
+        if (data.secure_url) {
+          imageUrl = data.secure_url;
+          console.log("Image URL:", imageUrl);
+        } else {
+          throw new Error(data.error?.message || 'Failed to upload image');
+        }
       }
       console.log("imageUrl:", imageUrl);
 

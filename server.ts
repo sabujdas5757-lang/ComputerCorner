@@ -1,7 +1,8 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { v2 as cloudinary } from "cloudinary";
+import { Client, Storage, ID } from "appwrite";
+import { InputFile } from "appwrite/file";
 import multer from "multer";
 import 'dotenv/config';
 import axios from 'axios';
@@ -13,12 +14,12 @@ async function startServer() {
   
   app.use(express.json());
 
-  // Cloudinary configuration
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
+  // Appwrite configuration
+  const client = new Client()
+    .setEndpoint(process.env.APPWRITE_ENDPOINT || "")
+    .setProject(process.env.APPWRITE_PROJECT_ID || "")
+    .setKey(process.env.APPWRITE_API_KEY || "");
+  const storage = new Storage(client);
 
   const upload = multer({ 
     storage: multer.memoryStorage(),
@@ -79,23 +80,24 @@ async function startServer() {
         return res.status(400).json({ error: "No file uploaded" });
       }
       
-      console.log("Starting Cloudinary upload...", "preset:", process.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+      console.log("Starting Appwrite upload...");
 
-      if (!process.env.VITE_CLOUDINARY_UPLOAD_PRESET) {
-         return res.status(500).json({ error: "VITE_CLOUDINARY_UPLOAD_PRESET is not configured." });
+      if (!process.env.APPWRITE_BUCKET_ID) {
+         return res.status(500).json({ error: "APPWRITE_BUCKET_ID is not configured." });
       }
 
-      cloudinary.uploader.upload(file, { 
-        resource_type: "auto",
-        upload_preset: process.env.VITE_CLOUDINARY_UPLOAD_PRESET 
-      }, (error, result) => {
-        if (error) {
-          console.error("Cloudinary error:", error);
-          return res.status(500).json({ error: error.message });
-        }
-        console.log("Cloudinary upload successful:", result?.secure_url);
-        res.json({ secure_url: result?.secure_url });
-      });
+      // Convert base64 to buffer
+      const [header, base64] = file.split(',');
+      const buffer = Buffer.from(base64, 'base64');
+      const mimeType = header.split(':')[1].split(';')[0];
+      const extension = mimeType.split('/')[1];
+      const inputFile = InputFile.fromBuffer(buffer, `image.${extension}`);
+
+      const result = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
+      
+      const fileView = storage.getFileView(process.env.APPWRITE_BUCKET_ID, result.$id);
+      console.log("Appwrite upload successful:", fileView.href);
+      res.json({ secure_url: fileView.href });
       
     } catch (error: any) {
       console.error("Server API upload error:", error);

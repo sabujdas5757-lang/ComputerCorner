@@ -13,18 +13,19 @@ async function startServer() {
   const PORT = 3000;
 
   // Supabase Configuration
-  let supabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
-  // Normalize URL more aggressively
-  supabaseUrl = supabaseUrl.replace(/\/+$/, ""); // Remove trailing slashes
-  if (supabaseUrl.endsWith("/rest/v1")) {
-    supabaseUrl = supabaseUrl.slice(0, -8);
-  } else if (supabaseUrl.endsWith("/rest/v1/")) {
-    supabaseUrl = supabaseUrl.slice(0, -9);
-  }
+  const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
+  
+  // Robust normalization to get the project's base URL (e.g., https://xyz.supabase.co)
+  let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
   
   const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydmR1b3hzYXF0aWl4c2tucG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMjg3MjksImV4cCI6MjA5MjcwNDcyOX0.hfM5tjamYmPKe9t2way_tm0fVQMdnG980u4K_HWUPso";
   const supabaseBucket = process.env.SUPABASE_BUCKET || "products";
-  console.log(`Supabase Initialization: URL=${supabaseUrl}, Bucket=${supabaseBucket}`);
+  
+  console.log(`Supabase Setup: 
+    Raw URL: "${rawSupabaseUrl}"
+    Normalized URL: "${supabaseUrl}"
+    Bucket: "${supabaseBucket}"
+  `);
 
   const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
   
@@ -144,19 +145,19 @@ async function startServer() {
           .from(supabaseBucket)
           .upload(filePath, file.buffer, {
             contentType: file.mimetype,
-            upsert: false
+            upsert: true // Allow overwriting if needed
           });
 
         if (error) {
-          console.error("Supabase Storage error:", error);
+          console.error("Supabase Storage error details:", JSON.stringify(error, null, 2));
           if (error.message.includes("new row violates row-level security policy")) {
             return res.status(500).json({ 
-              error: `Supabase RLS Error: Your bucket '${supabaseBucket}' has Row-Level Security enabled but no policy allows uploads. Please go to Supabase -> Storage -> Policies and add a policy for your bucket to allow 'INSERT' and 'SELECT' for 'anon' or 'authenticated' roles.` 
+              error: `Supabase RLS Error: Your bucket '${supabaseBucket}' has Row-Level Security enabled but no policy allows uploads. Please go to Supabase UI -> Storage -> Policies and add a policy for your bucket to allow 'INSERT' and 'SELECT' (for public viewing) for 'anon' or 'authenticated' roles.` 
             });
           }
-          if (error.message.includes("Invalid path") || error.message.includes("Bucket not found")) {
-            return res.status(500).json({ 
-              error: `Supabase Storage error: ${error.message}. The app is currently trying to use the bucket named '${supabaseBucket}'. If you created a bucket with a different name (like 'products'), please update the SUPABASE_BUCKET environment variable in the Settings menu to match your bucket name.` 
+          if (error.message.includes("Invalid path") || error.message.includes("Bucket not found") || error.message.includes("not_found")) {
+            return res.status(error.message.includes("not_found") ? 404 : 500).json({ 
+              error: `Supabase Storage error: ${error.message}. Please check that the bucket "${supabaseBucket}" exists and is set to PUBLIC in your Supabase dashboard.` 
             });
           }
           return res.status(500).json({ error: error.message });

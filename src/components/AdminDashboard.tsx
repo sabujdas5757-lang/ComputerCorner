@@ -226,8 +226,12 @@ export default function AdminDashboard() {
               const errorJson = JSON.parse(errorText);
               errorMessage = errorJson.error || errorMessage;
             } catch (e) {
-              if (errorText.includes('!doctype html') || errorText.includes('Cookie check')) {
-                errorMessage = "Your browser is blocking a security cookie required for uploads. Please open the app in a new tab using the 'Open in new tab' button at the top right of the screen, and then try again.";
+              if (errorText.includes('!doctype html') || errorText.includes('Cookie check') || errorText.includes('NOT_FOUND')) {
+                if (response.status === 404) {
+                   errorMessage = "The upload server endpoint was not found (404). This usually happens if the server is still restarting. Please wait 10 seconds and try again. If it persists, open the app in a new tab.";
+                } else {
+                   errorMessage = "Your browser is blocking a security cookie or the server returned an error page. Please open the app in a new tab using the 'Open in new tab' button at the top right, and then try again.";
+                }
               }
             }
             throw new Error(errorMessage);

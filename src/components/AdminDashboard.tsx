@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Image as ImageIcon, Plus, Save, Search } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
@@ -361,16 +361,6 @@ export default function AdminDashboard() {
                     </label>
                   ))}
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">Product Image URL</label>
-                <input 
-                  type="text" 
-                  placeholder="https://example.com/image.jpg"
-                  value={formData.image} 
-                  onChange={e => setFormData({...formData, image: e.target.value})} 
-                  className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" 
-                />
               </div>
 
               {/* Specifications Section */}

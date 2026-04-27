@@ -34,8 +34,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }, (error: any) => {
       console.error("Firestore error onSnapshot:", error);
       if (error.code === 'permission-denied') {
-        const rulesAlert = "Firestore Permission Denied.\n\nPlease go to Firebase Console -> Firestore Database -> Rules and update them to allow read/write access. For development, you can use:\n\nmatch /{document=**} {\n  allow read, write: if true;\n}";
-        console.warn(rulesAlert);
+        alert("Firestore Permission Denied.\n\nPlease go to Firebase Console -> Firestore Database -> Rules and update them to allow read/write access.");
       }
       setLoading(false);
     });

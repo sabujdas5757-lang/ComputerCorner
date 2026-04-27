@@ -6,12 +6,27 @@ import 'dotenv/config';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import multer from "multer";
-import { Client, Storage, ID } from "node-appwrite";
-import { InputFile } from "node-appwrite/file";
+import { createClient } from '@supabase/supabase-js';
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Supabase Configuration
+  let supabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
+  // Normalize URL more aggressively
+  supabaseUrl = supabaseUrl.replace(/\/+$/, ""); // Remove trailing slashes
+  if (supabaseUrl.endsWith("/rest/v1")) {
+    supabaseUrl = supabaseUrl.slice(0, -8);
+  } else if (supabaseUrl.endsWith("/rest/v1/")) {
+    supabaseUrl = supabaseUrl.slice(0, -9);
+  }
+  
+  const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydmR1b3hzYXF0aWl4c2tucG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMjg3MjksImV4cCI6MjA5MjcwNDcyOX0.hfM5tjamYmPKe9t2way_tm0fVQMdnG980u4K_HWUPso";
+  const supabaseBucket = process.env.SUPABASE_BUCKET || "products";
+  console.log(`Supabase Initialization: URL=${supabaseUrl}, Bucket=${supabaseBucket}`);
+
+  const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
   
   app.use(cors());
   app.use(express.json({ limit: '50mb' }));
@@ -112,23 +127,48 @@ async function startServer() {
           return res.status(400).json({ error: "No file uploaded" });
         }
 
-        if (!process.env.APPWRITE_ENDPOINT || !process.env.APPWRITE_PROJECT_ID || !process.env.APPWRITE_API_KEY || !process.env.APPWRITE_BUCKET_ID) {
-           return res.status(500).json({ error: "Appwrite Server configuration is missing" });
+        if (!supabase) {
+           return res.status(500).json({ error: "Supabase configuration is missing (SUPABASE_ANON_KEY unset)" });
         }
 
-        const client = new Client()
-          .setEndpoint(process.env.APPWRITE_ENDPOINT)
-          .setProject(process.env.APPWRITE_PROJECT_ID)
-          .setKey(process.env.APPWRITE_API_KEY);
-        
-        const appwriteStorage = new Storage(client);
+        const fileExt = file.originalname.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = fileName;
 
-        const inputFile = InputFile.fromBuffer(file.buffer, file.originalname || 'image.png');
+        console.log(`Uploading to Supabase bucket: "${supabaseBucket}", path: "${filePath}"`);
+        if (!supabaseBucket) {
+          return res.status(400).json({ error: "Storage bucket name is not configured." });
+        }
 
-        const result = await appwriteStorage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), inputFile);
+        const { data, error } = await supabase.storage
+          .from(supabaseBucket)
+          .upload(filePath, file.buffer, {
+            contentType: file.mimetype,
+            upsert: false
+          });
+
+        if (error) {
+          console.error("Supabase Storage error:", error);
+          if (error.message.includes("new row violates row-level security policy")) {
+            return res.status(500).json({ 
+              error: `Supabase RLS Error: Your bucket '${supabaseBucket}' has Row-Level Security enabled but no policy allows uploads. Please go to Supabase -> Storage -> Policies and add a policy for your bucket to allow 'INSERT' and 'SELECT' for 'anon' or 'authenticated' roles.` 
+            });
+          }
+          if (error.message.includes("Invalid path") || error.message.includes("Bucket not found")) {
+            return res.status(500).json({ 
+              error: `Supabase Storage error: ${error.message}. The app is currently trying to use the bucket named '${supabaseBucket}'. If you created a bucket with a different name (like 'products'), please update the SUPABASE_BUCKET environment variable in the Settings menu to match your bucket name.` 
+            });
+          }
+          return res.status(500).json({ error: error.message });
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from(supabaseBucket)
+          .getPublicUrl(filePath);
         
-        const fileUrl = `/api/images/${result.$id}`;
-        res.json({ secure_url: fileUrl });
+        console.log("Supabase upload successful:", publicUrl);
+        res.json({ secure_url: publicUrl });
         
       } catch (error: any) {
         console.error("Server API upload error:", error);

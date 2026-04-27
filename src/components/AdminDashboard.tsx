@@ -225,15 +225,22 @@ export default function AdminDashboard() {
             try {
               const errorJson = JSON.parse(errorText);
               errorMessage = errorJson.error || errorMessage;
-            } catch (e) {}
+            } catch (e) {
+              if (errorText.includes('!doctype html') || errorText.includes('Cookie check')) {
+                errorMessage = "Your browser is blocking a security cookie required for uploads. Please open the app in a new tab using the 'Open in new tab' button at the top right of the screen, and then try again.";
+              }
+            }
             throw new Error(errorMessage);
           }
           
           const contentType = response.headers.get('content-type');
-          if (!contentType || !contentType.includes('application/json')) {
+          if (contentType && !contentType.includes('application/json')) {
             const text = await response.text();
+            if (text.includes('!doctype html') || text.includes('Cookie check')) {
+              throw new Error("Your browser is blocking a security cookie required for uploads. Please open the app in a new tab using the 'Open in new tab' button at the top right of the screen, and then try again.");
+            }
             console.error('Expected JSON but got:', text);
-            throw new Error('Server returned an unexpected non-JSON response. This might be a security check or a configuration issue.');
+            throw new Error('Server returned an unexpected non-JSON response. Please try opening the app in a new tab.');
           }
 
           const data = await response.json();

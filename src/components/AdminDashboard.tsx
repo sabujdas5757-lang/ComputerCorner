@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Image as ImageIcon, Plus, Save, Search, Upload } from 'lucide-react';
+import { Trash2, Edit2, Image as ImageIcon, Plus, Save, Search } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
@@ -12,8 +12,6 @@ export default function AdminDashboard() {
   const { logout } = useAuth();
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [loading, setLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrapeUrl, setScrapeUrl] = useState('');
@@ -141,7 +139,8 @@ export default function AdminDashboard() {
     price: '',
     oldPrice: '',
     discount: '',
-    usageTags: [] as string[]
+    usageTags: [] as string[],
+    image: ''
   });
 
   const [specs, setSpecs] = useState<{ key: string; value: string }[]>([]);
@@ -171,7 +170,8 @@ export default function AdminDashboard() {
       price: product.price,
       oldPrice: product.oldPrice || '',
       discount: product.discount || '',
-      usageTags: Array.isArray(product.usageTags) ? product.usageTags : []
+      usageTags: Array.isArray(product.usageTags) ? product.usageTags : [],
+      image: product.image || ''
     });
 
     if (product.specifications) {
@@ -179,9 +179,6 @@ export default function AdminDashboard() {
     } else {
       setSpecs([]);
     }
-
-    setImageFile(null);
-    setImagePreview(null);
   };
 
   const handleCancelEdit = () => {
@@ -194,11 +191,10 @@ export default function AdminDashboard() {
       price: '',
       oldPrice: '',
       discount: '',
-      usageTags: []
+      usageTags: [],
+      image: ''
     });
     setSpecs([]);
-    setImageFile(null);
-    setImagePreview(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,65 +202,6 @@ export default function AdminDashboard() {
     console.log("Submitting form, editingId:", editingId);
     setLoading(true);
     try {
-      let finalImageUrl = '';
-      if (imageFile) {
-        console.log("Uploading file via Server API");
-        
-        try {
-          const uploadData = new FormData();
-          uploadData.append('file', imageFile);
-
-          const response = await fetch('/api/upload-file', {
-            method: 'POST',
-            body: uploadData
-          });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            let errorMessage = `Server returned ${response.status} for upload.`;
-            try {
-              const errorJson = JSON.parse(errorText);
-              errorMessage = errorJson.error || errorMessage;
-            } catch (e) {
-              if (errorText.includes('!doctype html') || errorText.includes('Cookie check') || errorText.includes('NOT_FOUND')) {
-                if (response.status === 404) {
-                   errorMessage = "The upload server endpoint was not found (404). The server might be restarting or the route is incorrectly defined. Please wait 10 seconds and try again.";
-                } else if (response.status === 400 || response.status === 500) {
-                   errorMessage = "The server returned an error page. This might be due to a file size limit or a server crash. Check the server console.";
-                } else {
-                   errorMessage = "Your browser is blocking a security cookie or the server returned an error page. Please open the app in a new tab using the 'Open in new tab' button at the top right, and then try again.";
-                }
-              } else {
-                errorMessage = errorText || errorMessage;
-              }
-            }
-            throw new Error(errorMessage);
-          }
-          
-          const contentType = response.headers.get('content-type');
-          if (contentType && !contentType.includes('application/json')) {
-            const text = await response.text();
-            if (text.includes('!doctype html') || text.includes('Cookie check')) {
-              throw new Error("Your browser is blocking a security cookie required for uploads. Please open the app in a new tab using the 'Open in new tab' button at the top right of the screen, and then try again.");
-            }
-            console.error('Expected JSON but got:', text);
-            throw new Error('Server returned an unexpected non-JSON response. Please try opening the app in a new tab.');
-          }
-
-          const data = await response.json();
-          if (data.secure_url) {
-            finalImageUrl = data.secure_url;
-            console.log("Upload successful:", finalImageUrl);
-          } else {
-            throw new Error(data.error || 'Failed to upload image');
-          }
-        } catch (uploadError: any) {
-          console.error("Upload failed:", uploadError);
-          throw new Error(`Failed to upload file: ${uploadError.message}`);
-        }
-      }
-      console.log("finalImageUrl:", finalImageUrl);
-
       const formattedSpecs = specs.reduce((acc, curr) => {
         if (curr.key.trim()) {
           acc[curr.key.trim()] = curr.value.trim();
@@ -278,16 +215,13 @@ export default function AdminDashboard() {
           category: formData.category as any,
           specifications: formattedSpecs
         };
-        if (finalImageUrl) {
-          updateData.image = finalImageUrl;
-        }
         await updateProduct(editingId, updateData);
         showFeedback('Product updated successfully!');
       } else {
         await addProduct({
           ...formData,
           category: formData.category as any,
-          image: finalImageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+          image: formData.image || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
           specifications: formattedSpecs
         });
         showFeedback('Product added successfully!');
@@ -346,7 +280,6 @@ export default function AdminDashboard() {
               <div className="flex gap-2">
                 {!editingId && (
                   <label className="text-sm bg-white/5 border border-white/10 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-2">
-                    <Upload size={16} className="text-primary" />
                     <span>Bulk Upload</span>
                     <input type="file" accept=".xlsx, .xls, .csv" onChange={handleBulkUpload} className="hidden" />
                   </label>
@@ -430,25 +363,14 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Product Image {editingId && '(Optional to keep current)'}</label>
-                <label className="flex items-center gap-3 w-full bg-bg-dark border border-dashed border-white/20 rounded-xl px-4 py-6 cursor-pointer hover:border-primary transition-colors">
-                  <ImageIcon size={24} className="text-gray-500" />
-                  <span className="text-gray-400 text-sm">
-                    {imagePreview ? 'New image selected' : (editingId ? 'Click to upload new image' : 'Click to upload preview image')}
-                  </span>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setImageFile(file);
-                        setImagePreview(URL.createObjectURL(file));
-                      }
-                    }} 
-                    className="hidden" 
-                  />
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Product Image URL</label>
+                <input 
+                  type="text" 
+                  placeholder="https://example.com/image.jpg"
+                  value={formData.image} 
+                  onChange={e => setFormData({...formData, image: e.target.value})} 
+                  className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" 
+                />
               </div>
 
               {/* Specifications Section */}

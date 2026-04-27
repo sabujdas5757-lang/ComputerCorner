@@ -221,17 +221,21 @@ export default function AdminDashboard() {
           
           if (!response.ok) {
             const errorText = await response.text();
-            let errorMessage = `Server returned ${response.status}: ${errorText}`;
+            let errorMessage = `Server returned ${response.status} for upload.`;
             try {
               const errorJson = JSON.parse(errorText);
               errorMessage = errorJson.error || errorMessage;
             } catch (e) {
               if (errorText.includes('!doctype html') || errorText.includes('Cookie check') || errorText.includes('NOT_FOUND')) {
                 if (response.status === 404) {
-                   errorMessage = "The upload server endpoint was not found (404). This usually happens if the server is still restarting. Please wait 10 seconds and try again. If it persists, open the app in a new tab.";
+                   errorMessage = "The upload server endpoint was not found (404). The server might be restarting or the route is incorrectly defined. Please wait 10 seconds and try again.";
+                } else if (response.status === 400 || response.status === 500) {
+                   errorMessage = "The server returned an error page. This might be due to a file size limit or a server crash. Check the server console.";
                 } else {
                    errorMessage = "Your browser is blocking a security cookie or the server returned an error page. Please open the app in a new tab using the 'Open in new tab' button at the top right, and then try again.";
                 }
+              } else {
+                errorMessage = errorText || errorMessage;
               }
             }
             throw new Error(errorMessage);

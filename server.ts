@@ -110,72 +110,78 @@ async function startServer() {
     }
   });
 
-  const upload = multer({ 
+  // API debug info (sanitized)
+  app.get("/api/debug-config", (req, res) => {
+    res.json({
+      supabase_url_configured: !!process.env.SUPABASE_URL,
+      supabase_url_base: supabaseUrl,
+      supabase_bucket: supabaseBucket,
+      supabase_key_present: !!(process.env.SUPABASE_ANON_KEY || supabaseKey),
+      node_env: process.env.NODE_ENV,
+      port: PORT
+    });
+  });
+
+  const uploadMiddleware = multer({ 
     storage: multer.memoryStorage(),
     limits: { fileSize: 50 * 1024 * 1024 } 
-  }).single('file');
+  });
 
-  app.post("/api/upload-file", (req, res) => {
-    upload(req, res, async (err: any) => {
-      if (err) {
-        console.error("Upload error:", err);
-        return res.status(400).json({ error: `Upload error: ${err.message}` });
+  app.post("/api/upload-file", uploadMiddleware.single('file'), async (req, res) => {
+    try {
+      const file = (req as any).file;
+      if (!file) {
+        return res.status(400).json({ error: "No file uploaded" });
       }
+
+      if (!supabase) {
+        return res.status(500).json({ error: "Supabase configuration is missing (SUPABASE_ANON_KEY unset)" });
+      }
+
+      const fileExt = file.originalname.split('.').pop() || 'png';
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = fileName;
+
+      console.log(`[Upload] Starting upload to bucket: "${supabaseBucket}", path: "${filePath}"`);
       
-      try {
-        const file = (req as any).file;
-        if (!file) {
-          return res.status(400).json({ error: "No file uploaded" });
-        }
-
-        if (!supabase) {
-           return res.status(500).json({ error: "Supabase configuration is missing (SUPABASE_ANON_KEY unset)" });
-        }
-
-        const fileExt = file.originalname.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = fileName;
-
-        console.log(`Uploading to Supabase bucket: "${supabaseBucket}", path: "${filePath}"`);
-        if (!supabaseBucket) {
-          return res.status(400).json({ error: "Storage bucket name is not configured." });
-        }
-
-        const { data, error } = await supabase.storage
-          .from(supabaseBucket)
-          .upload(filePath, file.buffer, {
-            contentType: file.mimetype,
-            upsert: true // Allow overwriting if needed
-          });
-
-        if (error) {
-          console.error("Supabase Storage error details:", JSON.stringify(error, null, 2));
-          if (error.message.includes("new row violates row-level security policy")) {
-            return res.status(500).json({ 
-              error: `Supabase RLS Error: Your bucket '${supabaseBucket}' has Row-Level Security enabled but no policy allows uploads. Please go to Supabase UI -> Storage -> Policies and add a policy for your bucket to allow 'INSERT' and 'SELECT' (for public viewing) for 'anon' or 'authenticated' roles.` 
-            });
-          }
-          if (error.message.includes("Invalid path") || error.message.includes("Bucket not found") || error.message.includes("not_found")) {
-            return res.status(error.message.includes("not_found") ? 404 : 500).json({ 
-              error: `Supabase Storage error: ${error.message}. Please check that the bucket "${supabaseBucket}" exists and is set to PUBLIC in your Supabase dashboard.` 
-            });
-          }
-          return res.status(500).json({ error: error.message });
-        }
-
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from(supabaseBucket)
-          .getPublicUrl(filePath);
-        
-        console.log("Supabase upload successful:", publicUrl);
-        res.json({ secure_url: publicUrl });
-        
-      } catch (error: any) {
-        console.error("Server API upload error:", error);
-        res.status(500).json({ error: error.message });
+      if (!supabaseBucket) {
+        return res.status(400).json({ error: "Storage bucket name is not configured." });
       }
-    });
+
+      const { data, error } = await supabase.storage
+        .from(supabaseBucket)
+        .upload(filePath, file.buffer, {
+          contentType: file.mimetype,
+          upsert: true
+        });
+
+      if (error) {
+        console.error("[Upload] Supabase Storage error:", JSON.stringify(error, null, 2));
+        if (error.message.includes("new row violates row-level security policy")) {
+          return res.status(500).json({ 
+            error: `Supabase RLS Error: Your bucket '${supabaseBucket}' has Row-Level Security enabled but no policy allows uploads. Please go to Supabase UI -> Storage -> Policies and add a policy for your bucket to allow 'INSERT' and 'SELECT' (for public viewing) for 'anon' or 'authenticated' roles.` 
+          });
+        }
+        if (error.message.includes("Invalid path") || error.message.includes("Bucket not found") || error.message.includes("not_found")) {
+          return res.status(error.message.includes("not_found") ? 404 : 500).json({ 
+            error: `Supabase Storage error: ${error.message}. Please check that the bucket "${supabaseBucket}" exists and is set to PUBLIC in your Supabase dashboard.` 
+          });
+        }
+        return res.status(500).json({ error: error.message });
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(supabaseBucket)
+        .getPublicUrl(filePath);
+      
+      console.log("[Upload] Success:", publicUrl);
+      res.json({ secure_url: publicUrl });
+      
+    } catch (error: any) {
+      console.error("[Upload] Server internal error:", error);
+      res.status(500).json({ error: `Internal Server Error: ${error.message}` });
+    }
   });
 
   // API health

@@ -32,9 +32,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setFirestoreProducts(prods);
       setLoading(false);
     }, (error: any) => {
-      console.error("Error fetching products", error);
+      console.error("Firestore error onSnapshot:", error);
       if (error.code === 'permission-denied') {
-        alert("Firestore Permission Denied.\n\nPlease go to Firebase Console -> Firestore Database -> Rules and update them to allow read/write access. For development, you can use:\n\nmatch /{document=**} {\n  allow read, write: if true;\n}");
+        const rulesAlert = "Firestore Permission Denied.\n\nPlease go to Firebase Console -> Firestore Database -> Rules and update them to allow read/write access. For development, you can use:\n\nmatch /{document=**} {\n  allow read, write: if true;\n}";
+        console.warn(rulesAlert);
       }
       setLoading(false);
     });
@@ -43,17 +44,27 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addProduct = async (product: Omit<Product, 'id'>) => {
-    await addDoc(collection(db, 'products'), product);
+    try {
+      await addDoc(collection(db, 'products'), product);
+    } catch (error: any) {
+      console.error("Firestore addDoc error:", error);
+      throw error;
+    }
   };
 
   const updateProduct = async (id: string, data: Partial<Product>) => {
-    const isInitial = initialProducts.find(p => p.id === id);
-    const inFirestore = firestoreProducts.find(p => p.id === id);
-    
-    if (isInitial && !inFirestore) {
-      await setDoc(doc(db, 'products', id), { ...isInitial, ...data });
-    } else {
-      await updateDoc(doc(db, 'products', id), data);
+    try {
+      const isInitial = initialProducts.find(p => p.id === id);
+      const inFirestore = firestoreProducts.find(p => p.id === id);
+      
+      if (isInitial && !inFirestore) {
+        await setDoc(doc(db, 'products', id), { ...isInitial, ...data });
+      } else {
+        await updateDoc(doc(db, 'products', id), data);
+      }
+    } catch (error: any) {
+      console.error("Firestore updateDoc error:", error);
+      throw error;
     }
   };
 

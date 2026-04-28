@@ -34,7 +34,7 @@ async function startServer() {
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
-    console.log(`[Scraper] Attempting to scrape: ${url}`);
+    console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
     
     try {
       let html = '';
@@ -75,8 +75,14 @@ async function startServer() {
         }
       }
 
-      if (!html) {
-        throw new Error("No data received from target URL");
+      if (!html || 
+          html.includes('503 - Service Unavailable') || 
+          html.includes('503 Service Unavailable') ||
+          html.includes('Robot Check') || 
+          html.includes('Bot Check') ||
+          html.includes('api.allorigins.win') ||
+          html.includes('captcha')) {
+        throw new Error("Target website blocked the request (Anti-bot protection).");
       }
 
       const $ = cheerio.load(html);

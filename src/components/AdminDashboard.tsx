@@ -43,16 +43,16 @@ export default function AdminDashboard() {
     // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
     const getProxyRequests = [
       async () => {
-        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
-        if (!res.ok) throw new Error("Codetabs failed");
-        return await res.text();
-      },
-      async () => {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
         if (!res.ok) throw new Error("AllOrigins failed");
         const data = await res.json();
         if (!data || !data.contents) throw new Error("Empty AllOrigins content");
         return data.contents;
+      },
+      async () => {
+        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
+        if (!res.ok) throw new Error("Codetabs failed");
+        return await res.text();
       },
       async () => {
         const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
@@ -65,8 +65,17 @@ export default function AdminDashboard() {
       try {
         html = await request();
         // Super basic validation that we actually got HTML and not an anti-bot captcha page
-        if (html && html.includes('<html') && !html.includes('api.allorigins.win')) {
+        if (html && 
+            html.includes('<html') && 
+            !html.includes('api.allorigins.win') && 
+            !html.includes('503 - Service Unavailable') &&
+            !html.includes('503 Service Unavailable') &&
+            !html.includes('Robot Check') &&
+            !html.includes('Bot Check') &&
+            !html.includes('captcha')) {
            break;
+        } else {
+           html = ''; // Reset html if it hit a bot check
         }
       } catch (e) {
         console.warn('A proxy fallback failed:', e);
@@ -74,7 +83,7 @@ export default function AdminDashboard() {
     }
     
     if (!html || !html.includes('<html')) {
-      throw new Error("Unable to import product. Target website may be blocking requests. Please add product manually.");
+      throw new Error("Target website blocked the request (Anti-bot protection). Please manually add the product details below.");
     }
 
     const parser = new DOMParser();
@@ -213,19 +222,33 @@ export default function AdminDashboard() {
     if (!scrapeUrl) return;
     setLoading(true);
     try {
+      // First, check backend health
+      try {
+        const healthRes = await fetch('/api/health');
+        if (!healthRes.ok) {
+           console.warn("Backend health check failed:", healthRes.status);
+        }
+      } catch (healthErr) {
+        console.error("Backend health check error:", healthErr);
+      }
+
       let productData;
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/scrape-product`, {
+        const response = await fetch('/api/scrape-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: scrapeUrl })
         });
         
+        if (response.status === 405) {
+          throw new Error("Server error: POST method not allowed on API. Please check server configuration.");
+        }
+
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          // If backend isn't available (like on static hosts returning 404/405), throw to fallback
-          throw new Error("Backend not available");
+          const text = await response.text();
+          console.error("Non-JSON response from backend:", text.substring(0, 100));
+          throw new Error(`Backend not available (Status: ${response.status})`);
         }
 
         productData = await response.json();
@@ -326,8 +349,7 @@ export default function AdminDashboard() {
           try {
             const uploadFormData = new FormData();
             uploadFormData.append('file', file);
-            const apiUrl = import.meta.env.VITE_API_URL || '';
-            const res = await fetch(`${apiUrl}/api/upload-file`, { method: 'POST', body: uploadFormData });
+            const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
             const uploadData = await res.json();
             
             if (uploadData.secure_url) {
@@ -550,8 +572,7 @@ export default function AdminDashboard() {
         for (let i = 0; i < imageFiles.length; i++) {
           const uploadFormData = new FormData();
           uploadFormData.append('file', imageFiles[i]);
-          const apiUrl = import.meta.env.VITE_API_URL || '';
-          const res = await fetch(`${apiUrl}/api/upload-file`, { method: 'POST', body: uploadFormData });
+          const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
           const uploadData = await res.json();
           if (uploadData.secure_url) {
             // If primary image is empty, make first uploaded image the primary

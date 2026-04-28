@@ -38,11 +38,21 @@ export default function AdminDashboard() {
   const safeJson = async (response: Response) => {
     try {
       const text = await response.text();
-      if (!text || text.trim() === '') return null;
-      return JSON.parse(text);
+      if (!text || text.trim() === '') {
+        if (!response.ok) {
+           return { error: `Server returned status ${response.status} with empty body.` };
+        }
+        return null;
+      }
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        console.error("JSON parse error:", e, "Raw text:", text.substring(0, 500));
+        return { error: `Invalid JSON response (Status ${response.status}). The server might be misconfigured or down.` };
+      }
     } catch (e) {
-      console.error("SafeJSON parse error:", e);
-      return null;
+      console.error("SafeJSON reading error:", e);
+      return { error: "Failed to read response from server." };
     }
   };
 
@@ -415,6 +425,26 @@ export default function AdminDashboard() {
               let pOldPrice = String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || '');
               if (pOldPrice && !pOldPrice.startsWith('₹')) pOldPrice = `₹${pOldPrice}`;
 
+              let finalImageUrl = getValue(['image', 'Image', 'IMAGE']) || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800';
+              
+              if (finalImageUrl.startsWith('http') && !finalImageUrl.includes('vercel-storage.com') && !finalImageUrl.includes('localhost')) {
+                try {
+                  const uploadRes = await fetch('/api/upload-from-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: finalImageUrl })
+                  });
+                  if (uploadRes.ok) {
+                    const uploadData = await safeJson(uploadRes);
+                    if (uploadData?.secure_url) {
+                      finalImageUrl = uploadData.secure_url;
+                    }
+                  }
+                } catch (e) {
+                  console.warn("Bulk upload auto-image upload failed:", e);
+                }
+              }
+
               const product = {
                 name: getValue(['name', 'Name', 'NAME']) || 'Unnamed Product',
                 brand: getValue(['brand', 'Brand', 'BRAND']) || 'Unknown',
@@ -426,7 +456,7 @@ export default function AdminDashboard() {
                 usageTags: getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS']) 
                   ? String(getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS'])).split(',').map(tag => tag.trim()) 
                   : [],
-                image: getValue(['image', 'Image', 'IMAGE']) || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+                image: finalImageUrl,
                 specifications: {}
               };
               await addProduct(product);

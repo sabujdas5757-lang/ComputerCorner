@@ -266,14 +266,20 @@ async function startServer() {
     const { url } = req.body;
     if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
 
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn("[Upload-From-URL] BLOB_READ_WRITE_TOKEN is missing. Skipping external upload.");
+      return res.status(503).json({ error: "Vercel Blob storage is not configured (missing token). Please set it in secrets." });
+    }
+
     try {
-      console.log(`[Upload-From-URL] Processing image: ${url}`);
+      console.log(`[Upload-From-URL] Processing image: ${url.substring(0, 50)}...`);
       const response = await axios.get(url, { responseType: 'arraybuffer', timeout: 15000 });
       const buffer = Buffer.from(response.data);
-      const contentTypeHeader = response.headers['content-type'];
+      const contentTypeHeader = response.headers['content-type'] as string;
       const contentType = typeof contentTypeHeader === 'string' ? contentTypeHeader : 'image/jpeg';
       
-      const filename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
+      const rawFilename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
+      const filename = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
       const blob = await put(filename, buffer, {
         access: 'public',
         contentType: contentType
@@ -283,7 +289,7 @@ async function startServer() {
       res.json({ secure_url: blob.url });
     } catch (error: any) {
       console.error("[Upload-From-URL Error]", error.message);
-      res.status(500).json({ error: "Your storage quota might be exceeded or the source image is blocked. Keeping original URL." });
+      res.status(500).json({ error: "Storage error: " + (error.message || "Unknown error") });
     }
   });
 
@@ -295,17 +301,30 @@ async function startServer() {
   app.post("/api/upload-file", uploadMiddleware.single('file'), async (req, res) => {
     try {
       const file = (req as any).file;
-      if (!file) return res.status(400).json({ error: "No file uploaded" });
+      if (!file) {
+        console.warn("[Upload] No file provided in request");
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      console.log(`[Upload] Processing file: ${file.originalname} (${file.size} bytes)`);
+
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        console.error("[Upload] BLOB_READ_WRITE_TOKEN is missing");
+        return res.status(503).json({ error: "Vercel Blob storage is not configured (missing token)." });
+      }
 
       // Using Vercel Blob
-      const blob = await put(file.originalname, file.buffer, {
+      const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const blob = await put(sanitizedName, file.buffer, {
         access: 'public',
+        contentType: file.mimetype
       });
 
+      console.log(`[Upload] Success: ${blob.url}`);
       res.json({ secure_url: blob.url });
     } catch (error: any) {
-      console.error("[Upload Error]", error);
-      res.status(500).json({ error: error.message });
+      console.error("[Upload Error]", error.message || error);
+      res.status(500).json({ error: "Upload failed: " + (error.message || "Unknown server error") });
     }
   });
 

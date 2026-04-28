@@ -39,37 +39,43 @@ export default function AdminDashboard() {
   const clientSideScrape = async (url: string) => {
     let html = '';
     const encodedUrl = encodeURIComponent(url);
-    const proxies = [
-      `https://api.allorigins.win/raw?url=${encodedUrl}`,
-      `https://corsproxy.io/?${encodedUrl}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`
+
+    // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
+    const getProxyRequests = [
+      async () => {
+        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
+        if (!res.ok) throw new Error("Codetabs failed");
+        return await res.text();
+      },
+      async () => {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
+        if (!res.ok) throw new Error("AllOrigins failed");
+        const data = await res.json();
+        if (!data || !data.contents) throw new Error("Empty AllOrigins content");
+        return data.contents;
+      },
+      async () => {
+        const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
+        if (!res.ok) throw new Error("Corsproxy failed");
+        return await res.text();
+      }
     ];
 
-    for (const proxyUrl of proxies) {
+    for (const request of getProxyRequests) {
       try {
-        const res = await fetch(proxyUrl);
-        if (res.ok) {
-          html = await res.text();
-          if (html) break;
+        html = await request();
+        // Super basic validation that we actually got HTML and not an anti-bot captcha page
+        if (html && html.includes('<html') && !html.includes('api.allorigins.win')) {
+           break;
         }
       } catch (e) {
-        console.warn(`Proxy ${proxyUrl} failed:`, e);
+        console.warn('A proxy fallback failed:', e);
       }
     }
-
-    if (!html) {
-      // Fallback to AllOrigins JSON API
-      try {
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodedUrl}`;
-        const res = await fetch(proxyUrl);
-        if (res.ok) {
-          const data = await res.json();
-          html = data.contents;
-        }
-      } catch (err) {}
-    }
     
-    if (!html) throw new Error("No content received from target site via any proxy");
+    if (!html || !html.includes('<html')) {
+      throw new Error("Unable to import product. Target website may be blocking requests. Please add product manually.");
+    }
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');

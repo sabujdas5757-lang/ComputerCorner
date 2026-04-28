@@ -403,8 +403,8 @@ export default function AdminDashboard() {
                 <div className="space-y-4">
                   {/* File Upload Option */}
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-primary hover:bg-white/5 transition-all group overflow-hidden relative">
-                    {imagePreview ? (
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    {(imagePreview || formData.image) ? (
+                      <img src={imagePreview || formData.image} alt="Preview" className="w-full h-full object-cover" />
                     ) : (
                       <div className="flex flex-col items-center justify-center p-4 text-center">
                         <Upload className="w-8 h-8 text-gray-500 mb-2 group-hover:text-primary transition-colors" />

@@ -10,14 +10,25 @@ const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'Ma
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { products, addProduct, updateProduct, deleteProduct, deleteMultipleProducts } = useProducts();
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [products, searchQuery]);
+
   const [scrapeUrl, setScrapeUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const showFeedback = (msg: string) => {
@@ -34,6 +45,14 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: scrapeUrl })
       });
+      
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Non-JSON response received:", text);
+        throw new Error(`Server returned a non-JSON response. Status: ${response.status}`);
+      }
+
       const productData = await response.json();
       
       if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
@@ -160,9 +179,62 @@ export default function AdminDashboard() {
     try {
       await deleteProduct(id);
       setDeletingId(null);
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
       showFeedback('Product deleted successfully');
     } catch (e: any) {
       showFeedback(`Save failed: ${e.message}`);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+
+    setLoading(true);
+    const idsToDelete = Array.from(selectedIds);
+    console.log("Starting atomic batch delete for IDs:", idsToDelete);
+    
+    try {
+      await deleteMultipleProducts(idsToDelete);
+      setSelectedIds(new Set());
+      setConfirmingBulkDelete(false);
+      showFeedback(`Successfully deleted ${idsToDelete.length} products`);
+    } catch (err: any) {
+      console.error("Batch delete error:", err);
+      showFeedback(`Error during deletion: ${err.message}`);
+    } finally {
+      setLoading(false);
+      console.log("Batch delete process finished");
+    }
+  };
+
+  const toggleSelectProduct = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const isAllSelected = filteredProducts.length > 0 && filteredProducts.every(p => selectedIds.has(p.id));
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        filteredProducts.forEach(p => next.delete(p.id));
+        return next;
+      });
+    } else {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        filteredProducts.forEach(p => next.add(p.id));
+        return next;
+      });
     }
   };
 
@@ -298,14 +370,6 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
-
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => 
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [products, searchQuery]);
 
   return (
     <div className="min-h-screen bg-bg-dark text-white p-6 md:p-12">
@@ -525,25 +589,78 @@ export default function AdminDashboard() {
 
           {/* Product List */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                Inventory ({filteredProducts.length})
-              </h2>
-              <div className="relative w-full md:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Search products..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 focus:border-primary transition-colors outline-none"
-                />
+            <div className="sticky top-[88px] z-20 bg-bg-dark/80 backdrop-blur-md py-4 -mt-4 mb-2 border-b border-white/5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    Inventory ({filteredProducts.length})
+                  </h2>
+                  {filteredProducts.length > 0 && (
+                    <label className="flex items-center gap-2 cursor-pointer bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
+                      <input 
+                        type="checkbox" 
+                        checked={isAllSelected}
+                        onChange={toggleSelectAll}
+                        className="rounded border-white/10 text-primary focus:ring-primary bg-bg-dark cursor-pointer"
+                      />
+                      <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Select All</span>
+                    </label>
+                  )}
+                  {selectedIds.size > 0 && !confirmingBulkDelete && (
+                    <button 
+                      onClick={() => setConfirmingBulkDelete(true)}
+                      disabled={loading}
+                      className="flex items-center gap-2 px-4 py-1.5 bg-red-500/10 text-red-500 border border-red-500/30 rounded-lg hover:bg-red-500 hover:text-white transition-all text-sm font-bold shadow-lg shadow-red-500/10"
+                    >
+                      <Trash2 size={16} />
+                      Delete {selectedIds.size}
+                    </button>
+                  )}
+                  {confirmingBulkDelete && (
+                    <div className="flex items-center gap-2">
+                       <span className="text-sm font-bold text-red-400">Sure?</span>
+                       <button
+                         onClick={handleDeleteSelected}
+                         disabled={loading}
+                         className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600 transition-colors"
+                       >
+                         Yes, delete
+                       </button>
+                       <button
+                         onClick={() => setConfirmingBulkDelete(false)}
+                         disabled={loading}
+                         className="px-3 py-1.5 bg-gray-500 text-white rounded-lg text-sm font-bold hover:bg-gray-600 transition-colors"
+                       >
+                         Cancel
+                       </button>
+                    </div>
+                  )}
+                </div>
+                <div className="relative w-full md:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                  <input 
+                    type="text" 
+                    placeholder="Search products..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 focus:border-primary transition-colors outline-none text-sm"
+                  />
+                </div>
               </div>
             </div>
+            
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden">
               <div className="max-h-[600px] overflow-y-auto p-4 space-y-4 scrollbar-hide">
                 {filteredProducts.map(product => (
-                  <div key={product.id} className={`flex items-center gap-4 p-4 bg-bg-dark border rounded-2xl transition-all ${editingId === product.id ? 'border-primary ring-1 ring-primary' : 'border-white/5'}`}>
+                  <div key={product.id} className={`flex items-center gap-4 p-4 bg-bg-dark border rounded-2xl transition-all ${editingId === product.id ? 'border-primary ring-1 ring-primary' : 'border-white/5'} ${selectedIds.has(product.id) ? 'bg-primary/5 border-primary/20' : ''}`}>
+                    <div className="flex items-center">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedIds.has(product.id)}
+                        onChange={() => toggleSelectProduct(product.id)}
+                        className="w-5 h-5 rounded border-white/10 text-primary focus:ring-primary bg-bg-dark cursor-pointer"
+                      />
+                    </div>
                     <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded-xl bg-white/5" />
                     <div className="flex-1">
                       <h3 className="font-bold line-clamp-1">{product.name}</h3>

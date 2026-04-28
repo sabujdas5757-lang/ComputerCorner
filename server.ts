@@ -34,40 +34,65 @@ async function startServer() {
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
+    console.log(`[Scraper] Attempting to scrape: ${url}`);
+    
     try {
       let response;
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         try {
           response = await axios.get(url, {
+            timeout: 15000,
             headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+              'User-Agent': i === 0 
+                ? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+                : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.5',
               'Referer': 'https://www.google.com/',
               'Connection': 'keep-alive',
-              'Upgrade-Insecure-Requests': '1'
             }
           });
           break;
         } catch (error: any) {
-          if (i === 4 || (error.response?.status !== 529 && error.response?.status !== 429 && error.response?.status !== 403)) throw error;
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          console.warn(`[Scraper] Attempt ${i + 1} failed: ${error.message}`);
+          if (i === 2) throw error;
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }
-      const $ = cheerio.load(response!.data);
-      
-      const name = $('meta[property="og:title"]').attr('content') || $('title').text();
-      const price = $('meta[property="product:price:amount"]').attr('content') || $('.price').first().text().trim();
-      const image = $('meta[property="og:image"]').attr('content');
-      const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content');
-      
-      res.json({ name, price: price.replace(/[^0-9.]/g, ''), image, description });
-    } catch (error: any) {
-      console.error("Scraping error:", error);
-      if (error.response?.status === 529 || error.response?.status === 429 || error.response?.status === 403) {
-        return res.status(500).json({ error: "The target website is blocking automated access. Please paste the details manually." });
+
+      if (!response || !response.data) {
+        throw new Error("No data received from target URL");
       }
-      res.status(500).json({ error: error.message });
+
+      const $ = cheerio.load(response.data);
+      
+      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || 'Unknown Product';
+      let price = $('meta[property="product:price:amount"]').attr('content') || 
+                  $('[itemprop="price"]').attr('content') ||
+                  $('.price, .product-price, .amount').first().text();
+      
+      const image = $('meta[property="og:image"]').attr('content') || 
+                    $('meta[name="twitter:image"]').attr('content') ||
+                    $('img[itemprop="image"]').attr('src');
+                    
+      const description = $('meta[property="og:description"]').attr('content') || 
+                          $('meta[name="description"]').attr('content') ||
+                          $('.description, .product-description').first().text();
+      
+      const cleanedPrice = price ? String(price).replace(/[^0-9.]/g, '') : '0';
+      
+      console.log(`[Scraper] Successfully parsed: ${name}`);
+      res.json({ name, price: cleanedPrice, image, description });
+    } catch (error: any) {
+      console.error("[Scraper Error]", error.message);
+      const status = error.response?.status || 500;
+      let message = error.message;
+      
+      if (status === 403 || status === 429) {
+        message = "Access denied by target website. They might be blocking automated tools.";
+      }
+      
+      res.status(status).json({ error: message });
     }
   });
 
@@ -170,7 +195,13 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+    
+    // Support SPA routing in production
     app.get('*', (req, res) => {
+      // If it's an API route that reached here, it's missing
+      if (req.path.startsWith('/api')) {
+        return res.status(404).json({ error: "API route not found" });
+      }
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

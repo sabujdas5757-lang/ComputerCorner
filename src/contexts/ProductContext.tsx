@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { PRODUCTS as initialProducts, Product } from '../constants';
 
@@ -8,6 +8,7 @@ interface ProductContextType {
   addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
   updateProduct: (id: string, data: Partial<Product>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
+  deleteMultipleProducts: (ids: string[]) => Promise<void>;
   loading: boolean;
 }
 
@@ -16,6 +17,7 @@ const ProductContext = createContext<ProductContextType>({
   addProduct: async () => {},
   updateProduct: async () => {},
   deleteProduct: async () => {},
+  deleteMultipleProducts: async () => {},
   loading: true,
 });
 
@@ -68,29 +70,92 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteProduct = async (id: string) => {
+    const previousProducts = [...firestoreProducts];
+    
+    // Optimistic UI update
+    setFirestoreProducts(prev => {
+      const isInitial = initialProducts.find(p => p.id === id);
+      const index = prev.findIndex(p => p.id === id);
+      const next = [...prev];
+      
+      if (index > -1) {
+        next[index] = { ...next[index], deleted: true } as Product;
+      } else if (isInitial) {
+        next.push({ ...isInitial, deleted: true } as Product);
+      }
+      return next;
+    });
+
     try {
       const isInitial = initialProducts.find(p => p.id === id);
       const inFirestore = firestoreProducts.find(p => p.id === id);
       
-      if (isInitial && !inFirestore) {
-        // Create full object tombstone to bypass strict database validation rules
-        await setDoc(doc(db, 'products', id), { ...isInitial, deleted: true });
-      } else if (isInitial && inFirestore) {
-        await updateDoc(doc(db, 'products', id), { deleted: true });
+      const docRef = doc(db, 'products', id);
+
+      if (isInitial) {
+        // Initial products need a tombstone in Firestore
+        await setDoc(docRef, { ...isInitial, deleted: true }, { merge: true });
       } else {
         try {
-          await deleteDoc(doc(db, 'products', id));
+          await deleteDoc(docRef);
         } catch (deleteError: any) {
           if (deleteError.code === 'permission-denied') {
             // Fallback to soft delete if hard delete is restricted by rules
-            await updateDoc(doc(db, 'products', id), { deleted: true });
+            await updateDoc(docRef, { deleted: true });
           } else {
             throw deleteError;
           }
         }
       }
     } catch (error: any) {
-      console.error("Delete failed", error);
+      console.error("Delete failed, reverting state", error);
+      setFirestoreProducts(previousProducts);
+      if (error.code === 'permission-denied') {
+        throw new Error("Firestore Permission Denied. Please check your Firestore rules.");
+      }
+      throw error;
+    }
+  };
+
+  const deleteMultipleProducts = async (ids: string[]) => {
+    const previousProducts = [...firestoreProducts];
+
+    // Optimistic UI update: Mark as deleted in local state immediately
+    setFirestoreProducts(prev => {
+      const next = [...prev];
+      for (const id of ids) {
+        const isInitial = initialProducts.find(p => p.id === id);
+        const index = next.findIndex(p => p.id === id);
+        
+        if (index > -1) {
+          next[index] = { ...next[index], deleted: true } as Product;
+        } else if (isInitial) {
+          next.push({ ...isInitial, deleted: true } as Product);
+        }
+      }
+      return next;
+    });
+
+    try {
+      const batch = writeBatch(db);
+      
+      for (const id of ids) {
+        const isInitial = initialProducts.find(p => p.id === id);
+        const docRef = doc(db, 'products', id);
+        
+        if (isInitial) {
+          // Initial products need a tombstone in Firestore to be hidden because they are hardcoded in the app
+          batch.set(docRef, { ...isInitial, deleted: true }, { merge: true });
+        } else {
+          // New products can be hard-deleted from Firestore
+          batch.delete(docRef);
+        }
+      }
+      
+      await batch.commit();
+    } catch (error: any) {
+      console.error("Batch delete failed, reverting state", error);
+      setFirestoreProducts(previousProducts);
       if (error.code === 'permission-denied') {
         throw new Error("Firestore Permission Denied. Please check your Firestore rules.");
       }
@@ -104,7 +169,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   ].filter(p => !(p as any).deleted); // filter out tombstones
 
   return (
-    <ProductContext.Provider value={{ products: allProducts, addProduct, updateProduct, deleteProduct, loading }}>
+    <ProductContext.Provider value={{ products: allProducts, addProduct, updateProduct, deleteProduct, deleteMultipleProducts, loading }}>
       {children}
     </ProductContext.Provider>
   );

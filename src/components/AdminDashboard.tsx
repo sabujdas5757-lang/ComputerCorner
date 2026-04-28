@@ -35,6 +35,17 @@ export default function AdminDashboard() {
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
 
+  const safeJson = async (response: Response) => {
+    try {
+      const text = await response.text();
+      if (!text || text.trim() === '') return null;
+      return JSON.parse(text);
+    } catch (e) {
+      console.error("SafeJSON parse error:", e);
+      return null;
+    }
+  };
+
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(null), 3000);
@@ -51,7 +62,7 @@ export default function AdminDashboard() {
         fn: async () => {
           const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
           if (!res.ok) throw new Error("AllOrigins failed");
-          const data = await res.json();
+          const data = await safeJson(res);
           if (!data || !data.contents) throw new Error("Empty AllOrigins content");
           return data.contents;
         }
@@ -259,70 +270,76 @@ export default function AdminDashboard() {
         });
         
         if (response.status === 405) {
-          throw new Error("405 Method Not Allowed: The server is misconfigured or you're using a static host. Ensure the backend is active.");
+          throw new Error("405 Method Not Allowed: The server is misconfigured or using a static host. Fallback triggered.");
         }
 
         const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          console.error("Non-JSON response from backend:", text.substring(0, 100));
-          throw new Error(`Server returned a non-JSON response. (Status: ${response.status}). This usually means the backend is not running or a proxy intercepted the request.`);
-        }
-
-      productData = await response.json();
-      if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
-
-      // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
-      if (productData.image && productData.image.startsWith('http')) {
-        try {
-          setScrapingStatus('Saving primary image to Vercel storage...');
-          const uploadRes = await fetch('/api/upload-from-url', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: productData.image })
-          });
-          if (uploadRes.ok) {
-            const uploadData = await uploadRes.json();
-            if (uploadData.secure_url) {
-              productData.image = uploadData.secure_url;
-            }
-          }
-        } catch (uploadErr) {
-          console.warn("Failed to auto-upload scraped image:", uploadErr);
-        }
-      }
-
-      // Also try to upload additional images if there are a few
-      if (productData.additionalImages && Array.isArray(productData.additionalImages)) {
-        const topImages = productData.additionalImages.slice(0, 3); // Just the first few to save time/quota
-        const savedImages: string[] = [];
+        const bodyText = await response.text();
         
-        for (const imgUrl of topImages) {
+        if (!contentType || !contentType.includes("application/json") || !bodyText) {
+          console.error("Invalid response from backend:", bodyText.substring(0, 100));
+          throw new Error(`Server returned a non-JSON or empty response (Status: ${response.status}). Fallback triggered.`);
+        }
+
+        try {
+          productData = JSON.parse(bodyText);
+        } catch (parseE) {
+          throw new Error("Failed to parse backend JSON. Fallback triggered.");
+        }
+
+        if (!response.ok) throw new Error(productData?.error || 'Failed to scrape');
+
+        // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
+        if (productData.image && productData.image.startsWith('http')) {
           try {
+            setScrapingStatus('Saving primary image to Vercel storage...');
             const uploadRes = await fetch('/api/upload-from-url', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ url: imgUrl })
+              body: JSON.stringify({ url: productData.image })
             });
             if (uploadRes.ok) {
-              const uploadData = await uploadRes.json();
-              if (uploadData.secure_url) {
-                savedImages.push(uploadData.secure_url);
+              const uploadData = await safeJson(uploadRes);
+              if (uploadData?.secure_url) {
+                productData.image = uploadData.secure_url;
+              }
+            }
+          } catch (uploadErr) {
+            console.warn("Failed to auto-upload scraped image:", uploadErr);
+          }
+        }
+
+        // Also try to upload additional images if there are a few
+        if (productData.additionalImages && Array.isArray(productData.additionalImages)) {
+          const topImages = productData.additionalImages.slice(0, 3); // Just the first few to save time/quota
+          const savedImages: string[] = [];
+          
+          for (const imgUrl of topImages) {
+            try {
+              const uploadRes = await fetch('/api/upload-from-url', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: imgUrl })
+              });
+              if (uploadRes.ok) {
+                const uploadData = await safeJson(uploadRes);
+                if (uploadData?.secure_url) {
+                  savedImages.push(uploadData.secure_url);
+                } else {
+                  savedImages.push(imgUrl);
+                }
               } else {
                 savedImages.push(imgUrl);
               }
-            } else {
+            } catch (e) {
               savedImages.push(imgUrl);
             }
-          } catch (e) {
-            savedImages.push(imgUrl);
           }
+          productData.additionalImages = [...savedImages, ...productData.additionalImages.slice(3)];
         }
-        productData.additionalImages = [...savedImages, ...productData.additionalImages.slice(3)];
-      }
       } catch (backendError: any) {
-        console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError);
-        setScrapingStatus('Backend unavailable, falling back to browser-proxies...');
+        console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError.message);
+        setScrapingStatus(`Backend check: ${backendError.message.substring(0, 30)}... Falling back to browser-proxies.`);
         productData = await clientSideScrape(scrapeUrl);
       }
 
@@ -424,9 +441,9 @@ export default function AdminDashboard() {
             const uploadFormData = new FormData();
             uploadFormData.append('file', file);
             const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
-            const uploadData = await res.json();
+            const uploadData = await safeJson(res);
             
-            if (uploadData.secure_url) {
+            if (uploadData?.secure_url) {
               await addProduct({
                 name: file.name.split('.')[0].replace(/[_-]/g, ' '),
                 brand: 'Unknown',
@@ -441,7 +458,7 @@ export default function AdminDashboard() {
               });
               successCount++;
             } else {
-              throw new Error(uploadData.error || 'Upload failed');
+              throw new Error(uploadData?.error || 'Image upload failed. It might be due to server configuration or quota limits.');
             }
           } catch (err) {
             console.error("Error bulk uploading image:", file.name, err);
@@ -641,14 +658,33 @@ export default function AdminDashboard() {
       let mainImageUrl = formData.image;
       let newAdditionalImages = [...formData.additionalImages];
 
+      // If the primary image is an external URL, upload it to Vercel Blob automatically
+      if (mainImageUrl && mainImageUrl.startsWith('http') && !mainImageUrl.includes('vercel-storage.com') && !mainImageUrl.includes('localhost')) {
+        try {
+          const res = await fetch('/api/upload-from-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: mainImageUrl })
+          });
+          if (res.ok) {
+            const data = await safeJson(res);
+            if (data?.secure_url) {
+              mainImageUrl = data.secure_url;
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to auto-upload external URL image:", e);
+        }
+      }
+
       // Upload all newly selected files
       if (imageFiles.length > 0) {
         for (let i = 0; i < imageFiles.length; i++) {
           const uploadFormData = new FormData();
           uploadFormData.append('file', imageFiles[i]);
           const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
-          const uploadData = await res.json();
-          if (uploadData.secure_url) {
+          const uploadData = await safeJson(res);
+          if (uploadData?.secure_url) {
             // If primary image is empty, make first uploaded image the primary
             if (!mainImageUrl && i === 0 && !formData.image) {
                mainImageUrl = uploadData.secure_url;
@@ -656,7 +692,7 @@ export default function AdminDashboard() {
                newAdditionalImages.push(uploadData.secure_url);
             }
           } else {
-            throw new Error(uploadData.error || 'Image upload failed');
+            throw new Error(uploadData?.error || 'Image upload failed');
           }
         }
       }

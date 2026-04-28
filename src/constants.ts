@@ -6982,7 +6982,7 @@ export const GALLERY_IMAGES = [
     description: 'Advanced CCTV solutions for total security'
   },
   {
-    url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800',
+    url: 'https://lh3.googleusercontent.com/p/AF1QipNfQyeLbkRS9AymBF9atAySTxpSOTUSsyoztlFV=s680-w680-h510-rw',
     title: 'Expert Service',
     description: 'Precision hardware repair and servicing'
   },

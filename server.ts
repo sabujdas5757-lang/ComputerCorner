@@ -145,7 +145,7 @@ async function startServer() {
     
     app.get('*', async (req, res, next) => {
       // Skip API routes as they should have been handled or returned 404 in JSON
-      if (req.originalUrl.startsWith('/api')) return next();
+      if (req.path.startsWith('/api')) return next();
       
       // For any other route, serve index.html to support SPA routing
       try {
@@ -153,18 +153,18 @@ async function startServer() {
         const indexPath = path.resolve(process.cwd(), 'index.html');
         
         if (!fs.existsSync(indexPath)) {
-          console.error("index.html not found at:", indexPath);
-          return res.status(404).send("Internal Error: Entry point missing");
+          console.warn("index.html not found, falling back to basic response");
+          return res.status(404).send("Internal Error: Application entry point missing");
         }
 
         let template = fs.readFileSync(indexPath, 'utf-8');
-        // Transform the HTML with Vite's dev server to inject pre-requisites
+        // Transform the HTML with Vite's dev server to inject scripts and HMR
         template = await vite.transformIndexHtml(url, template);
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).send(template);
       } catch (e: any) {
         if (vite) vite.ssrFixStacktrace(e);
-        console.error("Dev Server Error:", e.stack);
-        res.status(500).end(e.stack);
+        console.error("Vite Transform Error:", e);
+        res.status(500).send(e.toString());
       }
     });
   } else {

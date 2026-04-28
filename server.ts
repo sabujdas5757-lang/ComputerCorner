@@ -37,52 +37,171 @@ async function startServer() {
     console.log(`[Scraper] Attempting to scrape: ${url}`);
     
     try {
-      let response;
+      let html = '';
+      
       for (let i = 0; i < 3; i++) {
         try {
-          response = await axios.get(url, {
+          // Last attempt: try using allorigins proxy to bypass target blocking
+          if (i === 2) {
+            console.log(`[Scraper] Attempt 3 using proxy...`);
+            const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, {
+              timeout: 15000
+            });
+            if (proxyRes.data && proxyRes.data.contents) {
+              html = proxyRes.data.contents;
+              break;
+            }
+          }
+          
+          const response = await axios.get(url, {
             timeout: 15000,
             headers: { 
               'User-Agent': i === 0 
                 ? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
                 : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.5',
               'Referer': 'https://www.google.com/',
               'Connection': 'keep-alive',
+              'Cache-Control': 'no-cache',
             }
           });
+          html = response.data;
           break;
         } catch (error: any) {
-          console.warn(`[Scraper] Attempt ${i + 1} failed: ${error.message}`);
+          // console.warn(`[Scraper] Attempt ${i + 1} failed: ${error.message}`);
           if (i === 2) throw error;
           await new Promise(resolve => setTimeout(resolve, 2000));
         }
       }
 
-      if (!response || !response.data) {
+      if (!html) {
         throw new Error("No data received from target URL");
       }
 
-      const $ = cheerio.load(response.data);
+      const $ = cheerio.load(html);
       
-      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || 'Unknown Product';
+      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
+      
       let price = $('meta[property="product:price:amount"]').attr('content') || 
                   $('[itemprop="price"]').attr('content') ||
-                  $('.price, .product-price, .amount').first().text();
+                  $('.price, .product-price, .amount, .a-price-whole').first().text();
+      let cleanedPrice = price ? String(price).replace(/[^0-9.]/g, '') : '0';
+      if (cleanedPrice && !cleanedPrice.startsWith('₹') && cleanedPrice !== '0') {
+        cleanedPrice = `₹${cleanedPrice}`;
+      }
+
+      const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
+      let oldPrice = oldPriceText ? String(oldPriceText).replace(/[^0-9.]/g, '') : '';
+      if (oldPrice && !oldPrice.startsWith('₹')) {
+        oldPrice = `₹${oldPrice}`;
+      }
       
       const image = $('meta[property="og:image"]').attr('content') || 
                     $('meta[name="twitter:image"]').attr('content') ||
-                    $('img[itemprop="image"]').attr('src');
+                    $('img[itemprop="image"]').attr('src') ||
+                    $('#landingImage, #imgBlkFront').attr('src');
+                    
+      const additionalImages: string[] = [];
+      $('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img').each((_, el) => {
+        let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).data('src');
+        if (srcRaw) {
+          let src = String(srcRaw);
+          // Amazon specific: remove small image constraint to get full size
+          if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
+            src = src.replace(/\._[A-Z0-9_]+_\./, '.');
+          }
+          if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
+            additionalImages.push(src);
+          }
+        }
+      });
+      // also try to find amazon image array in js scripts
+      if (additionalImages.length === 0) {
+        const scriptMatch = html.match(/'colorImages':\s*({.+?}),/);
+        if (scriptMatch && scriptMatch[1]) {
+          try {
+            const data = JSON.parse(scriptMatch[1].replace(/'/g, '"'));
+            if (data.initial && Array.isArray(data.initial)) {
+              data.initial.forEach((imgObj: any) => {
+                if (imgObj.hiRes && imgObj.hiRes !== image && !additionalImages.includes(imgObj.hiRes)) {
+                  additionalImages.push(imgObj.hiRes);
+                } else if (imgObj.large && imgObj.large !== image && !additionalImages.includes(imgObj.large)) {
+                  additionalImages.push(imgObj.large);
+                }
+              });
+            }
+          } catch (e) {}
+        }
+      }
                     
       const description = $('meta[property="og:description"]').attr('content') || 
                           $('meta[name="description"]').attr('content') ||
-                          $('.description, .product-description').first().text();
+                          $('.description, .product-description, #feature-bullets').first().text().trim();
       
-      const cleanedPrice = price ? String(price).replace(/[^0-9.]/g, '') : '0';
+      let brand = $('meta[property="product:brand"]').attr('content') || 
+                    $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
+                    $('[itemprop="brand"]').text().trim() ||
+                    $('#bylineInfo').text().trim() || '';
+
+      if (brand) {
+         if (brand.toLowerCase().startsWith('visit the ')) {
+            brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
+         }
+         if (brand.toLowerCase().startsWith('brand: ')) {
+            brand = brand.replace(/brand: /i, '').trim();
+         }
+      } else {
+         brand = 'Unknown';
+      }
+
+      const category = $('meta[property="product:category"]').attr('content') || 
+                       $('[itemprop="category"]').attr('content') ||
+                       $('.nav-a-content').first().text().trim() || '';
+
+      const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
       
+      const specifications: Record<string, string> = {};
+      
+      const parseSpecRow = (_: any, el: any) => {
+        const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
+        const value = $(el).find('td').not(':first-child').first().text().trim() || $(el).find('td').last().text().trim();
+        
+        if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
+          const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+          const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+          if (cleanKey && cleanVal) {
+            specifications[cleanKey] = cleanVal;
+          }
+        }
+      };
+
+      $('#productDetails_techSpec_section_1 tr').each(parseSpecRow);
+      $('#productDetails_techSpec_section_2 tr').each(parseSpecRow);
+      $('table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr').each(parseSpecRow);
+
+      $('.po-row').each((_, el) => {
+        const key = $(el).find('.a-span3').text().replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+        const value = $(el).find('.a-span9').text().replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+        if (key && value) {
+          specifications[key] = value;
+        }
+      });
+
+      let featureCount = 1;
+      $('#feature-bullets ul li:not(.a-hidden) span.a-list-item').each((_, el) => {
+        const text = $(el).text().trim();
+        if (text && !text.includes('Hide') && !text.includes('Show more')) {
+          specifications[`Feature ${featureCount++}`] = text;
+        }
+      });
+
+      if ((!brand || brand === 'Unknown') && specifications['Brand']) {
+        brand = specifications['Brand'];
+      }
+
       console.log(`[Scraper] Successfully parsed: ${name}`);
-      res.json({ name, price: cleanedPrice, image, description });
+      res.json({ name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications });
     } catch (error: any) {
       console.error("[Scraper Error]", error.message);
       const status = error.response?.status || 500;

@@ -36,38 +36,184 @@ export default function AdminDashboard() {
     setTimeout(() => setFeedbackMsg(null), 3000);
   };
 
+  const clientSideScrape = async (url: string) => {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl);
+    if (!res.ok) throw new Error("Proxy request failed");
+    const data = await res.json();
+    const html = data.contents;
+    
+    if (!html) throw new Error("No content received from target site");
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const name = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || 
+                 doc.querySelector('title')?.textContent ||
+                 doc.querySelector('h1')?.textContent?.trim() ||
+                 'Unknown Product';
+    
+    const priceEl = doc.querySelector('meta[property="product:price:amount"]') || 
+                    doc.querySelector('[itemprop="price"]') || 
+                    doc.querySelector('.price, .product-price, .amount, .a-price-whole');
+    
+    const priceText = priceEl?.getAttribute('content') || priceEl?.textContent || '0';
+    let cleanedPrice = String(priceText).replace(/[^0-9.]/g, '');
+    if (cleanedPrice && !cleanedPrice.startsWith('₹') && cleanedPrice !== '0') {
+      cleanedPrice = `₹${cleanedPrice}`;
+    }
+
+    const oldPriceEl = doc.querySelector('.old-price, .a-text-strike, del');
+    const oldPriceText = oldPriceEl?.textContent || '';
+    let oldPrice = String(oldPriceText).replace(/[^0-9.]/g, '');
+    if (oldPrice && !oldPrice.startsWith('₹')) {
+      oldPrice = `₹${oldPrice}`;
+    }
+
+    const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
+                  doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content') ||
+                  doc.querySelector('img[itemprop="image"]')?.getAttribute('src') ||
+                  doc.querySelector('#landingImage, #imgBlkFront')?.getAttribute('src') || '';
+
+    const additionalImages: string[] = [];
+    const imageElements = Array.from(doc.querySelectorAll('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img'));
+    imageElements.forEach(el => {
+      let src = el.getAttribute('src') || el.getAttribute('data-old-hires') || el.getAttribute('data-src');
+      if (src) {
+        if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
+          src = src.replace(/\._[A-Z0-9_]+_\./, '.');
+        }
+        if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
+          additionalImages.push(src);
+        }
+      }
+    });
+
+    if (additionalImages.length === 0) {
+      const scriptMatch = html.match(/'colorImages':\s*({.+?}),/);
+      if (scriptMatch && scriptMatch[1]) {
+        try {
+          const data = JSON.parse(scriptMatch[1].replace(/'/g, '"'));
+          if (data.initial && Array.isArray(data.initial)) {
+            data.initial.forEach((imgObj: any) => {
+              if (imgObj.hiRes && imgObj.hiRes !== image && !additionalImages.includes(imgObj.hiRes)) {
+                additionalImages.push(imgObj.hiRes);
+              } else if (imgObj.large && imgObj.large !== image && !additionalImages.includes(imgObj.large)) {
+                additionalImages.push(imgObj.large);
+              }
+            });
+          }
+        } catch (e) {}
+      }
+    }
+
+    const description = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || 
+                        doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
+                        doc.querySelector('.description, .product-description, #feature-bullets')?.textContent?.trim() || '';
+
+    const brandEl = doc.querySelector('meta[property="product:brand"]') || doc.querySelector('[itemprop="brand"] [itemprop="name"]') || doc.querySelector('[itemprop="brand"]') || doc.querySelector('#bylineInfo');
+    let brand = brandEl?.getAttribute('content') || brandEl?.textContent?.trim() || '';
+    if (brand) {
+      if (brand.toLowerCase().startsWith('visit the ')) {
+        brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
+      }
+      if (brand.toLowerCase().startsWith('brand: ')) {
+        brand = brand.replace(/brand: /i, '').trim();
+      }
+    } else {
+      brand = 'Unknown';
+    }
+
+    const category = doc.querySelector('meta[property="product:category"]')?.getAttribute('content') || 
+                     doc.querySelector('[itemprop="category"]')?.getAttribute('content') || 
+                     doc.querySelector('.nav-a-content')?.textContent?.trim() || '';
+
+    let discount = '';
+    const discountEl = doc.querySelector('.savingsPercentage, .discount, .badge');
+    if (discountEl) {
+      discount = discountEl.textContent?.trim() || '';
+    }
+
+    const specifications: Record<string, string> = {};
+    
+    // Amazon and generic tables
+    const specRows = Array.from(doc.querySelectorAll('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr'));
+    specRows.forEach(row => {
+      const key = (row.querySelector('th')?.textContent || row.querySelector('td:first-child')?.textContent || '').trim();
+      const value = (row.querySelector('td:not(:first-child)')?.textContent || row.querySelector('td:last-child')?.textContent || '').trim();
+      
+      if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
+        // Clean up common Amazon weird chars (ZWSP, Zero-width space)
+        const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        if (cleanKey && cleanVal) {
+          specifications[cleanKey] = cleanVal;
+        }
+      }
+    });
+
+    const poRows = Array.from(doc.querySelectorAll('.po-row'));
+    poRows.forEach(row => {
+      const key = row.querySelector('.a-span3')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      const value = row.querySelector('.a-span9')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      if (key && value) {
+        specifications[key] = value;
+      }
+    });
+
+    let featureCount = 1;
+    const bulletItems = Array.from(doc.querySelectorAll('#feature-bullets ul li:not(.a-hidden) span.a-list-item'));
+    bulletItems.forEach(item => {
+      const text = item.textContent?.trim();
+      if (text && !text.includes('Hide') && !text.includes('Show more')) {
+        specifications[`Feature ${featureCount++}`] = text;
+      }
+    });
+
+    if ((!brand || brand === 'Unknown') && specifications['Brand']) {
+      brand = specifications['Brand'];
+    }
+
+    return { name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications };
+  };
+
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setLoading(true);
     try {
-      const response = await fetch('/api/scrape-product', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: scrapeUrl })
-      });
-      
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        const text = await response.text();
-        console.error("Non-JSON response received:", text);
-        throw new Error(`Server returned a non-JSON response. Status: ${response.status}`);
-      }
+      let productData;
+      try {
+        const response = await fetch('/api/scrape-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: scrapeUrl })
+        });
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          // If backend isn't available (like on static hosts returning 404/405), throw to fallback
+          throw new Error("Backend not available");
+        }
 
-      const productData = await response.json();
-      
-      if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
+        productData = await response.json();
+        if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
+      } catch (backendError) {
+        console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError);
+        productData = await clientSideScrape(scrapeUrl);
+      }
 
       const product = {
         name: productData.name || 'Unnamed Product',
-        brand: 'Unknown',
-        category: 'Laptops' as any,
+        brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : 'Unknown',
+        category: (productData.category || 'Laptops') as any,
         description: productData.description || '',
         price: productData.price || '0',
-        oldPrice: '',
-        discount: '',
+        oldPrice: productData.oldPrice || '',
+        discount: productData.discount || '',
         usageTags: [],
         image: productData.image || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
-        specifications: {}
+        additionalImages: productData.additionalImages || [],
+        specifications: productData.specifications || {}
       };
       
       await addProduct(product);
@@ -110,13 +256,18 @@ export default function AdminDashboard() {
             };
 
             try {
+              let pPrice = String(getValue(['price', 'Price', 'PRICE']) || '0');
+              if (pPrice && !pPrice.startsWith('₹') && pPrice !== '0') pPrice = `₹${pPrice}`;
+              let pOldPrice = String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || '');
+              if (pOldPrice && !pOldPrice.startsWith('₹')) pOldPrice = `₹${pOldPrice}`;
+
               const product = {
                 name: getValue(['name', 'Name', 'NAME']) || 'Unnamed Product',
                 brand: getValue(['brand', 'Brand', 'BRAND']) || 'Unknown',
                 category: (getValue(['category', 'Category', 'CATEGORY']) || 'Laptops') as any,
                 description: getValue(['description', 'Description', 'DESCRIPTION']) || '',
-                price: String(getValue(['price', 'Price', 'PRICE']) || '0'),
-                oldPrice: String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || ''),
+                price: pPrice,
+                oldPrice: pOldPrice,
                 discount: String(getValue(['discount', 'Discount', 'DISCOUNT']) || ''),
                 usageTags: getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS']) 
                   ? String(getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS'])).split(',').map(tag => tag.trim()) 
@@ -144,7 +295,7 @@ export default function AdminDashboard() {
                 brand: 'Unknown',
                 category: 'Laptops' as any,
                 description: '',
-                price: '0',
+                price: '₹0',
                 oldPrice: '',
                 discount: '',
                 usageTags: [],
@@ -247,10 +398,14 @@ export default function AdminDashboard() {
     oldPrice: '',
     discount: '',
     usageTags: [] as string[],
-    image: ''
+    image: '',
+    additionalImages: [] as string[]
   });
 
   const [specs, setSpecs] = useState<{ key: string; value: string }[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [addUrlInput, setAddUrlInput] = useState('');
 
   const handleAddSpec = () => {
     setSpecs([...specs, { key: '', value: '' }]);
@@ -278,7 +433,8 @@ export default function AdminDashboard() {
       oldPrice: product.oldPrice || '',
       discount: product.discount || '',
       usageTags: Array.isArray(product.usageTags) ? product.usageTags : [],
-      image: product.image || ''
+      image: product.image || '',
+      additionalImages: product.additionalImages || []
     });
 
     if (product.specifications) {
@@ -286,6 +442,10 @@ export default function AdminDashboard() {
     } else {
       setSpecs([]);
     }
+    setImageFiles([]);
+    setImagePreviews([]);
+    setImageFile(null); // Keep backward compatibility for single image if needed, or remove later
+    setImagePreview(null);
   };
 
   const handleCancelEdit = () => {
@@ -299,23 +459,41 @@ export default function AdminDashboard() {
       oldPrice: '',
       discount: '',
       usageTags: [],
-      image: ''
+      image: '',
+      additionalImages: []
     });
     setSpecs([]);
     setImageFile(null);
     setImagePreview(null);
+    setImageFiles([]);
+    setImagePreviews([]);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = Array.from(e.target.files || []) as File[];
+    if (files.length > 0) {
+      setImageFiles(prev => [...prev, ...files]);
+      
+      files.forEach((file: File) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews(prev => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  };
+
+  const removeSelectedImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const removeExistingImage = (index: number) => {
+     setFormData(prev => ({
+       ...prev,
+       additionalImages: prev.additionalImages.filter((_, i) => i !== index)
+     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -323,17 +501,26 @@ export default function AdminDashboard() {
     console.log("Submitting form, editingId:", editingId);
     setLoading(true);
     try {
-      let imageUrl = formData.image;
+      let mainImageUrl = formData.image;
+      let newAdditionalImages = [...formData.additionalImages];
 
-      if (imageFile) {
-        const uploadFormData = new FormData();
-        uploadFormData.append('file', imageFile);
-        const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
-        const uploadData = await res.json();
-        if (uploadData.secure_url) {
-          imageUrl = uploadData.secure_url;
-        } else {
-          throw new Error(uploadData.error || 'Image upload failed');
+      // Upload all newly selected files
+      if (imageFiles.length > 0) {
+        for (let i = 0; i < imageFiles.length; i++) {
+          const uploadFormData = new FormData();
+          uploadFormData.append('file', imageFiles[i]);
+          const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
+          const uploadData = await res.json();
+          if (uploadData.secure_url) {
+            // If primary image is empty, make first uploaded image the primary
+            if (!mainImageUrl && i === 0 && !formData.image) {
+               mainImageUrl = uploadData.secure_url;
+            } else {
+               newAdditionalImages.push(uploadData.secure_url);
+            }
+          } else {
+            throw new Error(uploadData.error || 'Image upload failed');
+          }
         }
       }
 
@@ -344,10 +531,23 @@ export default function AdminDashboard() {
         return acc;
       }, {} as Record<string, string>);
 
+      let finalPrice = formData.price.trim();
+      if (finalPrice && !finalPrice.startsWith('₹') && finalPrice !== '0') {
+        finalPrice = '₹' + finalPrice;
+      }
+
+      let finalOldPrice = formData.oldPrice.trim();
+      if (finalOldPrice && !finalOldPrice.startsWith('₹')) {
+        finalOldPrice = '₹' + finalOldPrice;
+      }
+
       if (editingId) {
         const updateData: any = {
           ...formData,
-          image: imageUrl,
+          price: finalPrice,
+          oldPrice: finalOldPrice,
+          image: mainImageUrl,
+          additionalImages: newAdditionalImages,
           category: formData.category as any,
           specifications: formattedSpecs
         };
@@ -356,7 +556,10 @@ export default function AdminDashboard() {
       } else {
         await addProduct({
           ...formData,
-          image: imageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+          price: finalPrice,
+          oldPrice: finalOldPrice,
+          image: mainImageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+          additionalImages: newAdditionalImages,
           category: formData.category as any,
           specifications: formattedSpecs
         });
@@ -467,31 +670,90 @@ export default function AdminDashboard() {
                 <div className="space-y-4">
                   {/* File Upload Option */}
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-primary hover:bg-white/5 transition-all group overflow-hidden relative">
-                    {(imagePreview || formData.image) ? (
-                      <img src={imagePreview || formData.image} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center p-4 text-center">
-                        <Upload className="w-8 h-8 text-gray-500 mb-2 group-hover:text-primary transition-colors" />
-                        <p className="text-xs text-gray-400 group-hover:text-white transition-colors font-medium">Click to upload product image</p>
-                        <p className="text-[10px] text-gray-600 mt-1 uppercase tracking-widest font-black">JPG, JPEG, PNG supported</p>
+                    <div className="flex flex-col items-center justify-center p-4 text-center">
+                      <Upload className="w-8 h-8 text-gray-500 mb-2 group-hover:text-primary transition-colors" />
+                      <p className="text-xs text-gray-400 group-hover:text-white transition-colors font-medium">Click to upload product image(s)</p>
+                      <p className="text-[10px] text-gray-600 mt-1 uppercase tracking-widest font-black">JPG, JPEG, PNG, WEBP</p>
+                    </div>
+                    <input type="file" multiple className="hidden" accept="image/jpeg,image/jpg,image/png,image/webp" onChange={handleImageChange} />
+                  </label>
+                  
+                  {/* Gallery Previews */}
+                  <div className="flex flex-wrap gap-4">
+                    {/* Primary URL display (if not overridden by file preview) */}
+                    {(imagePreview || formData.image) && (
+                      <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-white/20">
+                        <img src={imagePreview || formData.image} alt="Primary" className="w-full h-full object-cover" />
+                        <div className="absolute top-0 right-0 bg-primary text-black text-[10px] font-bold px-1 m-1 rounded shadow">Primary</div>
                       </div>
                     )}
-                    <input type="file" className="hidden" accept="image/jpeg,image/jpg,image/png,image/webp" onChange={handleImageChange} />
-                  </label>
+                    
+                    {/* Existing Additional URL Images */}
+                    {formData.additionalImages.map((imgUrl, i) => (
+                      <div key={`exist-${i}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-white/10 group">
+                        <img src={imgUrl} alt={`Additional ${i}`} className="w-full h-full object-cover opacity-80" />
+                        <button type="button" onClick={() => removeExistingImage(i)} className="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+                           <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* New Upload Previews */}
+                    {imagePreviews.map((preview, i) => (
+                      <div key={`new-${i}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-primary/50 group">
+                        <img src={preview} alt={`Upload ${i}`} className="w-full h-full object-cover" />
+                        <div className="absolute top-0 left-0 bg-blue-500 text-white text-[10px] px-1 m-1 rounded font-bold shadow">New</div>
+                        <button type="button" onClick={() => removeSelectedImage(i)} className="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+                           <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
 
                   {/* URL Paste Option */}
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-1">
                       <ImageIcon size={14} className="text-gray-500" />
-                      <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Or paste image URL</span>
+                      <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Image URLs</span>
                     </div>
-                    <input 
-                      type="text" 
-                      placeholder="https://images.unsplash.com/..."
-                      value={formData.image} 
-                      onChange={e => setFormData({...formData, image: e.target.value})} 
-                      className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary transition-colors outline-none" 
-                    />
+                    <div className="flex flex-col gap-2">
+                      <input 
+                        type="text" 
+                        placeholder="Primary URL: https://images.unsplash.com/..."
+                        value={formData.image} 
+                        onChange={e => setFormData({...formData, image: e.target.value})} 
+                        className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary transition-colors outline-none cursor-text disabled:cursor-not-allowed" 
+                      />
+                      <div className="flex gap-2">
+                        <input 
+                          type="text" 
+                          placeholder="Additional URL..."
+                          value={addUrlInput} 
+                          onChange={e => setAddUrlInput(e.target.value)} 
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && addUrlInput) {
+                              e.preventDefault();
+                              setFormData(prev => ({...prev, additionalImages: [...prev.additionalImages, addUrlInput]}));
+                              setAddUrlInput('');
+                            }
+                          }}
+                          className="flex-1 bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary transition-colors outline-none" 
+                        />
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            if (addUrlInput) {
+                              setFormData(prev => ({...prev, additionalImages: [...prev.additionalImages, addUrlInput]}));
+                              setAddUrlInput('');
+                            }
+                          }}
+                          className="px-4 bg-primary/20 text-primary border border-primary/30 rounded-xl hover:bg-primary/30 transition-colors flex items-center justify-center font-bold"
+                          title="Add additional image"
+                        >
+                           <Plus size={20} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

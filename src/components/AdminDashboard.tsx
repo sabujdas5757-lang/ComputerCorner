@@ -37,13 +37,39 @@ export default function AdminDashboard() {
   };
 
   const clientSideScrape = async (url: string) => {
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error("Proxy request failed");
-    const data = await res.json();
-    const html = data.contents;
+    let html = '';
+    const encodedUrl = encodeURIComponent(url);
+    const proxies = [
+      `https://api.allorigins.win/raw?url=${encodedUrl}`,
+      `https://corsproxy.io/?${encodedUrl}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`
+    ];
+
+    for (const proxyUrl of proxies) {
+      try {
+        const res = await fetch(proxyUrl);
+        if (res.ok) {
+          html = await res.text();
+          if (html) break;
+        }
+      } catch (e) {
+        console.warn(`Proxy ${proxyUrl} failed:`, e);
+      }
+    }
+
+    if (!html) {
+      // Fallback to AllOrigins JSON API
+      try {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodedUrl}`;
+        const res = await fetch(proxyUrl);
+        if (res.ok) {
+          const data = await res.json();
+          html = data.contents;
+        }
+      } catch (err) {}
+    }
     
-    if (!html) throw new Error("No content received from target site");
+    if (!html) throw new Error("No content received from target site via any proxy");
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
@@ -183,7 +209,8 @@ export default function AdminDashboard() {
     try {
       let productData;
       try {
-        const response = await fetch('/api/scrape-product', {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${apiUrl}/api/scrape-product`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: scrapeUrl })
@@ -286,7 +313,8 @@ export default function AdminDashboard() {
           try {
             const uploadFormData = new FormData();
             uploadFormData.append('file', file);
-            const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${apiUrl}/api/upload-file`, { method: 'POST', body: uploadFormData });
             const uploadData = await res.json();
             
             if (uploadData.secure_url) {
@@ -509,7 +537,8 @@ export default function AdminDashboard() {
         for (let i = 0; i < imageFiles.length; i++) {
           const uploadFormData = new FormData();
           uploadFormData.append('file', imageFiles[i]);
-          const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
+          const apiUrl = import.meta.env.VITE_API_URL || '';
+          const res = await fetch(`${apiUrl}/api/upload-file`, { method: 'POST', body: uploadFormData });
           const uploadData = await res.json();
           if (uploadData.secure_url) {
             // If primary image is empty, make first uploaded image the primary

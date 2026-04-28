@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
@@ -12,7 +12,9 @@ export default function AdminDashboard() {
   const { logout } = useAuth();
   const { products, addProduct, updateProduct, deleteProduct, deleteMultipleProducts } = useProducts();
   const [loading, setLoading] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredProducts = useMemo(() => {
@@ -220,7 +222,7 @@ export default function AdminDashboard() {
 
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
-    setLoading(true);
+    setIsImporting(true);
     try {
       // First, check backend health
       try {
@@ -283,10 +285,15 @@ export default function AdminDashboard() {
       
       showFeedback('Product details imported to form. Review and click "Add Product".');
       setScrapeUrl('');
+
+      // Scroll to form after import
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     } catch (err: any) {
       showFeedback(`Error scraping/adding product: ${err.message}`);
     } finally {
-      setLoading(false);
+      setIsImporting(false);
     }
   };
 
@@ -665,7 +672,7 @@ export default function AdminDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Add/Edit Product Form */}
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 h-fit">
+          <div ref={formRef} className="bg-white/5 border border-white/10 rounded-3xl p-8 h-fit">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 {editingId ? <Edit2 size={24} className="text-primary" /> : <Plus size={24} className="text-primary" />} 
@@ -693,7 +700,15 @@ export default function AdminDashboard() {
                 <p className="text-sm text-gray-400">Import from URL</p>
                 <div className="flex gap-2">
                   <input type="text" value={scrapeUrl} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
-                  <button type="button" onClick={handleScrapeProduct} className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors">Import</button>
+                  <button 
+                    type="button" 
+                    onClick={handleScrapeProduct} 
+                    disabled={isImporting}
+                    className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : null}
+                    {isImporting ? 'Importing...' : 'Import'}
+                  </button>
                 </div>
               </div>
             )}

@@ -39,49 +39,71 @@ async function startServer() {
     try {
       let html = '';
       
-      for (let i = 0; i < 3; i++) {
-        try {
-          // Last attempt: try using allorigins proxy to bypass target blocking
-          if (i === 2) {
-            console.log(`[Scraper] Attempt 3 using proxy...`);
-            const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, {
-              timeout: 15000
-            });
-            if (proxyRes.data && proxyRes.data.contents) {
-              html = proxyRes.data.contents;
-              break;
-            }
-          }
-          
+      const fetchMethods = [
+        // Method 1: Direct fetch with standard UA
+        async () => {
           const response = await axios.get(url, {
-            timeout: 15000,
+            timeout: 10000,
             headers: { 
-              'User-Agent': i === 0 
-                ? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-                : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.5',
               'Referer': 'https://www.google.com/',
-              'Connection': 'keep-alive',
-              'Cache-Control': 'no-cache',
             }
           });
-          html = response.data;
-          break;
+          return response.data;
+        },
+        // Method 2: Direct fetch with different UA
+        async () => {
+          const response = await axios.get(url, {
+            timeout: 10000,
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            }
+          });
+          return response.data;
+        },
+        // Method 3: AllOrigins Proxy
+        async () => {
+          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { timeout: 15000 });
+          return proxyRes.data?.contents || '';
+        },
+        // Method 4: Codetabs Proxy
+        async () => {
+          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { timeout: 15000 });
+          return proxyRes.data;
+        },
+        // Method 5: CorsProxy.io
+        async () => {
+          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { timeout: 15000 });
+          return proxyRes.data;
+        }
+      ];
+
+      for (const method of fetchMethods) {
+        try {
+          html = await method();
+          
+          // Check if we got a real page or a block
+          if (html && 
+              html.includes('<html') && 
+              !html.includes('Robot Check') && 
+              !html.includes('Bot Check') &&
+              !html.includes('captcha') &&
+              !html.includes('503 Service Unavailable') &&
+              !html.includes('503 - Service Unavailable')) {
+            break;
+          } else {
+            console.log(`[Scraper] Blocked or invalid content from method, trying next...`);
+            html = '';
+          }
         } catch (error: any) {
-          // console.warn(`[Scraper] Attempt ${i + 1} failed: ${error.message}`);
-          if (i === 2) throw error;
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          console.warn(`[Scraper] A fetch method failed: ${error.message}`);
         }
       }
 
-      if (!html || 
-          html.includes('503 - Service Unavailable') || 
-          html.includes('503 Service Unavailable') ||
-          html.includes('Robot Check') || 
-          html.includes('Bot Check') ||
-          html.includes('api.allorigins.win') ||
-          html.includes('captcha')) {
+      if (!html || !html.includes('<html')) {
         throw new Error("Target website blocked the request (Anti-bot protection).");
       }
 

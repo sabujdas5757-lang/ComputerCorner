@@ -6,6 +6,7 @@ import 'dotenv/config';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import multer from "multer";
+import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
 
 async function startServer() {
@@ -78,25 +79,13 @@ async function startServer() {
     try {
       const file = (req as any).file;
       if (!file) return res.status(400).json({ error: "No file uploaded" });
-      if (!supabase) return res.status(500).json({ error: "Supabase not configured" });
 
-      const fileExt = file.originalname.split('.').pop() || 'png';
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      
-      const { data, error } = await supabase.storage
-        .from(supabaseBucket)
-        .upload(fileName, file.buffer, {
-          contentType: file.mimetype,
-          upsert: true
-        });
+      // Using Vercel Blob
+      const blob = await put(file.originalname, file.buffer, {
+        access: 'public',
+      });
 
-      if (error) throw error;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from(supabaseBucket)
-        .getPublicUrl(fileName);
-      
-      res.json({ secure_url: publicUrl });
+      res.json({ secure_url: blob.url });
     } catch (error: any) {
       console.error("[Upload Error]", error);
       res.status(500).json({ error: error.message });
@@ -161,9 +150,15 @@ async function startServer() {
   }
 
   // Start listening
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-  });
+  try {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server successfully started and listening on 0.0.0.0:${PORT}`);
+    });
+  } catch (listenError) {
+    console.error("Critical error starting server:", listenError);
+  }
 }
 
-startServer();
+startServer().catch(err => {
+  console.error("Failed to initialize server application:", err);
+});

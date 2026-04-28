@@ -5,6 +5,7 @@ import cors from "cors";
 import 'dotenv/config';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import multer from "multer";
 import { createClient } from '@supabase/supabase-js';
 
 async function startServer() {
@@ -15,6 +16,7 @@ async function startServer() {
   const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
   let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
   const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydmR1b3hzYXF0aWl4c2tucG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMjg3MjksImV4cCI6MjA5MjcwNDcyOX0.hfM5tjamYmPKe9t2way_tm0fVQMdnG980u4K_HWUPso";
+  const supabaseBucket = process.env.SUPABASE_BUCKET || "products";
 
   const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
   
@@ -63,6 +65,40 @@ async function startServer() {
       if (error.response?.status === 529 || error.response?.status === 429 || error.response?.status === 403) {
         return res.status(500).json({ error: "The target website is blocking automated access. Please paste the details manually." });
       }
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  const uploadMiddleware = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } 
+  });
+
+  app.post("/api/upload-file", uploadMiddleware.single('file'), async (req, res) => {
+    try {
+      const file = (req as any).file;
+      if (!file) return res.status(400).json({ error: "No file uploaded" });
+      if (!supabase) return res.status(500).json({ error: "Supabase not configured" });
+
+      const fileExt = file.originalname.split('.').pop() || 'png';
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from(supabaseBucket)
+        .upload(fileName, file.buffer, {
+          contentType: file.mimetype,
+          upsert: true
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(supabaseBucket)
+        .getPublicUrl(fileName);
+      
+      res.json({ secure_url: publicUrl });
+    } catch (error: any) {
+      console.error("[Upload Error]", error);
       res.status(500).json({ error: error.message });
     }
   });

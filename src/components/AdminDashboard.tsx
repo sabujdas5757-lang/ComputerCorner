@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
@@ -15,8 +15,15 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrapeUrl, setScrapeUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+
+  const showFeedback = (msg: string) => {
+    setFeedbackMsg(msg);
+    setTimeout(() => setFeedbackMsg(null), 3000);
+  };
 
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
@@ -34,7 +41,7 @@ export default function AdminDashboard() {
       const product = {
         name: productData.name || 'Unnamed Product',
         brand: 'Unknown',
-        category: 'Laptops',
+        category: 'Laptops' as any,
         description: productData.description || '',
         price: productData.price || '0',
         oldPrice: '',
@@ -55,68 +62,96 @@ export default function AdminDashboard() {
     }
   };
 
-  const showFeedback = (msg: string) => {
-    setFeedbackMsg(msg);
-    setTimeout(() => setFeedbackMsg(null), 3000);
-  };
-
   const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setLoading(true);
     try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const json: any[] = XLSX.utils.sheet_to_json(worksheet);
-
       let successCount = 0;
       let errorCount = 0;
 
-      for (const row of json) {
-        // Helper to find value despite potentially different casing
-        const getValue = (keys: string[]) => {
-          for (const k of keys) {
-            if (row[k] !== undefined) return row[k];
-          }
-          return undefined;
-        };
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop()?.toLowerCase();
 
-        try {
-          const product = {
-            name: getValue(['name', 'Name', 'NAME']) || 'Unnamed Product',
-            brand: getValue(['brand', 'Brand', 'BRAND']) || 'Unknown',
-            category: getValue(['category', 'Category', 'CATEGORY']) || 'Laptops',
-            description: getValue(['description', 'Description', 'DESCRIPTION']) || '',
-            price: String(getValue(['price', 'Price', 'PRICE']) || '0'),
-            oldPrice: String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || ''),
-            discount: String(getValue(['discount', 'Discount', 'DISCOUNT']) || ''),
-            usageTags: getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS']) 
-              ? String(getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS'])).split(',').map(tag => tag.trim()) 
-              : [],
-            image: getValue(['image', 'Image', 'IMAGE']) || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
-            specifications: {}
-          };
-          await addProduct(product);
-          successCount++;
-        } catch (err) {
-          console.error("Error adding product row:", row, err);
-          errorCount++;
+        if (['xlsx', 'xls', 'csv'].includes(fileExt || '')) {
+          const data = await file.arrayBuffer();
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const json: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+          for (const row of json) {
+            const getValue = (keys: string[]) => {
+              for (const k of keys) {
+                if (row[k] !== undefined) return row[k];
+              }
+              return undefined;
+            };
+
+            try {
+              const product = {
+                name: getValue(['name', 'Name', 'NAME']) || 'Unnamed Product',
+                brand: getValue(['brand', 'Brand', 'BRAND']) || 'Unknown',
+                category: (getValue(['category', 'Category', 'CATEGORY']) || 'Laptops') as any,
+                description: getValue(['description', 'Description', 'DESCRIPTION']) || '',
+                price: String(getValue(['price', 'Price', 'PRICE']) || '0'),
+                oldPrice: String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || ''),
+                discount: String(getValue(['discount', 'Discount', 'DISCOUNT']) || ''),
+                usageTags: getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS']) 
+                  ? String(getValue(['usageTags', 'UsageTags', 'usage_tags', 'USAGE_TAGS'])).split(',').map(tag => tag.trim()) 
+                  : [],
+                image: getValue(['image', 'Image', 'IMAGE']) || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
+                specifications: {}
+              };
+              await addProduct(product);
+              successCount++;
+            } catch (err) {
+              console.error("Error adding product row:", row, err);
+              errorCount++;
+            }
+          }
+        } else if (['jpg', 'jpeg', 'png', 'webp'].includes(fileExt || '')) {
+          try {
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', file);
+            const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
+            const uploadData = await res.json();
+            
+            if (uploadData.secure_url) {
+              await addProduct({
+                name: file.name.split('.')[0].replace(/[_-]/g, ' '),
+                brand: 'Unknown',
+                category: 'Laptops' as any,
+                description: '',
+                price: '0',
+                oldPrice: '',
+                discount: '',
+                usageTags: [],
+                image: uploadData.secure_url,
+                specifications: {}
+              });
+              successCount++;
+            } else {
+              throw new Error(uploadData.error || 'Upload failed');
+            }
+          } catch (err) {
+            console.error("Error bulk uploading image:", file.name, err);
+            errorCount++;
+          }
         }
       }
       
       if (errorCount > 0) {
-        showFeedback(`Added ${successCount} products, but ${errorCount} failed. Check console for details.`);
+        showFeedback(`Processed ${successCount} items, but ${errorCount} failed.`);
       } else {
-        showFeedback(`Successfully added ${successCount} products!`);
+        showFeedback(`Successfully added ${successCount} items!`);
       }
     } catch (err: any) {
-      showFeedback(`Error uploading bulk products: ${err.message}`);
+      showFeedback(`Error uploading: ${err.message}`);
     } finally {
       setLoading(false);
-      // Reset input
       e.target.value = '';
     }
   };
@@ -195,6 +230,20 @@ export default function AdminDashboard() {
       image: ''
     });
     setSpecs([]);
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,6 +251,20 @@ export default function AdminDashboard() {
     console.log("Submitting form, editingId:", editingId);
     setLoading(true);
     try {
+      let imageUrl = formData.image;
+
+      if (imageFile) {
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', imageFile);
+        const res = await fetch('/api/upload-file', { method: 'POST', body: uploadFormData });
+        const uploadData = await res.json();
+        if (uploadData.secure_url) {
+          imageUrl = uploadData.secure_url;
+        } else {
+          throw new Error(uploadData.error || 'Image upload failed');
+        }
+      }
+
       const formattedSpecs = specs.reduce((acc, curr) => {
         if (curr.key.trim()) {
           acc[curr.key.trim()] = curr.value.trim();
@@ -212,6 +275,7 @@ export default function AdminDashboard() {
       if (editingId) {
         const updateData: any = {
           ...formData,
+          image: imageUrl,
           category: formData.category as any,
           specifications: formattedSpecs
         };
@@ -220,8 +284,8 @@ export default function AdminDashboard() {
       } else {
         await addProduct({
           ...formData,
+          image: imageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
           category: formData.category as any,
-          image: formData.image || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
           specifications: formattedSpecs
         });
         showFeedback('Product added successfully!');
@@ -279,9 +343,10 @@ export default function AdminDashboard() {
               </h2>
               <div className="flex gap-2">
                 {!editingId && (
-                  <label className="text-sm bg-white/5 border border-white/10 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-2">
-                    <span>Bulk Upload</span>
-                    <input type="file" accept=".xlsx, .xls, .csv" onChange={handleBulkUpload} className="hidden" />
+                  <label className="text-sm bg-white/5 border border-white/10 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-2 text-primary whitespace-nowrap">
+                    <Upload size={16} />
+                    <span>Bulk Upload (.xlsx, .jpg)</span>
+                    <input type="file" multiple accept=".xlsx, .xls, .csv, .jpg, .jpeg, .png" onChange={handleBulkUpload} className="hidden" />
                   </label>
                 )}
                 {editingId && (
@@ -298,11 +363,12 @@ export default function AdminDashboard() {
                 <p className="text-sm text-gray-400">Import from URL</p>
                 <div className="flex gap-2">
                   <input type="text" value={scrapeUrl} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
-                  <button onClick={handleScrapeProduct} className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors">Import</button>
+                  <button type="button" onClick={handleScrapeProduct} className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors">Import</button>
                 </div>
               </div>
             )}
 
+            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Product Name</label>
@@ -323,8 +389,47 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Description</label>
-                <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} rows={3} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none resize-none" />
+                <label className="block text-sm text-gray-400 mb-1">Product Description</label>
+                <textarea 
+                  value={formData.description} 
+                  onChange={e => setFormData({...formData, description: e.target.value})} 
+                  placeholder="Enter detailed description..."
+                  rows={3} 
+                  className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none resize-none" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Product Media</label>
+                <div className="space-y-4">
+                  {/* File Upload Option */}
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-primary hover:bg-white/5 transition-all group overflow-hidden relative">
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-4 text-center">
+                        <Upload className="w-8 h-8 text-gray-500 mb-2 group-hover:text-primary transition-colors" />
+                        <p className="text-xs text-gray-400 group-hover:text-white transition-colors font-medium">Click to upload product image</p>
+                        <p className="text-[10px] text-gray-600 mt-1 uppercase tracking-widest font-black">JPG, JPEG, PNG supported</p>
+                      </div>
+                    )}
+                    <input type="file" className="hidden" accept="image/jpeg,image/jpg,image/png,image/webp" onChange={handleImageChange} />
+                  </label>
+
+                  {/* URL Paste Option */}
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-1">
+                      <ImageIcon size={14} className="text-gray-500" />
+                      <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Or paste image URL</span>
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="https://images.unsplash.com/..."
+                      value={formData.image} 
+                      onChange={e => setFormData({...formData, image: e.target.value})} 
+                      className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary transition-colors outline-none" 
+                    />
+                  </div>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

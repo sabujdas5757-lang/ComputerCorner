@@ -236,22 +236,29 @@ export default function AdminDashboard() {
       }
 
       const product = {
-        name: productData.name || 'Unnamed Product',
-        brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : 'Unknown',
+        name: productData.name || '',
+        brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : '',
         category: (productData.category || 'Laptops') as any,
         description: productData.description || '',
-        price: productData.price || '0',
+        price: productData.price || '',
         oldPrice: productData.oldPrice || '',
         discount: productData.discount || '',
         usageTags: [],
-        image: productData.image || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
-        additionalImages: productData.additionalImages || [],
-        specifications: productData.specifications || {}
+        image: productData.image || '',
+        additionalImages: productData.additionalImages || []
       };
       
-      await addProduct(product);
+      setFormData(product);
       
-      showFeedback('Product automatically added to inventory!');
+      const newSpecs: {key: string, value: string}[] = [];
+      if (productData.specifications) {
+         Object.entries(productData.specifications).forEach(([k, v]) => {
+           newSpecs.push({key: k, value: String(v)});
+         });
+      }
+      setSpecs(newSpecs);
+      
+      showFeedback('Product details imported to form. Review and click "Add Product".');
       setScrapeUrl('');
     } catch (err: any) {
       showFeedback(`Error scraping/adding product: ${err.message}`);

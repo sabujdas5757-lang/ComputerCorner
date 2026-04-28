@@ -1,7 +1,7 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
@@ -34,6 +34,16 @@ export default function AdminDashboard() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
+  const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
+
+  useEffect(() => {
+    fetch('/api/storage-status')
+      .then(res => res.json())
+      .then(data => {
+        if (data) setStorageStatus(data);
+      })
+      .catch(err => console.error("Storage status check failed:", err));
+  }, []);
 
   const safeJson = async (response: Response) => {
     try {
@@ -790,6 +800,15 @@ export default function AdminDashboard() {
             <h1 className="text-4xl font-bold">Admin Portal</h1>
             <p className="text-gray-400 mt-2">Manage products and inventory</p>
           </div>
+          {storageStatus && !storageStatus.configured && (
+            <div className="flex-1 max-w-md bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-3 text-red-500">
+              <AlertCircle size={20} className="flex-shrink-0" />
+              <div className="text-xs">
+                <p className="font-bold">Storage Missing</p>
+                <p className="opacity-80">Images will not be saved permanently. Please set tokens.</p>
+              </div>
+            </div>
+          )}
           <div className="flex gap-4">
             <Link to="/" className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
               Back to Home

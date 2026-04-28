@@ -10,10 +10,10 @@ import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
+async function startServer() {
   // Supabase Configuration (Used for any other future client needs)
   const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
   let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
@@ -365,6 +365,14 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  app.get("/api/storage-status", (req, res) => {
+    res.json({ 
+      configured: !!process.env.BLOB_READ_WRITE_TOKEN,
+      provider: "Vercel Blob",
+      message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing in environment variables"
+    });
+  });
+
   // Fallback for missing API routes to ensure they return JSON, not HTML
   app.all("/api/*", (req, res) => {
     res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
@@ -429,3 +437,5 @@ async function startServer() {
 startServer().catch(err => {
   console.error("Failed to initialize server application:", err);
 });
+
+export default app;

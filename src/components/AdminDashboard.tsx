@@ -33,6 +33,8 @@ export default function AdminDashboard() {
   const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
+  const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
+
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(null), 3000);
@@ -44,28 +46,39 @@ export default function AdminDashboard() {
 
     // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
     const getProxyRequests = [
-      async () => {
-        const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
-        if (!res.ok) throw new Error("AllOrigins failed");
-        const data = await res.json();
-        if (!data || !data.contents) throw new Error("Empty AllOrigins content");
-        return data.contents;
+      {
+        name: 'Proxy A (AllOrigins)',
+        fn: async () => {
+          const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
+          if (!res.ok) throw new Error("AllOrigins failed");
+          const data = await res.json();
+          if (!data || !data.contents) throw new Error("Empty AllOrigins content");
+          return data.contents;
+        }
       },
-      async () => {
-        const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
-        if (!res.ok) throw new Error("Codetabs failed");
-        return await res.text();
+      {
+        name: 'Proxy B (Codetabs)',
+        fn: async () => {
+          const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
+          if (!res.ok) throw new Error("Codetabs failed");
+          return await res.text();
+        }
       },
-      async () => {
-        const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
-        if (!res.ok) throw new Error("Corsproxy failed");
-        return await res.text();
+      {
+        name: 'Proxy C (CorsProxy)',
+        fn: async () => {
+          const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
+          if (!res.ok) throw new Error("Corsproxy failed");
+          return await res.text();
+        }
       }
     ];
 
-    for (const request of getProxyRequests) {
+    for (const proxy of getProxyRequests) {
       try {
-        html = await request();
+        setScrapingStatus(`Trying ${proxy.name}...`);
+        html = await proxy.fn();
+        
         // Super basic validation that we actually got HTML and not an anti-bot captcha page
         if (html && 
             html.includes('<html') && 
@@ -77,15 +90,16 @@ export default function AdminDashboard() {
             !html.includes('captcha')) {
            break;
         } else {
+           console.warn(`${proxy.name} returned blocked content.`);
            html = ''; // Reset html if it hit a bot check
         }
       } catch (e) {
-        console.warn('A proxy fallback failed:', e);
+        console.warn(`${proxy.name} failed:`, e);
       }
     }
     
     if (!html || !html.includes('<html')) {
-      throw new Error("Target website blocked the request (Anti-bot protection). Please manually add the product details below.");
+      throw new Error("Target website blocked all requests (Anti-bot protection). Please manually add the product details below.");
     }
 
     const parser = new DOMParser();
@@ -223,6 +237,7 @@ export default function AdminDashboard() {
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
+    setScrapingStatus('Connecting to backend...');
     try {
       // First, check backend health
       try {
@@ -236,6 +251,7 @@ export default function AdminDashboard() {
 
       let productData;
       try {
+        setScrapingStatus('Querying smart backend engine...');
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -255,8 +271,9 @@ export default function AdminDashboard() {
 
         productData = await response.json();
         if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
-      } catch (backendError) {
+      } catch (backendError: any) {
         console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError);
+        setScrapingStatus('Backend unavailable, falling back to browser-proxies...');
         productData = await clientSideScrape(scrapeUrl);
       }
 
@@ -294,6 +311,7 @@ export default function AdminDashboard() {
       showFeedback(`Error scraping/adding product: ${err.message}`);
     } finally {
       setIsImporting(false);
+      setScrapingStatus(null);
     }
   };
 
@@ -710,6 +728,12 @@ export default function AdminDashboard() {
                     {isImporting ? 'Importing...' : 'Import'}
                   </button>
                 </div>
+                {scrapingStatus && (
+                  <p className="text-xs text-primary mt-2 animate-pulse flex items-center gap-1">
+                    <Loader2 size={12} className="animate-spin" />
+                    {scrapingStatus}
+                  </p>
+                )}
               </div>
             )}
 

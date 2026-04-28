@@ -66,17 +66,33 @@ async function startServer() {
         },
         // Method 3: AllOrigins Proxy
         async () => {
-          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { timeout: 15000 });
+          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
+            timeout: 20000,
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+          });
           return proxyRes.data?.contents || '';
         },
         // Method 4: Codetabs Proxy
         async () => {
-          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { timeout: 15000 });
+          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
+            timeout: 20000,
+            validateStatus: () => true 
+          });
+          if (proxyRes.status !== 200) throw new Error(`Codetabs returned ${proxyRes.status}`);
           return proxyRes.data;
         },
         // Method 5: CorsProxy.io
         async () => {
-          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { timeout: 15000 });
+          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
+            timeout: 20000,
+            validateStatus: () => true
+          });
+          if (proxyRes.status !== 200) throw new Error(`CorsProxy returned ${proxyRes.status}`);
+          return proxyRes.data;
+        },
+        // Method 6: ThingProxy
+        async () => {
+          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${url}`, { timeout: 15000 });
           return proxyRes.data;
         }
       ];
@@ -87,24 +103,26 @@ async function startServer() {
           
           // Check if we got a real page or a block
           if (html && 
+              typeof html === 'string' &&
               html.includes('<html') && 
               !html.includes('Robot Check') && 
               !html.includes('Bot Check') &&
               !html.includes('captcha') &&
               !html.includes('503 Service Unavailable') &&
-              !html.includes('503 - Service Unavailable')) {
+              !html.includes('503 - Service Unavailable') &&
+              html.length > 1000) { // Most product pages are reasonably large
             break;
           } else {
-            console.log(`[Scraper] Blocked or invalid content from method, trying next...`);
+            console.log(`[Scraper] Blocked or invalid content (Length: ${html?.length}), trying next...`);
             html = '';
           }
         } catch (error: any) {
-          console.warn(`[Scraper] A fetch method failed: ${error.message}`);
+          console.warn(`[Scraper] A fetch method failed (${error.response?.status || 'network error'}): ${error.message}`);
         }
       }
 
       if (!html || !html.includes('<html')) {
-        throw new Error("Target website blocked the request (Anti-bot protection).");
+        throw new Error("The target website is heavily protected or temporarily unavailable. Please add product details manually.");
       }
 
       const $ = cheerio.load(html);

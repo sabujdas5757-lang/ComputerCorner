@@ -144,16 +144,27 @@ async function startServer() {
     app.use(vite.middlewares);
     
     app.get('*', async (req, res, next) => {
+      // Skip API routes as they should have been handled or returned 404 in JSON
       if (req.originalUrl.startsWith('/api')) return next();
       
+      // For any other route, serve index.html to support SPA routing
       try {
         const url = req.originalUrl;
-        let template = fs.readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf-8');
+        const indexPath = path.resolve(process.cwd(), 'index.html');
+        
+        if (!fs.existsSync(indexPath)) {
+          console.error("index.html not found at:", indexPath);
+          return res.status(404).send("Internal Error: Entry point missing");
+        }
+
+        let template = fs.readFileSync(indexPath, 'utf-8');
+        // Transform the HTML with Vite's dev server to inject pre-requisites
         template = await vite.transformIndexHtml(url, template);
         res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
-      } catch (e) {
-        vite.ssrFixStacktrace(e as Error);
-        next(e);
+      } catch (e: any) {
+        if (vite) vite.ssrFixStacktrace(e);
+        console.error("Dev Server Error:", e.stack);
+        res.status(500).end(e.stack);
       }
     });
   } else {

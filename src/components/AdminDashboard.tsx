@@ -259,18 +259,67 @@ export default function AdminDashboard() {
         });
         
         if (response.status === 405) {
-          throw new Error("Server error: POST method not allowed on API. Please check server configuration.");
+          throw new Error("405 Method Not Allowed: The server is misconfigured or you're using a static host. Ensure the backend is active.");
         }
 
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           const text = await response.text();
           console.error("Non-JSON response from backend:", text.substring(0, 100));
-          throw new Error(`Backend not available (Status: ${response.status})`);
+          throw new Error(`Server returned a non-JSON response. (Status: ${response.status}). This usually means the backend is not running or a proxy intercepted the request.`);
         }
 
-        productData = await response.json();
-        if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
+      productData = await response.json();
+      if (!response.ok) throw new Error(productData.error || 'Failed to scrape');
+
+      // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
+      if (productData.image && productData.image.startsWith('http')) {
+        try {
+          setScrapingStatus('Saving primary image to Vercel storage...');
+          const uploadRes = await fetch('/api/upload-from-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: productData.image })
+          });
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            if (uploadData.secure_url) {
+              productData.image = uploadData.secure_url;
+            }
+          }
+        } catch (uploadErr) {
+          console.warn("Failed to auto-upload scraped image:", uploadErr);
+        }
+      }
+
+      // Also try to upload additional images if there are a few
+      if (productData.additionalImages && Array.isArray(productData.additionalImages)) {
+        const topImages = productData.additionalImages.slice(0, 3); // Just the first few to save time/quota
+        const savedImages: string[] = [];
+        
+        for (const imgUrl of topImages) {
+          try {
+            const uploadRes = await fetch('/api/upload-from-url', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: imgUrl })
+            });
+            if (uploadRes.ok) {
+              const uploadData = await uploadRes.json();
+              if (uploadData.secure_url) {
+                savedImages.push(uploadData.secure_url);
+              } else {
+                savedImages.push(imgUrl);
+              }
+            } else {
+              savedImages.push(imgUrl);
+            }
+          } catch (e) {
+            savedImages.push(imgUrl);
+          }
+        }
+        productData.additionalImages = [...savedImages, ...productData.additionalImages.slice(3)];
+      }
       } catch (backendError: any) {
         console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError);
         setScrapingStatus('Backend unavailable, falling back to browser-proxies...');

@@ -261,6 +261,32 @@ async function startServer() {
     }
   });
 
+  // Proxy-save an external image to Vercel Blob
+  app.post("/api/upload-from-url", async (req, res) => {
+    const { url } = req.body;
+    if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
+
+    try {
+      console.log(`[Upload-From-URL] Processing image: ${url}`);
+      const response = await axios.get(url, { responseType: 'arraybuffer', timeout: 15000 });
+      const buffer = Buffer.from(response.data);
+      const contentTypeHeader = response.headers['content-type'];
+      const contentType = typeof contentTypeHeader === 'string' ? contentTypeHeader : 'image/jpeg';
+      
+      const filename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
+      const blob = await put(filename, buffer, {
+        access: 'public',
+        contentType: contentType
+      });
+
+      console.log(`[Upload-From-URL] Successfully saved to Vercel: ${blob.url}`);
+      res.json({ secure_url: blob.url });
+    } catch (error: any) {
+      console.error("[Upload-From-URL Error]", error.message);
+      res.status(500).json({ error: "Your storage quota might be exceeded or the source image is blocked. Keeping original URL." });
+    }
+  });
+
   const uploadMiddleware = multer({ 
     storage: multer.memoryStorage(),
     limits: { fileSize: 50 * 1024 * 1024 } 

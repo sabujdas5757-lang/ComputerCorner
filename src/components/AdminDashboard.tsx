@@ -3,10 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
+import { db, handleFirestoreError, OperationType } from '../firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 
-const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'Macbook'];
+const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage'];
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
@@ -35,6 +37,121 @@ export default function AdminDashboard() {
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
+
+  const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
+  const [editingCategory, setEditingCategory] = useState<{id: string, name: string, img: string} | null>(null);
+  const [brands, setBrands] = useState<{id: string, name: string, img: string}[]>([]);
+  const [editingBrand, setEditingBrand] = useState<{id: string, name: string, img: string} | null>(null);
+  const [categoryForm, setCategoryForm] = useState({ name: '', img: '' });
+  const [brandForm, setBrandForm] = useState({ name: '', img: '' });
+  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
+  const [isBrandLoading, setIsBrandLoading] = useState(false);
+  const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null);
+  const [deletingBrandId, setDeletingBrandId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const q = query(collection(db, 'categories'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setCategories(cats);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'categories');
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, 'brands'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const b = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setBrands(b);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'brands');
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCategoryLoading(true);
+    try {
+      if (editingCategory) {
+        await updateDoc(doc(db, 'categories', editingCategory.id), {
+          ...categoryForm,
+          updatedAt: serverTimestamp()
+        });
+        showFeedback('Category updated!');
+      } else {
+        await addDoc(collection(db, 'categories'), {
+          ...categoryForm,
+          createdAt: serverTimestamp()
+        });
+        showFeedback('Category added!');
+      }
+      setCategoryForm({ name: '', img: '' });
+      setEditingCategory(null);
+    } catch (err: any) {
+      handleFirestoreError(err, editingCategory ? OperationType.UPDATE : OperationType.CREATE, 'categories');
+    } finally {
+      setIsCategoryLoading(false);
+    }
+  };
+
+  const handleBrandSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsBrandLoading(true);
+    try {
+      if (editingBrand) {
+        await updateDoc(doc(db, 'brands', editingBrand.id), {
+          ...brandForm,
+          updatedAt: serverTimestamp()
+        });
+        showFeedback('Brand updated!');
+      } else {
+        await addDoc(collection(db, 'brands'), {
+          ...brandForm,
+          createdAt: serverTimestamp()
+        });
+        showFeedback('Brand added!');
+      }
+      setBrandForm({ name: '', img: '' });
+      setEditingBrand(null);
+    } catch (err: any) {
+      handleFirestoreError(err, editingBrand ? OperationType.UPDATE : OperationType.CREATE, 'brands');
+    } finally {
+      setIsBrandLoading(false);
+    }
+  };
+
+  const handleEditCategory = (cat: any) => {
+    setEditingCategory(cat);
+    setCategoryForm({ name: cat.name, img: cat.img });
+  };
+
+  const handleEditBrand = (brand: any) => {
+    setEditingBrand(brand);
+    setBrandForm({ name: brand.name, img: brand.img });
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'categories', id));
+      showFeedback('Category deleted');
+      setDeletingCategoryId(null);
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.DELETE, `categories/${id}`);
+    }
+  };
+
+  const handleDeleteBrand = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'brands', id));
+      showFeedback('Brand deleted');
+      setDeletingBrandId(null);
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.DELETE, `brands/${id}`);
+    }
+  };
 
   useEffect(() => {
     fetch('/api/storage-status')
@@ -822,6 +939,185 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Category Management Section */}
+        <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <ImageIcon size={24} className="text-primary" />
+            Manage Categories (Home Page Grid)
+          </h2>
+          
+          <form onSubmit={handleCategorySubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-black/40 p-6 rounded-2xl border border-white/5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Category Name</label>
+              <input
+                type="text"
+                required
+                value={categoryForm.name}
+                onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                placeholder="e.g. Laptops"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Image URL</label>
+              <input
+                type="text"
+                required
+                value={categoryForm.img}
+                onChange={(e) => setCategoryForm({ ...categoryForm, img: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                placeholder="https://..."
+              />
+            </div>
+            <div className="flex items-end gap-2">
+              <button
+                type="submit"
+                disabled={isCategoryLoading}
+                className="flex-1 bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
+              >
+                {isCategoryLoading ? <Loader2 className="animate-spin" size={18} /> : (editingCategory ? 'Update' : 'Add Category')}
+              </button>
+              {editingCategory && (
+                <button
+                  type="button"
+                  onClick={() => { setEditingCategory(null); setCategoryForm({ name: '', img: '' }); }}
+                  className="bg-white/10 text-white h-[50px] px-6 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+
+          <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-4 scroll-smooth">
+            {categories.map((cat) => (
+              <div key={cat.id} className="group relative bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-3 hover:border-primary/50 transition-all min-w-[150px] shrink-0">
+                <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10">
+                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">{cat.name}</span>
+                
+                <div className="flex gap-1">
+                  <button onClick={() => handleEditCategory(cat)} className="p-1.5 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/40 transition-all">
+                    <Edit2 size={12} />
+                  </button>
+                  {deletingCategoryId === cat.id ? (
+                    <div className="flex gap-1">
+                      <button 
+                        onClick={() => handleDeleteCategory(cat.id)}
+                        className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-lg hover:bg-red-600 transition-all"
+                      >
+                        Confirm
+                      </button>
+                      <button 
+                        onClick={() => setDeletingCategoryId(null)}
+                        className="px-2 py-1 bg-white/10 text-white text-[10px] font-bold rounded-lg hover:bg-white/20 transition-all"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setDeletingCategoryId(cat.id)} className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 transition-all">
+                      <Trash2 size={12} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Brand Management Section */}
+        <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <ImageIcon size={24} className="text-primary" />
+            Manage Brands (Catalog Filter)
+          </h2>
+          
+          <form onSubmit={handleBrandSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-black/40 p-6 rounded-2xl border border-white/5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Brand Name</label>
+              <input
+                type="text"
+                required
+                value={brandForm.name}
+                onChange={(e) => setBrandForm({ ...brandForm, name: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                placeholder="e.g. ASUS"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Brand Image URL (Optional)</label>
+              <input
+                type="text"
+                value={brandForm.img}
+                onChange={(e) => setBrandForm({ ...brandForm, img: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                placeholder="https://..."
+              />
+            </div>
+            <div className="flex items-end gap-2">
+              <button
+                type="submit"
+                disabled={isBrandLoading}
+                className="flex-1 bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
+              >
+                {isBrandLoading ? <Loader2 className="animate-spin" size={18} /> : (editingBrand ? 'Update' : 'Add Brand')}
+              </button>
+              {editingBrand && (
+                <button
+                  type="button"
+                  onClick={() => { setEditingBrand(null); setBrandForm({ name: '', img: '' }); }}
+                  className="bg-white/10 text-white h-[50px] px-6 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+
+          <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-4 scroll-smooth">
+            {brands.map((b) => (
+              <div key={b.id} className="group relative bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-3 hover:border-primary/50 transition-all min-w-[150px] shrink-0">
+                <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 flex items-center justify-center">
+                  {b.img ? (
+                    <img src={b.img} alt={b.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-xs font-bold text-gray-500 uppercase">{b.name.substring(0, 2)}</span>
+                  )}
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">{b.name}</span>
+                
+                <div className="flex gap-1">
+                  <button onClick={() => handleEditBrand(b)} className="p-1.5 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/40 transition-all">
+                    <Edit2 size={12} />
+                  </button>
+                  {deletingBrandId === b.id ? (
+                    <div className="flex gap-1">
+                      <button 
+                        onClick={() => handleDeleteBrand(b.id)}
+                        className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-lg hover:bg-red-600 transition-all"
+                      >
+                        Confirm
+                      </button>
+                      <button 
+                        onClick={() => setDeletingBrandId(null)}
+                        className="px-2 py-1 bg-white/10 text-white text-[10px] font-bold rounded-lg hover:bg-white/20 transition-all"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setDeletingBrandId(b.id)} className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 transition-all">
+                      <Trash2 size={12} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Add/Edit Product Form */}
           <div ref={formRef} className="bg-white/5 border border-white/10 rounded-3xl p-8 h-fit">
@@ -885,9 +1181,15 @@ export default function AdminDashboard() {
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Category</label>
                   <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none appearance-none">
-                    {PRODUCT_CATEGORIES.map(c => (
-                      <option key={c.title} value={c.title}>{c.title}</option>
-                    ))}
+                    {categories.length > 0 ? (
+                      categories.map(c => (
+                        <option key={c.id} value={c.name}>{c.name}</option>
+                      ))
+                    ) : (
+                      PRODUCT_CATEGORIES.map(c => (
+                        <option key={c.title} value={c.title}>{c.title}</option>
+                      ))
+                    )}
                   </select>
                 </div>
               </div>

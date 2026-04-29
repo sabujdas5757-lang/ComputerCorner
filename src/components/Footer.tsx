@@ -27,17 +27,17 @@ export default function Footer() {
               Your one-stop destination for premium hardware sales and expert service in Jhargram. Authorized partners for industry-leading brands.
             </p>
             <div className="flex gap-4">
-              <a href="https://www.facebook.com/computercornerjgm/" target="_blank" rel="noopener noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
-                <Facebook size={18} />
-              </a>
-              <a href="https://www.instagram.com/computer_corner_15?igsh=MWQ5c2w0aGp2eHdpeQ==" target="_blank" rel="noopener noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
-                <Instagram size={18} />
-              </a>
-              <a href="https://www.youtube.com/@computercorner15" target="_blank" rel="noopener noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
-                <Youtube size={18} />
-              </a>
               <a href="mailto:contact@computercornerjgm.com" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
                 <Mail size={18} />
+              </a>
+              <a href="https://www.facebook.com/computercornerjgm/" target="_blank" rel="noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+                <Facebook size={18} />
+              </a>
+              <a href="https://www.instagram.com/computer_corner_15" target="_blank" rel="noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+                <Instagram size={18} />
+              </a>
+              <a href="https://www.youtube.com/@computercorner15" target="_blank" rel="noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+                <Youtube size={18} />
               </a>
             </div>
           </div>
@@ -54,12 +54,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Quick Links</h4>
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Navigation</h4>
             <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-white">
-              <li><Link to="/catalog" className="hover:text-primary transition-colors">Digital Catalog</Link></li>
-              <li><a href="#workshop" className="hover:text-primary transition-colors">Service Workshop</a></li>
-              <li><a href="#amc" className="hover:text-primary transition-colors">AMC Maintenance</a></li>
-              <li><a href="#contact" className="hover:text-primary transition-colors">Support Desk</a></li>
+              <li><Link to="/quick-access" className="hover:text-primary transition-colors">Quick Access Hub</Link></li>
             </ul>
           </div>
 

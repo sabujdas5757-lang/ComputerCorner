@@ -5,41 +5,36 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import CategoryBar from './components/CategoryBar';
+import CategoryGrid from './components/CategoryGrid';
 import Hero from './components/Hero';
-import Brands from './components/Brands';
-import ProductGallery from './components/ProductGallery';
-import Products from './components/Products';
-import Services from './components/Services';
-import Gallery from './components/Gallery';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
 import QuickAccess from './components/QuickAccess';
 import Catalog from './components/Catalog';
 import ProductDetail from './components/ProductDetail';
-import TechShowcase from './components/TechShowcase';
-import BrandSubCatalogHome from './components/BrandSubCatalogHome';
 import LaptopUsageHub from './components/LaptopUsageHub';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './components/AdminDashboard';
+import ScrollToTop from './components/ScrollToTop';
+
+import ProductSection from './components/ProductSection';
+import UsageSection from './components/UsageSection';
+import MapSection from './components/MapSection';
 
 function HomePage() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
-        <CategoryBar />
       </header>
-      <main>
+      <main className="pt-16 md:pt-24">
+        <CategoryGrid />
+        <ProductSection title="Printers" category="Printers" />
+        <ProductSection title="Premium Monitors" category="Monitors" />
+        <ProductSection title="Laptops" category="Laptops" />
+        <ProductSection title="CCTV" category="CCTV" />
+        <UsageSection />
         <Hero />
-        <Brands />
-        <Products />
-        <BrandSubCatalogHome />
-        <TechShowcase />
-        <ProductGallery />
-        <Services />
-        <Gallery />
-        <Contact />
+        <MapSection />
       </main>
       <Footer />
     </>
@@ -49,6 +44,7 @@ function HomePage() {
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-bg-dark text-white selection:bg-primary selection:text-bg-dark">
         <Routes>
           <Route path="/" element={<HomePage />} />

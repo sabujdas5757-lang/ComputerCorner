@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, MessageSquare, Star, Shield, Truck, RotateCcw } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Star, Shield, Truck, RotateCcw, Home } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -28,7 +28,8 @@ export default function ProductDetail() {
       <div className="min-h-screen bg-bg-dark text-white flex items-center justify-center p-6">
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-4">Product Not Found</h2>
-          <Link to="/catalog" className="text-primary font-bold hover:underline">Back to Catalog</Link>
+          <Link to="/" className="text-primary font-bold hover:underline mb-2 block">Back to Home</Link>
+          <Link to="/catalog" className="text-gray-400 font-bold hover:underline">Back to Catalog</Link>
         </div>
       </div>
     );
@@ -42,10 +43,17 @@ export default function ProductDetail() {
       
       <main className="pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-6">
-          <Link to="/catalog" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-8 group">
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm font-bold">Back to Catalog</span>
-          </Link>
+          <div className="flex items-center gap-6 mb-8">
+            <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors group">
+              <Home size={18} className="group-hover:-translate-y-0.5 transition-transform" />
+              <span className="text-sm font-bold uppercase tracking-widest">Home</span>
+            </Link>
+            <div className="h-4 w-px bg-white/10" />
+            <Link to="/catalog" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors group">
+              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+              <span className="text-sm font-bold uppercase tracking-widest">Back to Catalog</span>
+            </Link>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             {/* Image Gallery */}

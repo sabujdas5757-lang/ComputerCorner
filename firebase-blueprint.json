@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "Category": {
+      "title": "Category",
+      "description": "Product category for the category grid",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the category"
+        },
+        "img": {
+          "type": "string",
+          "description": "URL of the category image"
+        }
+      },
+      "required": ["name", "img"]
+    }
+  },
+  "firestore": {
+    "categories": {
+      "schema": "Category",
+      "description": "List of categories displayed in the home page grid"
+    }
+  }
+}

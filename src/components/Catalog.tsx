@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, ShoppingCart, MessageSquare, Filter, LayoutGrid, List } from 'lucide-react';
-import { PRODUCT_CATEGORIES } from '../constants';
+import { ArrowLeft, MessageSquare, Filter, LayoutGrid, List } from 'lucide-react';
+import { PRODUCT_CATEGORIES as DEFAULT_CATEGORIES } from '../constants';
 import { useProducts } from '../contexts/ProductContext';
+import { db } from '../firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 const getNumericPrice = (priceStr: string) => {
   const match = priceStr.replace(/,/g, '').match(/\d+/);
@@ -23,21 +25,61 @@ export default function Catalog() {
 
   const [activeCategory, setActiveCategory] = useState(categorySlug || 'All');
   const [activeBrand, setActiveBrand] = useState('AllBrands');
-  const [searchQuery, setSearchQuery] = useState('');
+  const initialSearch = searchParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grid');
+  const [categories, setCategories] = useState<string[]>([]);
   
   const [priceRange, setPriceRange] = useState({ min: 0, max: 200000 });
+  const [firestoreBrands, setFirestoreBrands] = useState<string[]>([]);
+  
+  useEffect(() => {
+    const q = query(collection(db, 'categories'), orderBy('createdAt', 'asc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const cats = snapshot.docs.map(doc => doc.data().name);
+        setCategories(cats);
+      } else {
+        setCategories(DEFAULT_CATEGORIES.map(c => c.title));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const q = query(collection(db, 'brands'), orderBy('name', 'asc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const b = snapshot.docs.map(doc => doc.data().name);
+        setFirestoreBrands(b);
+      } else {
+        setFirestoreBrands([]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (categorySlug) {
       setActiveCategory(categorySlug);
     }
   }, [categorySlug]);
 
+  useEffect(() => {
+    const s = searchParams.get('search');
+    if (s !== null) {
+      setSearchQuery(s);
+    }
+  }, [searchParams]);
+
   const brands = useMemo(() => {
+    // If we have brands in firestore, use them. Otherwise derive from products.
+    if (firestoreBrands.length > 0) {
+      return ['AllBrands', ...firestoreBrands];
+    }
     const uniqueBrands = Array.from(new Set(PRODUCTS.map(p => p.brand))).sort();
     return ['AllBrands', ...uniqueBrands];
-  }, []);
+  }, [PRODUCTS, firestoreBrands]);
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter(p => {
@@ -84,16 +126,24 @@ export default function Catalog() {
   }, [filteredProducts, viewMode]);
 
   return (
-    <div className="min-h-screen bg-bg-dark text-white p-6 md:p-12">
+    <div className="min-h-screen bg-black text-white px-6 py-12">
       <div className="max-w-7xl mx-auto pt-24 md:pt-32">
+        {/* Breadcrumbs */}
+        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-8 border-b border-white/5 pb-4">
+          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+          <span className="opacity-20">❯</span>
+          <span className="text-primary">{activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory}</span>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
-            <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-6 group">
-              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-              <span className="text-sm font-bold">Back to Home</span>
-            </Link>
-            <h1 className="text-5xl font-bold tracking-tight">Full Products <span className="text-gray-500 italic">Catalog.</span></h1>
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white mb-2">
+              {activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory}
+              <span className="text-xs font-medium text-gray-500 normal-case ml-4">
+                (Showing {filteredProducts.length} of {PRODUCTS.length} products)
+              </span>
+            </h1>
           </div>
           
           <div className="flex flex-wrap gap-4">
@@ -132,7 +182,7 @@ export default function Catalog() {
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Category</span>
               <div className="flex flex-wrap gap-3">
-                {['All', ...PRODUCT_CATEGORIES.map(c => c.title)].map((cat) => (
+                {['All', ...categories].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
@@ -328,9 +378,9 @@ function ProductCard({ product, index }: { product: any; index: number; key?: Re
               )}
             </div>
             <div 
-              className="p-4 bg-white/5 border border-white/10 rounded-2xl group-hover:bg-primary group-hover:text-bg-dark transition-all"
+              className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl group-hover:bg-primary group-hover:text-bg-dark transition-all text-[10px] font-black uppercase tracking-widest"
             >
-              <ShoppingCart size={20} />
+              View Details
             </div>
           </div>
         </div>

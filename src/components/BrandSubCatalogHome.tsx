@@ -28,9 +28,6 @@ export default function BrandSubCatalogHome() {
             <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Shop by Manufacturer</h2>
             <h3 className="text-5xl font-bold tracking-tight">Our <span className="text-gray-500 italic">Brand Partners.</span></h3>
           </div>
-          <Link to="/catalog" className="group flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-white transition-all transform hover:translate-x-2">
-            Explore Full Catalog <ArrowRight size={18} className="text-primary" />
-          </Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

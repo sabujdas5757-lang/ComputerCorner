@@ -5,7 +5,7 @@
 
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Home, Phone, ShoppingBag, MapPin, MessageSquare, Heart } from 'lucide-react';
+import { Home, Phone, ShoppingBag, MapPin, MessageSquare, Heart, Facebook, Instagram, Youtube } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
 
 export default function QuickAccess() {
@@ -66,6 +66,45 @@ export default function QuickAccess() {
             <h3 className="text-xl font-bold mb-2">Direct Call</h3>
             <p className="text-gray-400 text-sm">Speak with our certified tech experts now.</p>
           </a>
+        </div>
+
+        {/* Social Media Links */}
+        <div className="mb-16">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Connect with us</span>
+              <h2 className="text-3xl font-bold">Follow Our Journey</h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <a 
+              href="https://www.facebook.com/computercornerjgm/" 
+              target="_blank" 
+              rel="noreferrer"
+              className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/5 rounded-3xl hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30 transition-all group"
+            >
+              <Facebook size={32} className="text-gray-400 group-hover:text-[#1877F2] transition-colors mb-3" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white">Facebook</span>
+            </a>
+            <a 
+              href="https://www.instagram.com/computer_corner_15" 
+              target="_blank" 
+              rel="noreferrer"
+              className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/5 rounded-3xl hover:bg-[#E4405F]/10 hover:border-[#E4405F]/30 transition-all group"
+            >
+              <Instagram size={32} className="text-gray-400 group-hover:text-[#E4405F] transition-colors mb-3" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white">Instagram</span>
+            </a>
+            <a 
+              href="https://www.youtube.com/@computercorner15" 
+              target="_blank" 
+              rel="noreferrer"
+              className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/5 rounded-3xl hover:bg-[#FF0000]/10 hover:border-[#FF0000]/30 transition-all group"
+            >
+              <Youtube size={32} className="text-gray-400 group-hover:text-[#FF0000] transition-colors mb-3" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white">YouTube</span>
+            </a>
+          </div>
         </div>
 
         {/* Product Catalog Preview */}

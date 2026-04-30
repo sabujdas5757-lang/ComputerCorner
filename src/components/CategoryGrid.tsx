@@ -75,7 +75,7 @@ export default function CategoryGrid() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.02 }}
-              onClick={() => navigate(`/catalog?search=${cat.name}`)}
+              onClick={() => navigate(`/catalog/${cat.name}`)}
               className="flex flex-col items-center gap-4 group shrink-0"
             >
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-white/10 overflow-hidden bg-white shadow-2xl group-hover:border-primary group-hover:scale-105 transition-all duration-300 relative">

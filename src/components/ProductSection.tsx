@@ -18,7 +18,8 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
-import { Product, PRODUCTS } from '../constants';
+import { useProducts } from '../contexts/ProductContext';
+import { Product } from '../constants';
 
 interface ProductSectionProps {
   title: string;
@@ -28,6 +29,7 @@ interface ProductSectionProps {
 export default function ProductSection({ title, category }: ProductSectionProps) {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { products: PRODUCTS } = useProducts();
 
   const products = PRODUCTS.filter(p => p.category === category).slice(0, 10);
 
@@ -48,7 +50,7 @@ export default function ProductSection({ title, category }: ProductSectionProps)
         <div className="flex justify-between items-center mb-8 bg-gradient-to-r from-[#fdf2a7] via-[#fdf2a7] to-[#fac1ff] p-4 rounded-lg shadow-xl">
           <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-black">{title}</h2>
           <button 
-            onClick={() => navigate(`/catalog?category=${category}`)}
+            onClick={() => navigate(`/catalog/${category}`)}
             className="bg-black text-white text-[10px] md:text-xs font-black px-6 py-2 rounded-md hover:bg-white hover:text-black transition-all uppercase tracking-widest"
           >
             View All

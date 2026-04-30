@@ -133,13 +133,31 @@ async function startServer() {
                   $('[itemprop="price"]').attr('content') ||
                   $('.price, .product-price, .amount, .a-price-whole').first().text();
       let cleanedPrice = price ? String(price).replace(/[^0-9.]/g, '') : '0';
+      
+      if (cleanedPrice && cleanedPrice !== '0') {
+        if (!cleanedPrice.includes('.')) {
+          cleanedPrice = cleanedPrice + '.00';
+        } else if (cleanedPrice.split('.')[1].length === 1) {
+          cleanedPrice = cleanedPrice + '0';
+        }
+      }
+      
       if (cleanedPrice && !cleanedPrice.startsWith('₹') && cleanedPrice !== '0') {
         cleanedPrice = `₹${cleanedPrice}`;
       }
 
       const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
       let oldPrice = oldPriceText ? String(oldPriceText).replace(/[^0-9.]/g, '') : '';
-      if (oldPrice && !oldPrice.startsWith('₹')) {
+      
+      if (oldPrice && oldPrice !== '0') {
+        if (!oldPrice.includes('.')) {
+          oldPrice = oldPrice + '.00';
+        } else if (oldPrice.split('.')[1].length === 1) {
+          oldPrice = oldPrice + '0';
+        }
+      }
+      
+      if (oldPrice && !oldPrice.startsWith('₹') && oldPrice !== '0') {
         oldPrice = `₹${oldPrice}`;
       }
       
@@ -282,7 +300,8 @@ async function startServer() {
       const filename = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
       const blob = await put(filename, buffer, {
         access: 'public',
-        contentType: contentType
+        contentType: contentType,
+        addRandomSuffix: true
       });
 
       console.log(`[Upload-From-URL] Successfully saved to Vercel: ${blob.url}`);
@@ -317,7 +336,8 @@ async function startServer() {
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
       const blob = await put(sanitizedName, file.buffer, {
         access: 'public',
-        contentType: file.mimetype
+        contentType: file.mimetype,
+        addRandomSuffix: true
       });
 
       console.log(`[Upload] Success: ${blob.url}`);

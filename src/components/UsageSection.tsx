@@ -77,7 +77,7 @@ export default function UsageSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              onClick={() => navigate(`/catalog?search=${item.search}`)}
+              onClick={() => navigate(`/catalog?usage=${item.search}`)}
               className={`group relative p-8 rounded-3xl border ${item.borderColor} bg-gradient-to-br ${item.color} flex flex-col items-center text-center hover:scale-[1.02] transition-all duration-300 overflow-hidden`}
             >
               {/* Decorative Background Blob */}

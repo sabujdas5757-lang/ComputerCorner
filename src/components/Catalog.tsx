@@ -74,11 +74,23 @@ export default function Catalog() {
 
   const brands = useMemo(() => {
     // If we have brands in firestore, use them. Otherwise derive from products.
+    let list: string[];
     if (firestoreBrands.length > 0) {
-      return ['AllBrands', ...firestoreBrands];
+      list = firestoreBrands;
+    } else {
+      list = (Array.from(new Set(PRODUCTS.map(p => p.brand))) as string[]).sort();
     }
-    const uniqueBrands = Array.from(new Set(PRODUCTS.map(p => p.brand))).sort();
-    return ['AllBrands', ...uniqueBrands];
+
+    // Filter out duplicates of different casing
+    const seen = new Set();
+    const unique = list.filter(b => {
+      const lower = b.toLowerCase();
+      if (seen.has(lower)) return false;
+      seen.add(lower);
+      return true;
+    });
+
+    return ['AllBrands', ...unique];
   }, [PRODUCTS, firestoreBrands]);
 
   const filteredProducts = useMemo(() => {
@@ -86,7 +98,7 @@ export default function Catalog() {
       const categoryMatch = activeCategory === 'All' || 
         p.category.toLowerCase().includes(activeCategory.toLowerCase()) || 
         activeCategory.toLowerCase().includes(p.category.toLowerCase());
-      const brandMatch = activeBrand === 'AllBrands' || p.brand === activeBrand;
+      const brandMatch = activeBrand === 'AllBrands' || p.brand.toLowerCase() === activeBrand.toLowerCase();
       
       const price = getNumericPrice(p.price);
       const priceMatch = price >= priceRange.min && price <= priceRange.max;
@@ -105,9 +117,9 @@ export default function Catalog() {
         } else if (usageParam === 'gaming') {
           usageMatch = name.includes('gaming') || name.includes('rog') || name.includes('tuf') || name.includes('victus');
         } else if (usageParam === 'office') {
-          usageMatch = (name.includes('inspiron') || name.includes('pavilion') || discount.includes('professional')) && p.brand !== 'APPLE';
+          usageMatch = (name.includes('inspiron') || name.includes('pavilion') || discount.includes('professional')) && p.brand.toUpperCase() !== 'APPLE';
         } else if (usageParam === 'macbook') {
-          usageMatch = p.brand === 'APPLE';
+          usageMatch = p.brand.toUpperCase() === 'APPLE';
         }
       }
 

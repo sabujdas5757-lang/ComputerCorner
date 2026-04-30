@@ -74,16 +74,19 @@ export default function AdminDashboard() {
   const handleCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsCategoryLoading(true);
+    const normalizedName = categoryForm.name.trim();
     try {
       if (editingCategory) {
         await updateDoc(doc(db, 'categories', editingCategory.id), {
           ...categoryForm,
+          name: normalizedName,
           updatedAt: serverTimestamp()
         });
         showFeedback('Category updated!');
       } else {
         await addDoc(collection(db, 'categories'), {
           ...categoryForm,
+          name: normalizedName,
           createdAt: serverTimestamp()
         });
         showFeedback('Category added!');
@@ -100,16 +103,32 @@ export default function AdminDashboard() {
   const handleBrandSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsBrandLoading(true);
+    const normalizedName = brandForm.name.trim();
+    
+    // Check if brand already exists (case-insensitive) to avoid duplicates
+    const alreadyExists = brands.some(b => 
+      b.name.toLowerCase() === normalizedName.toLowerCase() && 
+      (!editingBrand || b.id !== editingBrand.id)
+    );
+
+    if (alreadyExists && !editingBrand) {
+      showFeedback('This brand already exists!');
+      setIsBrandLoading(false);
+      return;
+    }
+
     try {
       if (editingBrand) {
         await updateDoc(doc(db, 'brands', editingBrand.id), {
           ...brandForm,
+          name: normalizedName,
           updatedAt: serverTimestamp()
         });
         showFeedback('Brand updated!');
       } else {
         await addDoc(collection(db, 'brands'), {
           ...brandForm,
+          name: normalizedName,
           createdAt: serverTimestamp()
         });
         showFeedback('Brand added!');
@@ -264,6 +283,13 @@ export default function AdminDashboard() {
     
     const priceText = priceEl?.getAttribute('content') || priceEl?.textContent || '0';
     let cleanedPrice = String(priceText).replace(/[^0-9.]/g, '');
+    if (cleanedPrice && cleanedPrice !== '0') {
+      if (!cleanedPrice.includes('.')) {
+        cleanedPrice = cleanedPrice + '.00';
+      } else if (cleanedPrice.split('.')[1].length === 1) {
+        cleanedPrice = cleanedPrice + '0';
+      }
+    }
     if (cleanedPrice && !cleanedPrice.startsWith('₹') && cleanedPrice !== '0') {
       cleanedPrice = `₹${cleanedPrice}`;
     }
@@ -271,6 +297,13 @@ export default function AdminDashboard() {
     const oldPriceEl = doc.querySelector('.old-price, .a-text-strike, del');
     const oldPriceText = oldPriceEl?.textContent || '';
     let oldPrice = String(oldPriceText).replace(/[^0-9.]/g, '');
+    if (oldPrice && oldPrice !== '0') {
+      if (!oldPrice.includes('.')) {
+        oldPrice = oldPrice + '.00';
+      } else if (oldPrice.split('.')[1].length === 1) {
+        oldPrice = oldPrice + '0';
+      }
+    }
     if (oldPrice && !oldPrice.startsWith('₹')) {
       oldPrice = `₹${oldPrice}`;
     }
@@ -382,6 +415,45 @@ export default function AdminDashboard() {
     return { name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications };
   };
 
+  const detectCategory = (scrapedCat: string, name: string, description: string) => {
+    const text = (scrapedCat + ' ' + name + ' ' + description).toLowerCase();
+    
+    // Priority 1: Direct matches with existing categories
+    for (const cat of categories) {
+      const catName = cat.name.toLowerCase();
+      if (text.includes(catName)) return cat.name;
+    }
+
+    // Priority 2: Keyword mapping
+    const keywordMap: Record<string, string[]> = {
+      'Laptops': ['laptop', 'notebook', 'ultrabook', 'macbook', 'chromebook', 'yoga', 'thinkpad', 'zenbook', 'vivobook', 'rog', 'tuf', 'pavilion', 'inspiron', 'latitude', 'precision', 'vostro'],
+      'Gaming': ['gaming', 'rog', 'tuf', 'victus', 'omen', 'legion', 'alienware', 'razer', 'rtx', 'gtx'],
+      'Monitors': ['monitor', 'display', 'screen', 'panel', 'ips', 'va', 'curved monitor', 'hz'],
+      'Desktop': ['desktop', 'tower', 'pc', 'gaming pc', 'workstation', 'mini pc', 'all-in-one', 'aio'],
+      'Components': ['motherboard', 'processor', 'cpu', 'graphics card', 'gpu', 'ram', 'memory', 'ssd', 'hdd', 'psu', 'power supply', 'chassis', 'case', 'cooler', 'fan'],
+      'Accessories': ['keyboard', 'mouse', 'mousepad', 'headphones', 'earphones', 'mic', 'microphone', 'webcam', 'headset', 'speaker'],
+      'Networking': ['router', 'switch', 'modem', 'wifi', 'adapter', 'access point', 'tp-link', 'd-link', 'netgear', 'tenda', 'mercusys'],
+      'UPS': ['ups', 'battery backup', 'voltage stabilizer', 'voltage regulator', 'apc', 'luminous', 'microtek'],
+      'Antivirus': ['antivirus', 'total security', 'internet security', 'quick heal', 'kaspersky', 'mcafee', 'eset'],
+      'Biometric': ['biometric', 'fingerprint', 'scanner', 'time attendance', 'zkteco', 'realtime'],
+      'Printers': ['printer', 'scanner', 'copier', 'laserjet', 'inkjet', 'ink tank', 'ecotank', 'canon', 'epson', 'hp printer', 'brother printer'],
+      'CCTV': ['cctv', 'camera', 'ip camera', 'dvr', 'nvr', 'security camera', 'hikvision', 'dahua', 'cp plus', 'ezviz']
+    };
+
+    for (const [catName, keywords] of Object.entries(keywordMap)) {
+      if (keywords.some(k => text.includes(k))) {
+        // Find if this category exists in our database
+        const existingCat = categories.find(c => c.name.toLowerCase() === catName.toLowerCase());
+        if (existingCat) return existingCat.name;
+        
+        // If not, but it's a strongly matched keyword and fits "Laptops" which is a default
+        if (catName === 'Laptops') return 'Laptops';
+      }
+    }
+
+    return categories.length > 0 ? categories[0].name : 'Laptops';
+  };
+
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
@@ -483,7 +555,7 @@ export default function AdminDashboard() {
       const product = {
         name: productData.name || '',
         brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : '',
-        category: (productData.category || 'Laptops') as any,
+        category: detectCategory(productData.category || '', productData.name || '', productData.description || ''),
         description: productData.description || '',
         price: productData.price || '',
         oldPrice: productData.oldPrice || '',
@@ -572,11 +644,15 @@ export default function AdminDashboard() {
                 }
               }
 
+              const pName = getValue(['name', 'Name', 'NAME']) || 'Unnamed Product';
+              const pDesc = getValue(['description', 'Description', 'DESCRIPTION']) || '';
+              const pCatRaw = getValue(['category', 'Category', 'CATEGORY']) || '';
+              
               const product = {
-                name: getValue(['name', 'Name', 'NAME']) || 'Unnamed Product',
+                name: pName,
                 brand: getValue(['brand', 'Brand', 'BRAND']) || 'Unknown',
-                category: (getValue(['category', 'Category', 'CATEGORY']) || 'Laptops') as any,
-                description: getValue(['description', 'Description', 'DESCRIPTION']) || '',
+                category: detectCategory(pCatRaw, pName, pDesc),
+                description: pDesc,
                 price: pPrice,
                 oldPrice: pOldPrice,
                 discount: String(getValue(['discount', 'Discount', 'DISCOUNT']) || ''),
@@ -601,10 +677,11 @@ export default function AdminDashboard() {
             const uploadData = await safeJson(res);
             
             if (uploadData?.secure_url) {
+              const pName = file.name.split('.')[0].replace(/[_-]/g, ' ');
               await addProduct({
-                name: file.name.split('.')[0].replace(/[_-]/g, ' '),
+                name: pName,
                 brand: 'Unknown',
-                category: 'Laptops' as any,
+                category: detectCategory('', pName, ''),
                 description: '',
                 price: '₹0',
                 oldPrice: '',
@@ -862,18 +939,44 @@ export default function AdminDashboard() {
       }, {} as Record<string, string>);
 
       let finalPrice = formData.price.trim();
+      let numericPrice = finalPrice.replace(/[^0-9.]/g, '');
+      if (numericPrice && numericPrice !== '0') {
+        if (!numericPrice.includes('.')) {
+          numericPrice = numericPrice + '.00';
+        } else if (numericPrice.split('.')[1].length === 1) {
+          numericPrice = numericPrice + '0';
+        }
+        finalPrice = numericPrice;
+      }
       if (finalPrice && !finalPrice.startsWith('₹') && finalPrice !== '0') {
         finalPrice = '₹' + finalPrice;
       }
 
       let finalOldPrice = formData.oldPrice.trim();
-      if (finalOldPrice && !finalOldPrice.startsWith('₹')) {
+      let numericOldPrice = finalOldPrice.replace(/[^0-9.]/g, '');
+      if (numericOldPrice && numericOldPrice !== '0') {
+        if (!numericOldPrice.includes('.')) {
+          numericOldPrice = numericOldPrice + '.00';
+        } else if (numericOldPrice.split('.')[1].length === 1) {
+          numericOldPrice = numericOldPrice + '0';
+        }
+        finalOldPrice = numericOldPrice;
+      }
+      if (finalOldPrice && !finalOldPrice.startsWith('₹') && finalOldPrice !== '0') {
         finalOldPrice = '₹' + finalOldPrice;
+      }
+
+      let finalBrand = formData.brand.trim();
+      // Try to find matching brand in normalized list for consistency
+      const matchingBrand = brands.find(b => b.name.toLowerCase() === finalBrand.toLowerCase());
+      if (matchingBrand) {
+        finalBrand = matchingBrand.name;
       }
 
       if (editingId) {
         const updateData: any = {
           ...formData,
+          brand: finalBrand,
           price: finalPrice,
           oldPrice: finalOldPrice,
           image: mainImageUrl,
@@ -886,6 +989,7 @@ export default function AdminDashboard() {
       } else {
         await addProduct({
           ...formData,
+          brand: finalBrand,
           price: finalPrice,
           oldPrice: finalOldPrice,
           image: mainImageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',

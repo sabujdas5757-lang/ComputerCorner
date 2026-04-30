@@ -108,18 +108,19 @@ export default function Catalog() {
 
       // Usage based filtering
       let usageMatch = true;
-      if (usageParam && p.category === 'Laptops') {
-        const name = p.name.toLowerCase();
-        const discount = (p.discount || '').toLowerCase();
-
+      if (usageParam) {
+        const productTags = Array.isArray(p.usageTags) ? p.usageTags.map((t: string) => t.toLowerCase()) : [];
         if (usageParam === 'student') {
-          usageMatch = discount.includes('student') || discount.includes('budget') || name.includes('vivobook') || name.includes('ideapad');
+          usageMatch = productTags.includes('student usage');
         } else if (usageParam === 'gaming') {
-          usageMatch = name.includes('gaming') || name.includes('rog') || name.includes('tuf') || name.includes('victus');
+          // In LaptopUsageHub, Gaming & Editing are grouped
+          usageMatch = productTags.includes('gaming') || productTags.includes('editing');
         } else if (usageParam === 'office') {
-          usageMatch = (name.includes('inspiron') || name.includes('pavilion') || discount.includes('professional')) && p.brand.toUpperCase() !== 'APPLE';
+          usageMatch = productTags.includes('office usage');
+        } else if (usageParam === 'editing') {
+          usageMatch = productTags.includes('editing');
         } else if (usageParam === 'macbook') {
-          usageMatch = p.brand.toUpperCase() === 'APPLE';
+          usageMatch = productTags.includes('macbook');
         }
       }
 

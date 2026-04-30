@@ -129,37 +129,34 @@ async function startServer() {
       
       const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
       
-      let price = $('meta[property="product:price:amount"]').attr('content') || 
+      const priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
                   $('[itemprop="price"]').attr('content') ||
                   $('.price, .product-price, .amount, .a-price-whole').first().text();
-      let cleanedPrice = price ? String(price).replace(/[^0-9.]/g, '') : '0';
-      
-      if (cleanedPrice && cleanedPrice !== '0') {
-        if (!cleanedPrice.includes('.')) {
-          cleanedPrice = cleanedPrice + '.00';
-        } else if (cleanedPrice.split('.')[1].length === 1) {
-          cleanedPrice = cleanedPrice + '0';
-        }
-      }
-      
-      if (cleanedPrice && !cleanedPrice.startsWith('₹') && cleanedPrice !== '0') {
-        cleanedPrice = `₹${cleanedPrice}`;
-      }
 
-      const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
-      let oldPrice = oldPriceText ? String(oldPriceText).replace(/[^0-9.]/g, '') : '';
-      
-      if (oldPrice && oldPrice !== '0') {
-        if (!oldPrice.includes('.')) {
-          oldPrice = oldPrice + '.00';
-        } else if (oldPrice.split('.')[1].length === 1) {
-          oldPrice = oldPrice + '0';
+      const formatPrice = (p: string | undefined) => {
+        if (!p) return '';
+        let cleaned = String(p).replace(/[^0-9.]/g, '');
+        if (!cleaned || cleaned === '.' || cleaned === '0') return '₹0.00';
+        
+        const num = parseFloat(cleaned);
+        if (isNaN(num)) return p;
+        
+        // Manual formatting to ensure it works even if Intl isn't fully supported in node env
+        const rounded = num.toFixed(2);
+        const [intPart, decimalPart] = rounded.split('.');
+        // Simple comma formatting for Indian style: last 3 digits, then every 2
+        let lastThree = intPart.substring(intPart.length - 3);
+        let otherParts = intPart.substring(0, intPart.length - 3);
+        if (otherParts !== '') {
+            lastThree = ',' + lastThree;
         }
-      }
-      
-      if (oldPrice && !oldPrice.startsWith('₹') && oldPrice !== '0') {
-        oldPrice = `₹${oldPrice}`;
-      }
+        const formattedInt = otherParts.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+        return `₹${formattedInt}.${decimalPart}`;
+      };
+
+      const cleanedPrice = formatPrice(priceRaw);
+      const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
+      const oldPrice = formatPrice(oldPriceText);
       
       const image = $('meta[property="og:image"]').attr('content') || 
                     $('meta[name="twitter:image"]').attr('content') ||

@@ -8,7 +8,21 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serve
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 
-const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage'];
+const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'MacBook'];
+
+const formatPrice = (value: string) => {
+  if (!value || value === '0') return '₹0.00';
+  let numeric = value.replace(/[^0-9.]/g, '');
+  if (!numeric || numeric === '0' || numeric === '.') return '₹0.00';
+  
+  const num = parseFloat(numeric);
+  if (isNaN(num)) return value;
+  
+  return '₹' + num.toLocaleString('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
@@ -282,31 +296,11 @@ export default function AdminDashboard() {
                     doc.querySelector('.price, .product-price, .amount, .a-price-whole');
     
     const priceText = priceEl?.getAttribute('content') || priceEl?.textContent || '0';
-    let cleanedPrice = String(priceText).replace(/[^0-9.]/g, '');
-    if (cleanedPrice && cleanedPrice !== '0') {
-      if (!cleanedPrice.includes('.')) {
-        cleanedPrice = cleanedPrice + '.00';
-      } else if (cleanedPrice.split('.')[1].length === 1) {
-        cleanedPrice = cleanedPrice + '0';
-      }
-    }
-    if (cleanedPrice && !cleanedPrice.startsWith('₹') && cleanedPrice !== '0') {
-      cleanedPrice = `₹${cleanedPrice}`;
-    }
+    const cleanedPrice = formatPrice(String(priceText));
 
     const oldPriceEl = doc.querySelector('.old-price, .a-text-strike, del');
     const oldPriceText = oldPriceEl?.textContent || '';
-    let oldPrice = String(oldPriceText).replace(/[^0-9.]/g, '');
-    if (oldPrice && oldPrice !== '0') {
-      if (!oldPrice.includes('.')) {
-        oldPrice = oldPrice + '.00';
-      } else if (oldPrice.split('.')[1].length === 1) {
-        oldPrice = oldPrice + '0';
-      }
-    }
-    if (oldPrice && !oldPrice.startsWith('₹')) {
-      oldPrice = `₹${oldPrice}`;
-    }
+    const oldPrice = oldPriceText ? formatPrice(String(oldPriceText)) : '';
 
     const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
                   doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content') ||
@@ -619,10 +613,10 @@ export default function AdminDashboard() {
             };
 
             try {
-              let pPrice = String(getValue(['price', 'Price', 'PRICE']) || '0');
-              if (pPrice && !pPrice.startsWith('₹') && pPrice !== '0') pPrice = `₹${pPrice}`;
-              let pOldPrice = String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) || '');
-              if (pOldPrice && !pOldPrice.startsWith('₹')) pOldPrice = `₹${pOldPrice}`;
+              const pPrice = formatPrice(String(getValue(['price', 'Price', 'PRICE']) || '0'));
+              const pOldPrice = getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']) 
+                ? formatPrice(String(getValue(['oldPrice', 'OldPrice', 'oldprice', 'OLDPRICE']))) 
+                : '';
 
               let finalImageUrl = getValue(['image', 'Image', 'IMAGE']) || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800';
               
@@ -938,33 +932,8 @@ export default function AdminDashboard() {
         return acc;
       }, {} as Record<string, string>);
 
-      let finalPrice = formData.price.trim();
-      let numericPrice = finalPrice.replace(/[^0-9.]/g, '');
-      if (numericPrice && numericPrice !== '0') {
-        if (!numericPrice.includes('.')) {
-          numericPrice = numericPrice + '.00';
-        } else if (numericPrice.split('.')[1].length === 1) {
-          numericPrice = numericPrice + '0';
-        }
-        finalPrice = numericPrice;
-      }
-      if (finalPrice && !finalPrice.startsWith('₹') && finalPrice !== '0') {
-        finalPrice = '₹' + finalPrice;
-      }
-
-      let finalOldPrice = formData.oldPrice.trim();
-      let numericOldPrice = finalOldPrice.replace(/[^0-9.]/g, '');
-      if (numericOldPrice && numericOldPrice !== '0') {
-        if (!numericOldPrice.includes('.')) {
-          numericOldPrice = numericOldPrice + '.00';
-        } else if (numericOldPrice.split('.')[1].length === 1) {
-          numericOldPrice = numericOldPrice + '0';
-        }
-        finalOldPrice = numericOldPrice;
-      }
-      if (finalOldPrice && !finalOldPrice.startsWith('₹') && finalOldPrice !== '0') {
-        finalOldPrice = '₹' + finalOldPrice;
-      }
+      const finalPrice = formatPrice(formData.price.trim());
+      const finalOldPrice = formData.oldPrice.trim() ? formatPrice(formData.oldPrice.trim()) : '';
 
       let finalBrand = formData.brand.trim();
       // Try to find matching brand in normalized list for consistency
@@ -1402,11 +1371,30 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Price</label>
-                  <input required type="text" placeholder="₹45,000" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+                  <input 
+                    required 
+                    type="text" 
+                    placeholder="₹45,000" 
+                    value={formData.price} 
+                    onChange={e => setFormData({...formData, price: e.target.value})} 
+                    onBlur={() => setFormData(prev => ({...prev, price: formatPrice(prev.price)}))}
+                    className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Old Price (Optional)</label>
-                  <input type="text" placeholder="₹50,000" value={formData.oldPrice} onChange={e => setFormData({...formData, oldPrice: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+                  <input 
+                    type="text" 
+                    placeholder="₹50,000" 
+                    value={formData.oldPrice} 
+                    onChange={e => setFormData({...formData, oldPrice: e.target.value})} 
+                    onBlur={() => {
+                        if (formData.oldPrice.trim()) {
+                            setFormData(prev => ({...prev, oldPrice: formatPrice(prev.oldPrice)}));
+                        }
+                    }}
+                    className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" 
+                  />
                 </div>
               </div>
               <div>

@@ -13,7 +13,7 @@ export interface Review {
 export interface Product {
   id: string;
   name: string;
-  category: 'Desktops' | 'Laptops' | 'Printers' | 'Cameras' | 'CCTV' | 'Audio' | 'Appliances' | 'Power' | 'Accessories' | 'Monitors' | 'Processors' | 'Motherboards' | 'Projectors' | 'Keyboard & Mouse';
+  category: string;
   brand: string;
   description: string;
   image: string;
@@ -24,6 +24,8 @@ export interface Product {
   oldPrice?: string;
   discount?: string;
   usageTags?: string[];
+  isHotSelling?: boolean;
+  showInHomeGrid?: boolean;
 }
 
 export interface Testimonial {

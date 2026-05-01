@@ -32,6 +32,7 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [homeGridSearchQuery, setHomeGridSearchQuery] = useState('');
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => 
@@ -56,7 +57,7 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<{id: string, name: string, img: string} | null>(null);
   const [brands, setBrands] = useState<{id: string, name: string, img: string}[]>([]);
   const [editingBrand, setEditingBrand] = useState<{id: string, name: string, img: string} | null>(null);
-  const [categoryForm, setCategoryForm] = useState({ name: '', img: '' });
+  const [categoryForm, setCategoryForm] = useState({ name: '', img: '', showAsSection: false, sectionTitle: '', sectionOrder: 0 });
   const [brandForm, setBrandForm] = useState({ name: '', img: '' });
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
   const [isBrandLoading, setIsBrandLoading] = useState(false);
@@ -105,7 +106,7 @@ export default function AdminDashboard() {
         });
         showFeedback('Category added!');
       }
-      setCategoryForm({ name: '', img: '' });
+      setCategoryForm({ name: '', img: '', showAsSection: false, sectionTitle: '', sectionOrder: 0 });
       setEditingCategory(null);
     } catch (err: any) {
       handleFirestoreError(err, editingCategory ? OperationType.UPDATE : OperationType.CREATE, 'categories');
@@ -158,7 +159,13 @@ export default function AdminDashboard() {
 
   const handleEditCategory = (cat: any) => {
     setEditingCategory(cat);
-    setCategoryForm({ name: cat.name, img: cat.img });
+    setCategoryForm({ 
+      name: cat.name, 
+      img: cat.img, 
+      showAsSection: !!cat.showAsSection,
+      sectionTitle: cat.sectionTitle || '',
+      sectionOrder: cat.sectionOrder || 0
+    });
   };
 
   const handleEditBrand = (brand: any) => {
@@ -780,6 +787,8 @@ export default function AdminDashboard() {
     oldPrice: '',
     discount: '',
     usageTags: [] as string[],
+    isHotSelling: false,
+    showInHomeGrid: false,
     image: '',
     additionalImages: [] as string[]
   });
@@ -807,14 +816,16 @@ export default function AdminDashboard() {
     console.log("Editing product:", product);
     setEditingId(product.id);
     setFormData({
-      name: product.name,
-      brand: product.brand,
-      category: product.category,
-      description: product.description,
-      price: product.price,
+      name: product.name || '',
+      brand: product.brand || '',
+      category: product.category || 'Laptops',
+      description: product.description || '',
+      price: product.price || '',
       oldPrice: product.oldPrice || '',
       discount: product.discount || '',
       usageTags: Array.isArray(product.usageTags) ? product.usageTags : [],
+      isHotSelling: !!product.isHotSelling,
+      showInHomeGrid: !!product.showInHomeGrid,
       image: product.image || '',
       additionalImages: product.additionalImages || []
     });
@@ -841,6 +852,8 @@ export default function AdminDashboard() {
       oldPrice: '',
       discount: '',
       usageTags: [],
+      isHotSelling: false,
+      showInHomeGrid: false,
       image: '',
       additionalImages: []
     });
@@ -950,6 +963,8 @@ export default function AdminDashboard() {
           oldPrice: finalOldPrice,
           image: mainImageUrl,
           additionalImages: newAdditionalImages,
+          isHotSelling: !!formData.isHotSelling,
+          showInHomeGrid: !!formData.showInHomeGrid,
           category: formData.category as any,
           specifications: formattedSpecs
         };
@@ -963,6 +978,8 @@ export default function AdminDashboard() {
           oldPrice: finalOldPrice,
           image: mainImageUrl || 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&q=80&w=800',
           additionalImages: newAdditionalImages,
+          isHotSelling: !!formData.isHotSelling,
+          showInHomeGrid: !!formData.showInHomeGrid,
           category: formData.category as any,
           specifications: formattedSpecs
         });
@@ -1012,91 +1029,246 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Category Management Section */}
-        <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <ImageIcon size={24} className="text-primary" />
-            Manage Categories (Home Page Grid)
-          </h2>
-          
-          <form onSubmit={handleCategorySubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-black/40 p-6 rounded-2xl border border-white/5">
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Category Name</label>
-              <input
-                type="text"
-                required
-                value={categoryForm.name}
-                onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
-                placeholder="e.g. Laptops"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Image URL</label>
-              <input
-                type="text"
-                required
-                value={categoryForm.img}
-                onChange={(e) => setCategoryForm({ ...categoryForm, img: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
-                placeholder="https://..."
-              />
-            </div>
-            <div className="flex items-end gap-2">
-              <button
-                type="submit"
-                disabled={isCategoryLoading}
-                className="flex-1 bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
-              >
-                {isCategoryLoading ? <Loader2 className="animate-spin" size={18} /> : (editingCategory ? 'Update' : 'Add Category')}
-              </button>
-              {editingCategory && (
+        {/* Home Page Layout Management */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          {/* Category Management Section */}
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <ImageIcon size={24} className="text-primary" />
+              Manage Categories (Home Page Grid)
+            </h2>
+            
+            <form onSubmit={handleCategorySubmit} className="grid grid-cols-1 gap-6 mb-8 bg-black/40 p-6 rounded-2xl border border-white/5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Category Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={categoryForm.name || ''}
+                    onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                    placeholder="e.g. Laptops"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Image URL</label>
+                  <input
+                    type="text"
+                    required
+                    value={categoryForm.img || ''}
+                    onChange={(e) => setCategoryForm({ ...categoryForm, img: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                <div className="flex items-center gap-4 mb-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={!!categoryForm.showAsSection}
+                      onChange={(e) => setCategoryForm({ ...categoryForm, showAsSection: e.target.checked, sectionTitle: e.target.checked && !categoryForm.sectionTitle ? categoryForm.name : categoryForm.sectionTitle })}
+                      className="rounded border-white/10 text-primary focus:ring-primary bg-bg-dark"
+                    />
+                    <span className="text-sm font-bold text-primary uppercase tracking-widest">Show as Featured Section on Home</span>
+                  </label>
+                </div>
+
+                {categoryForm.showAsSection && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Section Display Title</label>
+                      <input
+                        type="text"
+                        value={categoryForm.sectionTitle || ''}
+                        onChange={(e) => setCategoryForm({ ...categoryForm, sectionTitle: e.target.value })}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                        placeholder="e.g. Premium Printers"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Display Order (Higher = First)</label>
+                      <input
+                        type="number"
+                        value={categoryForm.sectionOrder ?? 0}
+                        onChange={(e) => setCategoryForm({ ...categoryForm, sectionOrder: parseInt(e.target.value) || 0 })}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-end gap-2">
                 <button
-                  type="button"
-                  onClick={() => { setEditingCategory(null); setCategoryForm({ name: '', img: '' }); }}
-                  className="bg-white/10 text-white h-[50px] px-6 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all"
+                  type="submit"
+                  disabled={isCategoryLoading}
+                  className="flex-1 bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
                 >
-                  Cancel
+                  {isCategoryLoading ? <Loader2 className="animate-spin" size={18} /> : (editingCategory ? 'Update' : 'Add Category')}
+                </button>
+                {editingCategory && (
+                  <button
+                    type="button"
+                    onClick={() => { setEditingCategory(null); setCategoryForm({ name: '', img: '', showAsSection: false, sectionTitle: '', sectionOrder: 0 }); }}
+                    className="bg-white/10 text-white h-[50px] px-6 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all transition-all"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+
+            <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-4 scroll-smooth">
+              {categories.map((cat) => (
+                <div key={cat.id} className={`group relative bg-black/40 border ${editingCategory?.id === cat.id ? 'border-primary' : 'border-white/5'} rounded-2xl p-4 flex flex-col items-center gap-3 hover:border-primary/50 transition-all min-w-[150px] shrink-0`}>
+                  <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10">
+                    <img src={cat.img} alt={cat.name} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">{cat.name}</span>
+                  {cat.showAsSection && (
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-[8px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">Section Active</span>
+                      <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tight">
+                        {products.filter(p => p.category === cat.name && p.showInHomeGrid).length} Featured
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-1">
+                    <button onClick={() => handleEditCategory(cat)} className="p-1.5 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/40 transition-all">
+                      <Edit2 size={12} />
+                    </button>
+                    {deletingCategoryId === cat.id ? (
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => handleDeleteCategory(cat.id)}
+                          className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-lg hover:bg-red-600 transition-all"
+                        >
+                          Confirm
+                        </button>
+                        <button 
+                          onClick={() => setDeletingCategoryId(null)}
+                          className="px-2 py-1 bg-white/10 text-white text-[10px] font-bold rounded-lg hover:bg-white/20 transition-all"
+                        >
+                          X
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeletingCategoryId(cat.id)} className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 transition-all">
+                        <Trash2 size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Home Grid Featured Products Summary */}
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Save size={24} className="text-blue-500" />
+              Home Grid Products
+            </h2>
+            
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold" size={16} />
+                <input 
+                  type="text"
+                  placeholder="Search home grid featured products..."
+                  value={homeGridSearchQuery}
+                  onChange={(e) => setHomeGridSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && setHomeGridSearchQuery((e.target as any).value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 focus:border-primary transition-all outline-none text-sm placeholder:text-gray-500"
+                />
+              </div>
+              <button 
+                onClick={() => setHomeGridSearchQuery(homeGridSearchQuery)}
+                className="bg-primary text-bg-dark px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white transition-all flex items-center justify-center gap-2"
+              >
+                <Search size={16} />
+                Search
+              </button>
+              {homeGridSearchQuery && (
+                <button 
+                  onClick={() => setHomeGridSearchQuery('')}
+                  className="px-4 py-3 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest border border-white/10 rounded-xl"
+                >
+                  Clear Results
                 </button>
               )}
             </div>
-          </form>
 
-          <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-4 scroll-smooth">
-            {categories.map((cat) => (
-              <div key={cat.id} className="group relative bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center gap-3 hover:border-primary/50 transition-all min-w-[150px] shrink-0">
-                <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10">
-                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover" />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">{cat.name}</span>
-                
-                <div className="flex gap-1">
-                  <button onClick={() => handleEditCategory(cat)} className="p-1.5 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/40 transition-all">
-                    <Edit2 size={12} />
-                  </button>
-                  {deletingCategoryId === cat.id ? (
-                    <div className="flex gap-1">
+            <p className="text-xs text-gray-500 mb-6 uppercase tracking-widest">
+              These products will appear at the start of their respective category sections on the home page.
+            </p>
+            <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-6 scroll-smooth">
+              {(() => {
+                const featuredCategoryNames = categories
+                  .filter(c => !!c.showAsSection)
+                  .map(c => c.name.toLowerCase().trim());
+
+                const homeGridFiltered = products.filter(p => {
+                  const isExplicitlyFeatured = !!p.showInHomeGrid;
+                  const productCat = (p.category || '').toLowerCase().trim();
+                  
+                  // Include if explicitly marked OR if it belongs to a featured section
+                  const isInFeaturedSection = featuredCategoryNames.some(featCat => 
+                    productCat === featCat || 
+                    productCat === featCat + 's' || 
+                    productCat + 's' === featCat
+                  );
+
+                  const search = homeGridSearchQuery.toLowerCase();
+                  const matchesSearch = p.name.toLowerCase().includes(search) ||
+                                        p.category.toLowerCase().includes(search) ||
+                                        p.brand.toLowerCase().includes(search);
+
+                  return (isExplicitlyFeatured || isInFeaturedSection) && matchesSearch;
+                });
+
+                if (homeGridFiltered.length === 0) {
+                  return (
+                    <div className="w-full text-center py-20 text-gray-500 italic text-sm border border-dashed border-white/10 rounded-2xl">
+                      {homeGridSearchQuery ? "No matching products found." : "No featured products. Mark categories or products as 'Home Grid' to see them here."} <br />
+                      {!homeGridSearchQuery && <span className="text-[10px] mt-2 block opacity-60">Try ticking \"Home Grid\" on a product or \"Show as Featured\" on a category.</span>}
+                    </div>
+                  );
+                }
+
+                return homeGridFiltered.map(p => (
+                  <div key={p.id} className="min-w-[280px] max-w-[280px] bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col gap-3 group hover:border-primary/50 transition-all shrink-0">
+                    <div className="relative aspect-video bg-white rounded-xl overflow-hidden p-2">
+                      <img src={p.image} className="w-full h-full object-contain" alt="" />
+                      <div className="absolute top-2 right-2 bg-blue-500 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full shadow-lg">
+                        Home Grid
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <span className="text-[8px] text-primary font-black uppercase tracking-widest bg-primary/10 px-1.5 py-0.5 rounded">{p.category}</span>
+                        <span className="text-[8px] text-gray-400 font-bold uppercase">{p.brand}</span>
+                      </div>
+                      <p className="text-xs font-bold text-white line-clamp-2 min-h-[32px] leading-relaxed">{p.name}</p>
+                    </div>
+                    <div className="flex gap-2 mt-auto">
                       <button 
-                        onClick={() => handleDeleteCategory(cat.id)}
-                        className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-lg hover:bg-red-600 transition-all"
+                        onClick={() => handleEdit(p)}
+                        className="flex-1 py-2 bg-white/5 text-white hover:bg-primary hover:text-bg-dark transition-all rounded-lg font-bold uppercase tracking-widest text-[9px] flex items-center justify-center gap-2"
                       >
-                        Confirm
-                      </button>
-                      <button 
-                        onClick={() => setDeletingCategoryId(null)}
-                        className="px-2 py-1 bg-white/10 text-white text-[10px] font-bold rounded-lg hover:bg-white/20 transition-all"
-                      >
-                        X
+                        <Edit2 size={12} />
+                        Edit Product
                       </button>
                     </div>
-                  ) : (
-                    <button onClick={() => setDeletingCategoryId(cat.id)} className="p-1.5 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 transition-all">
-                      <Trash2 size={12} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+                  </div>
+                ));
+              })()}
+            </div>
           </div>
         </div>
 
@@ -1113,7 +1285,7 @@ export default function AdminDashboard() {
               <input
                 type="text"
                 required
-                value={brandForm.name}
+                value={brandForm.name || ''}
                 onChange={(e) => setBrandForm({ ...brandForm, name: e.target.value })}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
                 placeholder="e.g. ASUS"
@@ -1123,7 +1295,7 @@ export default function AdminDashboard() {
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Brand Image URL (Optional)</label>
               <input
                 type="text"
-                value={brandForm.img}
+                value={brandForm.img || ''}
                 onChange={(e) => setBrandForm({ ...brandForm, img: e.target.value })}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
                 placeholder="https://..."
@@ -1220,7 +1392,7 @@ export default function AdminDashboard() {
               <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
                 <p className="text-sm text-gray-400">Import from URL</p>
                 <div className="flex gap-2">
-                  <input type="text" value={scrapeUrl} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+                  <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
                   <button 
                     type="button" 
                     onClick={handleScrapeProduct} 
@@ -1244,16 +1416,16 @@ export default function AdminDashboard() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Product Name</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+                <input required type="text" value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Brand</label>
-                  <input required type="text" value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+                  <input required type="text" value={formData.brand || ''} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Category</label>
-                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none appearance-none">
+                  <select value={formData.category || 'Laptops'} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none appearance-none">
                     {categories.length > 0 ? (
                       categories.map(c => (
                         <option key={c.id} value={c.name}>{c.name}</option>
@@ -1269,7 +1441,7 @@ export default function AdminDashboard() {
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Product Description</label>
                 <textarea 
-                  value={formData.description} 
+                  value={formData.description || ''} 
                   onChange={e => setFormData({...formData, description: e.target.value})} 
                   placeholder="Enter detailed description..."
                   rows={3} 
@@ -1331,7 +1503,7 @@ export default function AdminDashboard() {
                       <input 
                         type="text" 
                         placeholder="Primary URL: https://images.unsplash.com/..."
-                        value={formData.image} 
+                        value={formData.image || ''} 
                         onChange={e => setFormData({...formData, image: e.target.value})} 
                         className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary transition-colors outline-none cursor-text disabled:cursor-not-allowed" 
                       />
@@ -1339,7 +1511,7 @@ export default function AdminDashboard() {
                         <input 
                           type="text" 
                           placeholder="Additional URL..."
-                          value={addUrlInput} 
+                          value={addUrlInput || ''} 
                           onChange={e => setAddUrlInput(e.target.value)} 
                           onKeyDown={e => {
                             if (e.key === 'Enter' && addUrlInput) {
@@ -1375,7 +1547,7 @@ export default function AdminDashboard() {
                     required 
                     type="text" 
                     placeholder="₹45,000" 
-                    value={formData.price} 
+                    value={formData.price || ''} 
                     onChange={e => setFormData({...formData, price: e.target.value})} 
                     onBlur={() => setFormData(prev => ({...prev, price: formatPrice(prev.price)}))}
                     className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" 
@@ -1386,7 +1558,7 @@ export default function AdminDashboard() {
                   <input 
                     type="text" 
                     placeholder="₹50,000" 
-                    value={formData.oldPrice} 
+                    value={formData.oldPrice || ''} 
                     onChange={e => setFormData({...formData, oldPrice: e.target.value})} 
                     onBlur={() => {
                         if (formData.oldPrice.trim()) {
@@ -1399,7 +1571,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Discount/Badge (Optional)</label>
-                <input type="text" placeholder="e.g. Best Seller" value={formData.discount} onChange={e => setFormData({...formData, discount: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
+                <input type="text" placeholder="e.g. Best Seller" value={formData.discount || ''} onChange={e => setFormData({...formData, discount: e.target.value})} className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" />
               </div>
               
               <div>
@@ -1443,14 +1615,14 @@ export default function AdminDashboard() {
                       <input 
                         type="text" 
                         placeholder="Key (e.g. RAM)"
-                        value={spec.key}
+                        value={spec.key || ''}
                         onChange={(e) => handleSpecChange(index, 'key', e.target.value)}
                         className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none"
                       />
                       <input 
                         type="text" 
                         placeholder="Value (e.g. 16GB)"
-                        value={spec.value}
+                        value={spec.value || ''}
                         onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
                         className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none"
                       />
@@ -1466,6 +1638,44 @@ export default function AdminDashboard() {
                   {specs.length === 0 && (
                     <p className="text-xs text-gray-500 italic text-center py-2">No specifications added</p>
                   )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2 p-3 bg-primary/5 border border-primary/20 rounded-xl mb-4">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className="relative flex items-center">
+                        <input 
+                          type="checkbox" 
+                          checked={!!formData.isHotSelling}
+                          onChange={(e) => setFormData({...formData, isHotSelling: e.target.checked})}
+                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-bg-dark checked:border-primary checked:bg-primary transition-all"
+                      />
+                      <Plus size={14} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-bg-dark opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-primary group-hover:text-white transition-colors uppercase tracking-widest">Hot Selling</span>
+                      <span className="text-[10px] text-gray-500 font-medium">Show in Hot Selling section</span>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="flex flex-col gap-2 p-3 bg-blue-500/5 border border-blue-500/20 rounded-xl mb-4">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className="relative flex items-center">
+                        <input 
+                          type="checkbox" 
+                          checked={!!formData.showInHomeGrid}
+                          onChange={(e) => setFormData({...formData, showInHomeGrid: e.target.checked})}
+                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-bg-dark checked:border-blue-500 checked:bg-blue-500 transition-all"
+                      />
+                      <Plus size={14} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-blue-400 group-hover:text-white transition-colors uppercase tracking-widest">Home Grid</span>
+                      <span className="text-[10px] text-gray-500 font-medium">Feature in Home Category Grid</span>
+                    </div>
+                  </label>
                 </div>
               </div>
 
@@ -1533,7 +1743,7 @@ export default function AdminDashboard() {
                   <input 
                     type="text" 
                     placeholder="Search products..." 
-                    value={searchQuery}
+                    value={searchQuery || ''}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 focus:border-primary transition-colors outline-none text-sm"
                   />

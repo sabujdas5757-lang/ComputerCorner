@@ -8,47 +8,66 @@ service cloud.firestore {
 
     // Helper functions
     function isSignedIn() { return request.auth != null; }
+    
+    // Hardened Admin Check: Checks specific emails
     function isAdmin() { 
       return isSignedIn() && 
-             (request.auth.token.email == 'computercorner@gmail.com' || request.auth.token.email == 'sabujdas5757@gmail.com'); 
+             (request.auth.token.email == 'computercorner@gmail.com' || request.auth.token.email == 'sabujdas5757@gmail.com');
     }
+    
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
-
     function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
-    
+
+    // Validation Blueprints
     function isValidCategory(data) {
       return data.keys().hasAll(['name', 'img']) && 
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
              data.img is string && data.img.size() > 0 && data.img.size() <= 500 &&
-             (data.keys().size() == 2 || 
-              (data.keys().size() == 3 && (data.keys().hasAny(['createdAt', 'updatedAt']))) ||
-              (data.keys().size() == 4 && data.keys().hasAll(['createdAt', 'updatedAt'])));
+             (data.get('showAsSection', false) is bool) &&
+             (data.get('sectionTitle', '') is string) &&
+             (data.get('sectionOrder', 0) is int || data.get('sectionOrder', 0) is float);
     }
 
     function isValidBrand(data) {
       return data.keys().hasAll(['name']) && 
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
-             (data.keys().size() <= 4); // name, img, createdAt, updatedAt
+             (data.get('img', '') is string);
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'brand', 'category', 'price', 'image']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.brand is string &&
+             data.category is string &&
+             data.price is string &&
+             data.image is string &&
+             (data.get('isHotSelling', false) is bool) &&
+             (data.get('showInHomeGrid', false) is bool) &&
+             (data.get('usageTags', []) is list) &&
+             (data.get('additionalImages', []) is list) &&
+             (data.get('specifications', {}) is map);
     }
 
     match /categories/{categoryId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidCategory(incoming());
-      allow update: if isAdmin() && isValidCategory(incoming());
+      allow create: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming());
+      allow update: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming());
       allow delete: if isAdmin();
     }
 
     match /brands/{brandId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidBrand(incoming());
-      allow update: if isAdmin() && isValidBrand(incoming());
+      allow create: if isAdmin() && isValidId(brandId) && isValidBrand(incoming());
+      allow update: if isAdmin() && isValidId(brandId) && isValidBrand(incoming());
       allow delete: if isAdmin();
     }
 
     match /products/{productId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
+      allow update: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
+      allow delete: if isAdmin();
     }
   }
 }

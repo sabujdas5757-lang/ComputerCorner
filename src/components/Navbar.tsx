@@ -72,7 +72,7 @@ export default function Navbar() {
             <input 
               type="text" 
               placeholder="Search for products, brands and more"
-              value={searchQuery}
+              value={searchQuery || ''}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white text-gray-800 rounded-sm py-2.5 px-4 pr-12 focus:outline-none shadow-sm placeholder:text-gray-400 text-sm font-medium"
             />
@@ -212,7 +212,7 @@ export default function Navbar() {
                 <input 
                   type="text" 
                   placeholder="Search products..."
-                  value={searchQuery}
+                  value={searchQuery || ''}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-3 px-4 pr-12 focus:outline-none focus:border-primary/50 transition-all font-medium"
                   autoFocus

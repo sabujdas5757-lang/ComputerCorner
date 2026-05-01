@@ -22,6 +22,7 @@ export default function Catalog() {
   const { categorySlug } = useParams();
   const [searchParams] = useSearchParams();
   const usageParam = searchParams.get('usage');
+  const hotSellingParam = searchParams.get('hotSelling');
 
   const [activeCategory, setActiveCategory] = useState(categorySlug || 'All');
   const [activeBrand, setActiveBrand] = useState('AllBrands');
@@ -124,9 +125,12 @@ export default function Catalog() {
         }
       }
 
-      return categoryMatch && brandMatch && priceMatch && searchMatch && usageMatch;
+      // Hot Selling filtering
+      const hotSellingMatch = hotSellingParam === 'true' ? !!p.isHotSelling : true;
+
+      return categoryMatch && brandMatch && priceMatch && searchMatch && usageMatch && hotSellingMatch;
     });
-  }, [activeCategory, activeBrand, priceRange, usageParam, searchQuery]);
+  }, [activeCategory, activeBrand, priceRange, usageParam, searchQuery, hotSellingParam]);
 
   const groupedProducts = useMemo(() => {
     if (viewMode !== 'grouped') return [];
@@ -145,14 +149,16 @@ export default function Catalog() {
         <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-8 border-b border-white/5 pb-4">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <span className="opacity-20">❯</span>
-          <span className="text-primary">{activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory}</span>
+          <span className="text-primary">
+            {hotSellingParam === 'true' ? 'Hot Selling Products' : (activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory)}
+          </span>
         </div>
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
             <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white mb-2">
-              {activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory}
+              {hotSellingParam === 'true' ? 'Hot Selling Products' : (activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory)}
               <span className="text-xs font-medium text-gray-500 normal-case ml-4">
                 (Showing {filteredProducts.length} of {PRODUCTS.length} products)
               </span>
@@ -187,7 +193,7 @@ export default function Catalog() {
               <input 
                 type="text" 
                 placeholder="Search by name, brand or description..."
-                value={searchQuery}
+                value={searchQuery || ''}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 text-white"
               />
@@ -239,7 +245,7 @@ export default function Catalog() {
                   <label className="text-[9px] font-bold text-gray-600 uppercase block mb-2">Min Price</label>
                   <input 
                     type="number" 
-                    value={priceRange.min}
+                    value={priceRange.min ?? 0}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50"
                   />
@@ -248,7 +254,7 @@ export default function Catalog() {
                   <label className="text-[9px] font-bold text-gray-600 uppercase block mb-2">Max Price</label>
                   <input 
                     type="number" 
-                    value={priceRange.max}
+                    value={priceRange.max ?? 0}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50"
                   />

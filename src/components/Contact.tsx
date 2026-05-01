@@ -115,7 +115,7 @@ export default function Contact() {
                     type="text" 
                     name="name"
                     required
-                    value={formData.name}
+                    value={formData.name || ''}
                     onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-primary/50 transition-all" 
                     placeholder="John Doe" 
@@ -127,7 +127,7 @@ export default function Contact() {
                     type="tel" 
                     name="phone"
                     required
-                    value={formData.phone}
+                    value={formData.phone || ''}
                     onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-primary/50 transition-all" 
                     placeholder="+91 XXXX XXXX" 
@@ -138,7 +138,7 @@ export default function Contact() {
                 <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Your Hardware/Issue</label>
                 <select 
                   name="service"
-                  value={formData.service}
+                  value={formData.service || 'Buy New Product'}
                   onChange={handleChange}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-primary/50 transition-all text-gray-400"
                 >
@@ -154,7 +154,7 @@ export default function Contact() {
                 <textarea 
                   name="message"
                   required
-                  value={formData.message}
+                  value={formData.message || ''}
                   onChange={handleChange}
                   rows={4} 
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-primary/50 transition-all resize-none" 

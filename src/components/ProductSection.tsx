@@ -23,7 +23,8 @@ import { Product } from '../constants';
 
 interface ProductSectionProps {
   title: string;
-  category: Product['category'];
+  category: string;
+  key?: string;
 }
 
 export default function ProductSection({ title, category }: ProductSectionProps) {
@@ -31,7 +32,23 @@ export default function ProductSection({ title, category }: ProductSectionProps)
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
 
-  const products = PRODUCTS.filter(p => p.category === category).slice(0, 10);
+  const products = PRODUCTS
+    .filter(p => {
+      if (!p.category) return false;
+      const cat = p.category.toLowerCase().trim();
+      const target = category.toLowerCase().trim();
+      // Flexible matching for singular/plural
+      return cat === target || cat === target + 's' || cat + 's' === target;
+    })
+    .sort((a, b) => {
+      // Prioritize products marked for home grid
+      const aFeatured = !!a.showInHomeGrid;
+      const bFeatured = !!b.showInHomeGrid;
+      if (aFeatured && !bFeatured) return -1;
+      if (!aFeatured && bFeatured) return 1;
+      return 0;
+    })
+    .slice(0, 10);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {

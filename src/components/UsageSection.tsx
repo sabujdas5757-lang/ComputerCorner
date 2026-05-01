@@ -17,7 +17,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { GraduationCap, Briefcase, Gamepad2, Video } from 'lucide-react';
+import { GraduationCap, Briefcase, Gamepad2, Video, Apple } from 'lucide-react';
 
 const USAGE_TYPES = [
   {
@@ -55,6 +55,15 @@ const USAGE_TYPES = [
     borderColor: 'border-amber-500/30',
     textColor: 'text-amber-400',
     search: 'editing'
+  },
+  {
+    title: 'MacBook',
+    desc: 'The Apple Ecosystem',
+    icon: <Apple size={32} />,
+    color: 'from-gray-500/20 to-slate-500/20',
+    borderColor: 'border-gray-500/30',
+    textColor: 'text-gray-300',
+    search: 'macbook'
   }
 ];
 
@@ -69,7 +78,7 @@ export default function UsageSection() {
           <div className="h-1 w-20 bg-primary rounded-full" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {USAGE_TYPES.map((item, index) => (
             <motion.button
               key={item.title}

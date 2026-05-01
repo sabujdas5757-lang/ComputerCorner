@@ -2,25 +2,61 @@
   "entities": {
     "Category": {
       "title": "Category",
-      "description": "Product category for the category grid",
+      "description": "Product category for the category grid and featured sections on the home page",
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "Name of the category"
-        },
-        "img": {
-          "type": "string",
-          "description": "URL of the category image"
-        }
+        "name": { "type": "string" },
+        "img": { "type": "string" },
+        "showAsSection": { "type": "boolean" },
+        "sectionTitle": { "type": "string" },
+        "sectionOrder": { "type": "number" }
       },
       "required": ["name", "img"]
+    },
+    "Brand": {
+      "title": "Brand",
+      "description": "Product brand",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "img": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Hardware product details",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "brand": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "string" },
+        "oldPrice": { "type": "string" },
+        "discount": { "type": "string" },
+        "usageTags": { "type": "array", "items": { "type": "string" } },
+        "isHotSelling": { "type": "boolean" },
+        "showInHomeGrid": { "type": "boolean" },
+        "image": { "type": "string" },
+        "additionalImages": { "type": "array", "items": { "type": "string" } },
+        "specifications": { "type": "object" }
+      },
+      "required": ["name", "brand", "category", "price", "image"]
     }
   },
   "firestore": {
     "categories": {
       "schema": "Category",
-      "description": "List of categories displayed in the home page grid"
+      "description": "Categories for navigation and home page grid"
+    },
+    "brands": {
+      "schema": "Brand",
+      "description": "Available product brands"
+    },
+    "products": {
+      "schema": "Product",
+      "description": "Main product catalog"
     }
   }
 }

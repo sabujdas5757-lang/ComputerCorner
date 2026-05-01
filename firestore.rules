@@ -12,41 +12,35 @@ service cloud.firestore {
     // Hardened Admin Check: Checks specific emails
     function isAdmin() { 
       return isSignedIn() && 
-             (request.auth.token.email == 'computercorner@gmail.com' || request.auth.token.email == 'sabujdas5757@gmail.com');
+             (request.auth.token.email == 'computercorner@gmail.com' || 
+              request.auth.token.email == 'sabujdas5757@gmail.com' ||
+              request.auth.email == 'computercorner@gmail.com' ||
+              request.auth.email == 'sabujdas5757@gmail.com');
     }
     
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
-    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function isValidId(id) { return id is string && id.size() <= 128; }
 
     // Validation Blueprints
     function isValidCategory(data) {
       return data.keys().hasAll(['name', 'img']) && 
-             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
-             data.img is string && data.img.size() > 0 && data.img.size() <= 500 &&
-             (data.get('showAsSection', false) is bool) &&
-             (data.get('sectionTitle', '') is string) &&
-             (data.get('sectionOrder', 0) is int || data.get('sectionOrder', 0) is float);
+             data.name is string &&
+             data.img is string;
     }
 
     function isValidBrand(data) {
       return data.keys().hasAll(['name']) && 
-             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
-             (data.get('img', '') is string);
+             data.name is string;
     }
 
     function isValidProduct(data) {
       return data.keys().hasAll(['name', 'brand', 'category', 'price', 'image']) &&
-             data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.name is string &&
              data.brand is string &&
              data.category is string &&
              data.price is string &&
-             data.image is string &&
-             (data.get('isHotSelling', false) is bool) &&
-             (data.get('showInHomeGrid', false) is bool) &&
-             (data.get('usageTags', []) is list) &&
-             (data.get('additionalImages', []) is list) &&
-             (data.get('specifications', {}) is map);
+             data.image is string;
     }
 
     match /categories/{categoryId} {

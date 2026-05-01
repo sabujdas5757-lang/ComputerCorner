@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
+  const [confirmingAllDelete, setConfirmingAllDelete] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
@@ -748,6 +749,22 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
       console.log("Batch delete process finished");
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (products.length === 0) return;
+    setLoading(true);
+    const idsToDelete = products.map(p => p.id);
+    try {
+      await deleteMultipleProducts(idsToDelete);
+      setSelectedIds(new Set());
+      setConfirmingAllDelete(false);
+      showFeedback(`Successfully removed all ${idsToDelete.length} products`);
+    } catch (err: any) {
+      showFeedback(`Error clearing products: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1708,7 +1725,7 @@ export default function AdminDashboard() {
                       <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Select All</span>
                     </label>
                   )}
-                  {selectedIds.size > 0 && !confirmingBulkDelete && (
+                  {selectedIds.size > 0 && !confirmingBulkDelete && !confirmingAllDelete && (
                     <button 
                       onClick={() => setConfirmingBulkDelete(true)}
                       disabled={loading}
@@ -1732,6 +1749,35 @@ export default function AdminDashboard() {
                          onClick={() => setConfirmingBulkDelete(false)}
                          disabled={loading}
                          className="px-3 py-1.5 bg-gray-500 text-white rounded-lg text-sm font-bold hover:bg-gray-600 transition-colors"
+                       >
+                         Cancel
+                       </button>
+                    </div>
+                  )}
+                  {products.length > 0 && !confirmingAllDelete && !confirmingBulkDelete && (
+                    <button 
+                      onClick={() => setConfirmingAllDelete(true)}
+                      disabled={loading}
+                      className="flex items-center gap-2 px-4 py-1.5 bg-red-600/20 text-red-500 border border-red-600/40 rounded-lg hover:bg-red-600 hover:text-white transition-all text-sm font-bold"
+                    >
+                      <Trash2 size={16} />
+                      Delete All Items
+                    </button>
+                  )}
+                  {confirmingAllDelete && (
+                    <div className="flex items-center gap-2 bg-red-500/10 p-2 rounded-xl border border-red-500/20 animate-in fade-in zoom-in-95">
+                       <span className="text-xs font-bold text-red-400 uppercase tracking-widest px-2">Wipe everything?</span>
+                       <button
+                         onClick={handleDeleteAll}
+                         disabled={loading}
+                         className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-black uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
+                       >
+                         Confirm Wipe
+                       </button>
+                       <button
+                         onClick={() => setConfirmingAllDelete(false)}
+                         disabled={loading}
+                         className="px-3 py-1.5 bg-white/10 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-colors"
                        >
                          Cancel
                        </button>

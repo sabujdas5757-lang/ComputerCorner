@@ -92,8 +92,28 @@ async function startServer() {
         },
         // Method 6: ThingProxy
         async () => {
-          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${url}`, { timeout: 15000 });
+          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`, { timeout: 15000 });
           return proxyRes.data;
+        },
+        // Method 7: Proxy.io (different endpoint)
+        async () => {
+          const proxyRes = await axios.get(`https://proxy.cors.sh/${url}`, { 
+            timeout: 15000,
+            headers: { 'x-cors-gratis': 'true' }
+          });
+          return proxyRes.data;
+        },
+        // Method 8: Direct fetch using native fetch (sometimes axios headers are flagged)
+        async () => {
+          const response = await fetch(url, {
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            },
+            signal: AbortSignal.timeout(10000)
+          } as any);
+          if (!response.ok) throw new Error(`Fetch returned ${response.status}`);
+          return await response.text();
         }
       ];
 
@@ -110,19 +130,22 @@ async function startServer() {
               !html.includes('captcha') &&
               !html.includes('503 Service Unavailable') &&
               !html.includes('503 - Service Unavailable') &&
-              html.length > 1000) { // Most product pages are reasonably large
+              html.length > 500) { // Lowered threshold slightly
+            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using a fetch method.`);
             break;
           } else {
-            console.log(`[Scraper] Blocked or invalid content (Length: ${html?.length}), trying next...`);
+            console.log(`[Scraper] Content too short, blocked, or invalid (Length: ${html?.length}), trying next...`);
             html = '';
           }
         } catch (error: any) {
-          console.warn(`[Scraper] A fetch method failed (${error.response?.status || 'network error'}): ${error.message}`);
+          const status = error.response?.status || 'network error';
+          console.warn(`[Scraper] A fetch method failed (${status}): ${error.message}`);
         }
       }
 
       if (!html || !html.includes('<html')) {
-        throw new Error("The target website is heavily protected or temporarily unavailable. Please add product details manually.");
+        console.error("[Scraper] All fetch methods failed for URL:", url);
+        throw new Error("The target website is heavily protected or temporarily unavailable (all 8 attempt methods failed). Please add product details manually.");
       }
 
       const $ = cheerio.load(html);

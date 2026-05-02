@@ -159,42 +159,42 @@ async function startServer() {
       let aiResult: any = null;
       if (genAI) {
         try {
-          console.log("[Scraper] Attempting AI-assisted extraction...");
+          console.log("[Scrapy Spider] Attempting AI-assisted extraction...");
           const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
           
           // Only send essential parts of HTML to save tokens and avoid noise
           // Amazon often has huge IDs and class names, we prioritize readable text
-          const bodyText = $('body').text().replace(/\s+/g, ' ').substring(0, 12000); 
+          const bodyText = $('body').text().replace(/\s+/g, ' ').substring(0, 15000); 
           const titleText = $('title').text();
           
-          const prompt = `Extract product details from this text:
+          const prompt = `Act as a professional data scraper (Scrapy-style). Extract product details from this Amazon/E-commerce content:
           Title: ${titleText}
-          Content: ${bodyText}
+          Content Area: ${bodyText}
           
           Return JSON only with these fields:
-          - name (string: clear, concise product title)
-          - price (string: include currency ₹)
-          - oldPrice (string: original price before discount)
-          - discount (string: % off)
-          - brand (string)
-          - category (string: Broad category like Laptops, Accessories, etc.)
-          - description (string: 2-3 sentence summary of features)
-          - specificationJson (object: key-value pairs of technical specs)
+          - name (concise, professional product title)
+          - price (current price with ₹)
+          - oldPrice (original MRP if visible)
+          - discount (percentage or amount off)
+          - brand (extracted brand name)
+          - category (logical store category)
+          - description (comprehensive but clean 3-4 sentence feature summary)
+          - specificationJson (detailed object of all technical specs found)
           
-          If info is missing, leave empty. No talk, just pure JSON.`;
+          Strictly return pure valid JSON. If info is missing, use empty string.`;
 
           const result = await model.generateContent(prompt);
           const responseText = result.response.text();
           const jsonMatch = responseText.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             aiResult = JSON.parse(jsonMatch[0]);
-            console.log("[Scraper] AI extraction successful:", aiResult.name);
+            console.log("[Scrapy Spider] AI extraction successful:", aiResult.name);
           }
         } catch (aiErr: any) {
-          if (aiErr.message?.includes('API_KEY_INVALID') || aiErr.message?.includes('400')) {
-             console.error("[Scraper] Critical: Gemini API Key is invalid or expired. Add a valid key in Secrets.");
+          if (aiErr.message?.includes('API_KEY_INVALID')) {
+             console.error("[Scraper] Gemini API Key is invalid.");
           } else {
-             console.warn("[Scraper] AI extraction fallback failed:", aiErr.message);
+             console.warn("[Scraper] AI fallback failed:", aiErr.message);
           }
         }
       }

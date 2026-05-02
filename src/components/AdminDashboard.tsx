@@ -1415,62 +1415,80 @@ export default function AdminDashboard() {
               </div>
             </div>
             
-            {/* Scraper Tool - Smart AI Engine */}
+            {/* Scrapy-style Spider Engine */}
             {!editingId && (
-              <div className="mb-8 p-6 bg-primary/5 border border-primary/20 rounded-2xl space-y-4 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Search size={80} className="text-primary" />
+              <div className="mb-8 p-6 bg-primary/5 border border-primary/30 rounded-2xl space-y-4 relative overflow-hidden group shadow-2xl shadow-primary/5">
+                <div className="absolute -top-10 -right-10 p-4 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-12 group-hover:rotate-0">
+                  <Search size={220} className="text-primary" />
                 </div>
+                
                 <div className="flex items-center justify-between relative z-10">
                   <div>
-                    <h3 className="text-lg font-bold text-primary flex items-center gap-2">
-                       <Search size={20} />
-                       Smart AI Scraper
+                    <h3 className="text-xl font-black text-primary flex items-center gap-3 italic tracking-tighter">
+                       <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-bg-dark not-italic">
+                          <Search size={18} strokeWidth={3} />
+                       </div>
+                       PROFESSIONAL SPIDER ENGINE v2.0
                     </h3>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
-                      Import images, pricing, and specs from Amazon URL
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.25em] mt-2 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                      Ready to crawl Amazon & Global E-commerce
                     </p>
                   </div>
                 </div>
                 
-                <div className="flex gap-2 relative z-10">
-                  <input 
-                    type="text" 
-                    value={scrapeUrl || ''} 
-                    onChange={e => setScrapeUrl(e.target.value)} 
-                    placeholder="https://www.amazon.in/dp/..." 
-                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" 
-                  />
+                <div className="flex gap-3 relative z-10 mt-4">
+                  <div className="flex-1 relative">
+                    <input 
+                      type="text" 
+                      value={scrapeUrl || ''} 
+                      onChange={e => setScrapeUrl(e.target.value)} 
+                      placeholder="https://www.amazon.in/dp/B0..." 
+                      className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-4 text-sm focus:border-primary outline-none transition-all placeholder:text-gray-700 font-mono" 
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-600 hidden md:block">
+                       URL DETECTED
+                    </div>
+                  </div>
                   <button 
                     type="button" 
                     onClick={handleScrapeProduct} 
-                    disabled={isImporting}
-                    className="bg-primary text-bg-dark px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 flex items-center gap-2 shadow-lg shadow-primary/20"
+                    disabled={!scrapeUrl || isImporting}
+                    className="bg-primary text-bg-dark px-8 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:scale-100 flex items-center gap-3 shadow-xl shadow-primary/30 min-w-[140px] justify-center"
                   >
-                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-                    {isImporting ? 'SCRAPING...' : 'SCRAP'}
+                    {isImporting ? <Loader2 size={18} className="animate-spin" /> : null}
+                    {isImporting ? 'CRAWLING...' : 'SPIDER'}
                   </button>
                 </div>
 
                 {isImporting && (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2 relative z-10">
-                    <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary">
-                       <span>{scrapingStatus}</span>
-                       <span>{scrapingProgress}%</span>
+                  <div className="pt-4 space-y-3 animate-in fade-in slide-in-from-top-4 relative z-10">
+                    <div className="flex justify-between items-end">
+                       <div className="space-y-1">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-primary block">Engine Status</span>
+                          <span className="text-xs text-white font-medium">{scrapingStatus}</span>
+                       </div>
+                       <span className="text-xl font-black text-primary italic">{scrapingProgress}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                        <div 
-                         className="h-full bg-primary transition-all duration-500 ease-out" 
+                         className="h-full bg-gradient-to-r from-primary/50 to-primary transition-all duration-700 ease-out relative" 
                          style={{ width: `${scrapingProgress}%` }}
-                       />
+                       >
+                          <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                       </div>
                     </div>
                   </div>
                 )}
                 
                 {!isImporting && !scrapingStatus && (
-                  <p className="text-[9px] text-gray-600 font-medium italic">
-                    Note: Powered by AI for high-accuracy extraction.
-                  </p>
+                  <div className="flex items-center justify-between text-[10px] text-gray-600 font-bold uppercase tracking-widest border-t border-white/5 pt-4">
+                    <div className="flex gap-4">
+                      <span>• AUTO-IMAGE STORAGE</span>
+                      <span>• SMART SPEC PARSING</span>
+                    </div>
+                    <span className="text-primary/50">POWERED BY GEMINI ENGINE</span>
+                  </div>
                 )}
               </div>
             )}

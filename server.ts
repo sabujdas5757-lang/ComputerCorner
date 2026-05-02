@@ -262,6 +262,14 @@ async function startServer() {
       if (req.path.startsWith('/api')) {
         return res.status(404).json({ error: "API route not found" });
       }
+      
+      // Safety: Don't serve index.html for assets that are missing (prevent MIME type errors)
+      if (req.path.includes('.') && 
+          !req.path.endsWith('.html') && 
+          !req.path.startsWith('/assets/')) {
+        return res.status(404).end();
+      }
+      
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

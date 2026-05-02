@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Sparkles, Wand2, Zap, Link as LinkIcon } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
+import { GoogleGenAI, Type } from "@google/genai";
+import { motion, AnimatePresence } from 'motion/react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
@@ -50,6 +52,7 @@ export default function AdminDashboard() {
   const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
   const [confirmingAllDelete, setConfirmingAllDelete] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+  const [isUsingAI, setIsUsingAI] = useState(false);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
@@ -456,108 +459,112 @@ export default function AdminDashboard() {
     return categories.length > 0 ? categories[0].name : 'Laptops';
   };
 
+  const refineWithAI = async (currentData: any, url: string) => {
+    try {
+      setIsUsingAI(true);
+      setScrapingStatus('AI is refining product details...');
+      
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      const prompt = `
+        You are a product data specialist. I am scraping a product from this URL: ${url}.
+        Here is the data I currently have: ${JSON.stringify(currentData)}.
+        
+        Please refine this data. Especially:
+        1. Ensure the name is clean and professional (remove site-specific suffixes like "Amazon.in: Buy...").
+        2. Format the price correctly in ₹ (Indian Rupees) with commas if missing.
+        3. Extract better specifications if the current ones are messy.
+        4. Detect the best category from: ${categories.map(c => c.name).join(', ')}.
+        
+        Return ONLY a JSON object with these fields:
+        {
+          "name": "string",
+          "brand": "string",
+          "category": "string",
+          "description": "string",
+          "price": "string",
+          "oldPrice": "string",
+          "discount": "string",
+          "specifications": {"key": "value"}
+        }
+      `;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json"
+        }
+      });
+
+      const aiData = JSON.parse(response.text);
+      return { ...currentData, ...aiData };
+    } catch (err) {
+      console.warn("AI refinement failed:", err);
+      return currentData;
+    } finally {
+      setIsUsingAI(false);
+    }
+  };
+
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
-    setScrapingStatus('Connecting to backend...');
+    setScrapingStatus('Connecting to scraping engine...');
     try {
-      // First, check backend health
-      try {
-        const healthRes = await fetch('/api/health');
-        if (!healthRes.ok) {
-           console.warn("Backend health check failed:", healthRes.status);
-        }
-      } catch (healthErr) {
-        console.error("Backend health check error:", healthErr);
-      }
-
       let productData;
+      
+      // Step 1: Server-side scrape
       try {
-        setScrapingStatus('Querying smart backend engine...');
+        setScrapingStatus('Fetching product data from server...');
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: scrapeUrl })
         });
         
-        if (response.status === 405) {
-          throw new Error("405 Method Not Allowed: The server is misconfigured or using a static host. Fallback triggered.");
-        }
-
-        const contentType = response.headers.get("content-type");
-        const bodyText = await response.text();
-        
-        if (!contentType || !contentType.includes("application/json") || !bodyText) {
-          console.error("Invalid response from backend:", bodyText.substring(0, 100));
-          throw new Error(`Server returned a non-JSON or empty response (Status: ${response.status}). Fallback triggered.`);
-        }
-
-        try {
-          productData = JSON.parse(bodyText);
-        } catch (parseE) {
-          throw new Error("Failed to parse backend JSON. Fallback triggered.");
-        }
-
-        if (!response.ok) throw new Error(productData?.error || 'Failed to scrape');
-
-        // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
-        if (productData.image && productData.image.startsWith('http')) {
-          try {
-            setScrapingStatus('Saving primary image to Vercel storage...');
-            const uploadRes = await fetch('/api/upload-from-url', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ url: productData.image })
-            });
-            if (uploadRes.ok) {
-              const uploadData = await safeJson(uploadRes);
-              if (uploadData?.secure_url) {
-                productData.image = uploadData.secure_url;
-              }
-            }
-          } catch (uploadErr) {
-            console.warn("Failed to auto-upload scraped image:", uploadErr);
-          }
-        }
-
-        // Also try to upload additional images if there are a few
-        if (productData.additionalImages && Array.isArray(productData.additionalImages)) {
-          const topImages = productData.additionalImages.slice(0, 3); // Just the first few to save time/quota
-          const savedImages: string[] = [];
-          
-          for (const imgUrl of topImages) {
-            try {
-              const uploadRes = await fetch('/api/upload-from-url', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: imgUrl })
-              });
-              if (uploadRes.ok) {
-                const uploadData = await safeJson(uploadRes);
-                if (uploadData?.secure_url) {
-                  savedImages.push(uploadData.secure_url);
-                } else {
-                  savedImages.push(imgUrl);
-                }
-              } else {
-                savedImages.push(imgUrl);
-              }
-            } catch (e) {
-              savedImages.push(imgUrl);
-            }
-          }
-          productData.additionalImages = [...savedImages, ...productData.additionalImages.slice(3)];
+        if (response.ok) {
+          productData = await response.json();
+        } else {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to scrape server-side');
         }
       } catch (backendError: any) {
-        console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError.message);
-        setScrapingStatus(`Backend check: ${backendError.message.substring(0, 30)}... Falling back to browser-proxies.`);
+        console.warn("Backend scrape failed, falling back to client-side proxy...", backendError.message);
+        setScrapingStatus(`Server-side failed, trying browser-based scraper...`);
         productData = await clientSideScrape(scrapeUrl);
       }
 
+      // Step 2: AI Refinement (Optional but recommended for Amazon)
+      const isAmazon = scrapeUrl.includes('amazon.');
+      if (isAmazon || !productData.name || productData.name === 'Unknown Product') {
+        productData = await refineWithAI(productData, scrapeUrl);
+      }
+
+      // Step 3: Image processing
+      if (productData.image && productData.image.startsWith('http')) {
+        try {
+          setScrapingStatus('Securing product images...');
+          const uploadRes = await fetch('/api/upload-from-url', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: productData.image })
+          });
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            if (uploadData?.secure_url) {
+              productData.image = uploadData.secure_url;
+            }
+          }
+        } catch (uploadErr) {
+          console.warn("Failed to auto-upload scraped image:", uploadErr);
+        }
+      }
+
+      // Final Assembly
       const product = {
         name: productData.name || '',
         brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : '',
-        category: detectCategory(productData.category || '', productData.name || '', productData.description || ''),
+        category: productData.category || detectCategory(productData.category || '', productData.name || '', productData.description || ''),
         description: productData.description || '',
         price: productData.price || '',
         oldPrice: productData.oldPrice || '',
@@ -577,15 +584,14 @@ export default function AdminDashboard() {
       }
       setSpecs(newSpecs);
       
-      showFeedback('Product details imported to form. Review and click "Add Product".');
+      showFeedback('Product details imported successfully! Please review before adding.');
       setScrapeUrl('');
 
-      // Scroll to form after import
       setTimeout(() => {
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch (err: any) {
-      showFeedback(`Error scraping/adding product: ${err.message}`);
+      showFeedback(`Error scraping product: ${err.message}`);
     } finally {
       setIsImporting(false);
       setScrapingStatus(null);
@@ -1406,26 +1412,70 @@ export default function AdminDashboard() {
             
             {/* Scrapper tool */}
             {!editingId && (
-              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                <p className="text-sm text-gray-400">Import from URL</p>
-                <div className="flex gap-2">
-                  <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+              <div className="mb-6 p-5 bg-primary/5 border border-primary/20 rounded-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-100 transition-opacity">
+                  <Sparkles className="text-primary animate-pulse" size={40} />
+                </div>
+                
+                <h4 className="text-sm font-black uppercase tracking-[0.2em] text-primary mb-3 flex items-center gap-2">
+                  <Zap size={16} />
+                  Smart Importer
+                </h4>
+                
+                <p className="text-xs text-gray-400 mb-4 max-w-lg">
+                  Paste an Amazon, Flipkart or any product link. Our AI-powered engine will extract details, clean specifications, and optimize images automatically.
+                </p>
+
+                <div className="flex flex-col md:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                    <input 
+                      type="text" 
+                      value={scrapeUrl || ''} 
+                      onChange={e => setScrapeUrl(e.target.value)} 
+                      placeholder="https://www.amazon.in/dp/..." 
+                      className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-3 py-3 text-sm focus:border-primary outline-none transition-all" 
+                    />
+                  </div>
                   <button 
                     type="button" 
                     onClick={handleScrapeProduct} 
-                    disabled={isImporting}
-                    className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    disabled={isImporting || !scrapeUrl}
+                    className="bg-primary text-black px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-white transition-all disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3 shadow-lg shadow-primary/20"
                   >
-                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : null}
-                    {isImporting ? 'Importing...' : 'Import'}
+                    {isImporting ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" />
+                        <span>Working...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 size={18} />
+                        <span>Magic Import</span>
+                      </>
+                    )}
                   </button>
                 </div>
-                {scrapingStatus && (
-                  <p className="text-xs text-primary mt-2 animate-pulse flex items-center gap-1">
-                    <Loader2 size={12} className="animate-spin" />
-                    {scrapingStatus}
-                  </p>
-                )}
+
+                <AnimatePresence>
+                  {scrapingStatus && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-xl flex items-center gap-3"
+                    >
+                      <div className="flex space-x-1">
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                      </div>
+                      <span className="text-xs font-bold text-primary uppercase tracking-widest">
+                        {scrapingStatus}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 

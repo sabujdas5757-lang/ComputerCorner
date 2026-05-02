@@ -40,25 +40,40 @@ async function startServer() {
       let html = '';
       
       const fetchMethods = [
-        // Method 1: Direct fetch with standard UA
+        // Method 1: Amazon-optimized fetch (if URL is amazon)
         async () => {
+          const isAmazon = url.includes('amazon.');
+          const headers: any = {
+            'User-Agent': isAmazon 
+              ? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+              : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Referer': 'https://www.google.com/',
+          };
+          
+          if (isAmazon) {
+            headers['device-memory'] = '8';
+            headers['downlink'] = '10';
+            headers['ect'] = '4g';
+            headers['rtt'] = '50';
+          }
+
           const response = await axios.get(url, {
             timeout: 10000,
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-              'Accept-Language': 'en-US,en;q=0.5',
-              'Referer': 'https://www.google.com/',
-            }
+            headers
           });
           return response.data;
         },
-        // Method 2: Direct fetch with different UA
+        // Method 2: Mobile User Agent (often less protected)
         async () => {
           const response = await axios.get(url, {
             timeout: 10000,
             headers: { 
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+              'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             }
           });
@@ -117,8 +132,27 @@ async function startServer() {
         }
       ];
 
-      for (const method of fetchMethods) {
+      // Shuffle or prioritize fetch methods based on domain
+      const isAmazon = url.includes('amazon.');
+      if (isAmazon) {
+        // Prioritize Amazon-specific methods
+        fetchMethods.sort((a, b) => {
+           const aStr = a.toString();
+           const bStr = b.toString();
+           if (aStr.includes('isAmazon')) return -1;
+           if (bStr.includes('isAmazon')) return 1;
+           return 0;
+        });
+      }
+
+      for (let i = 0; i < fetchMethods.length; i++) {
+        const method = fetchMethods[i];
         try {
+          if (i > 0) {
+            // Wait a bit between retries to avoid being flagged, but not too long
+            await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
+          }
+          
           html = await method();
           
           // Check if we got a real page or a block
@@ -130,16 +164,17 @@ async function startServer() {
               !html.includes('captcha') &&
               !html.includes('503 Service Unavailable') &&
               !html.includes('503 - Service Unavailable') &&
-              html.length > 500) { // Lowered threshold slightly
-            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using a fetch method.`);
+              !html.includes('To discuss automated access to Amazon data please contact') &&
+              html.length > 500) { 
+            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using method ${i + 1}.`);
             break;
           } else {
-            console.log(`[Scraper] Content too short, blocked, or invalid (Length: ${html?.length}), trying next...`);
+            console.log(`[Scraper] Content too short or blocked (Method ${i + 1}, Length: ${html?.length}), trying next...`);
             html = '';
           }
         } catch (error: any) {
           const status = error.response?.status || 'network error';
-          console.warn(`[Scraper] A fetch method failed (${status}): ${error.message}`);
+          console.warn(`[Scraper] Method ${i + 1} failed (${status}): ${error.message}`);
         }
       }
 
@@ -150,11 +185,20 @@ async function startServer() {
 
       const $ = cheerio.load(html);
       
-      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
+      const name = isAmazon ? $('#productTitle').text().trim() : 
+                  ($('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim());
       
-      const priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
-                  $('[itemprop="price"]').attr('content') ||
-                  $('.price, .product-price, .amount, .a-price-whole').first().text();
+      let priceRaw = '';
+      if (isAmazon) {
+        priceRaw = $('.a-price-whole').first().text() || 
+                   $('.a-offscreen').first().text() || 
+                   $('#priceblock_ourprice').text() || 
+                   $('#priceblock_dealprice').text();
+      } else {
+        priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
+                   $('[itemprop="price"]').attr('content') ||
+                   $('.price, .product-price, .amount, .a-price-whole').first().text();
+      }
 
       const formatPrice = (p: string | undefined) => {
         if (!p) return '';

@@ -38,162 +38,54 @@ async function startServer() {
     
     try {
       let html = '';
+      const isAmazon = url.includes('amazon.');
       
       const fetchMethods = [
-        // Method 1: Amazon-optimized stealth fetch
         async () => {
-          const isAmazon = url.includes('amazon.');
           const userAgents = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1'
           ];
           
           const headers: any = {
             'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
             'Referer': 'https://www.google.com/',
           };
           
           if (isAmazon) {
             headers['device-memory'] = '8';
             headers['downlink'] = '10';
-            headers['ect'] = '4g';
-            headers['rtt'] = '50';
           }
 
+          const response = await axios.get(url, { timeout: 15000, headers, maxRedirects: 5, validateStatus: () => true });
+          if (response.status !== 200) throw new Error(`Status ${response.status}`);
+          return response.data;
+        },
+        async () => {
           const response = await axios.get(url, {
             timeout: 12000,
-            headers,
-            maxRedirects: 5
+            headers: { 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1' }
           });
           return response.data;
-        },
-        // Method 2: Mobile User Agent (often less protected)
-        async () => {
-          const response = await axios.get(url, {
-            timeout: 10000,
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            }
-          });
-          return response.data;
-        },
-        // Method 3: AllOrigins Proxy
-        async () => {
-          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            headers: { 'User-Agent': 'Mozilla/5.0' }
-          });
-          return proxyRes.data?.contents || '';
-        },
-        // Method 4: Codetabs Proxy
-        async () => {
-          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            validateStatus: () => true 
-          });
-          if (proxyRes.status !== 200) throw new Error(`Codetabs returned ${proxyRes.status}`);
-          return proxyRes.data;
-        },
-        // Method 5: CorsProxy.io
-        async () => {
-          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            validateStatus: () => true
-          });
-          if (proxyRes.status !== 200) throw new Error(`CorsProxy returned ${proxyRes.status}`);
-          return proxyRes.data;
-        },
-        // Method 6: ThingProxy
-        async () => {
-          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`, { timeout: 15000 });
-          return proxyRes.data;
-        },
-        // Method 7: Proxy.io (different endpoint)
-        async () => {
-          const proxyRes = await axios.get(`https://proxy.cors.sh/${url}`, { 
-            timeout: 15000,
-            headers: { 'x-cors-gratis': 'true' }
-          });
-          return proxyRes.data;
-        },
-        // Method 8: Direct fetch using native fetch (sometimes axios headers are flagged)
-        async () => {
-          const response = await fetch(url, {
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            },
-            signal: AbortSignal.timeout(10000)
-          } as any);
-          if (!response.ok) throw new Error(`Fetch returned ${response.status}`);
-          return await response.text();
         }
       ];
 
-      // Shuffle or prioritize fetch methods based on domain
-      const isAmazon = url.includes('amazon.');
-      if (isAmazon) {
-        // Prioritize Amazon-specific methods
-        fetchMethods.sort((a, b) => {
-           const aStr = a.toString();
-           const bStr = b.toString();
-           if (aStr.includes('isAmazon')) return -1;
-           if (bStr.includes('isAmazon')) return 1;
-           return 0;
-        });
-      }
-
       for (let i = 0; i < fetchMethods.length; i++) {
-        const method = fetchMethods[i];
         try {
-          if (i > 0) {
-            // Wait a bit between retries to avoid being flagged, but not too long
-            await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
-          }
-          
-          html = await method();
-          
-          // Check if we got a real page or a block
-          if (html && 
-              typeof html === 'string' &&
-              html.includes('<html') && 
-              !html.includes('Robot Check') && 
-              !html.includes('Bot Check') &&
-              !html.includes('captcha') &&
-              !html.includes('503 Service Unavailable') &&
-              !html.includes('503 - Service Unavailable') &&
-              !html.includes('To discuss automated access to Amazon data please contact') &&
-              html.length > 500) { 
-            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using method ${i + 1}.`);
-            break;
-          } else {
-            console.log(`[Scraper] Content too short or blocked (Method ${i + 1}, Length: ${html?.length}), trying next...`);
-            html = '';
-          }
-        } catch (error: any) {
-          const status = error.response?.status || 'network error';
-          console.warn(`[Scraper] Method ${i + 1} failed (${status}): ${error.message}`);
-        }
+          if (i > 0) await new Promise(r => setTimeout(r, 1000));
+          html = await fetchMethods[i]();
+          const low = (html || '').toLowerCase() as string;
+          const isAmz = url.includes('amazon');
+          const blocked = low.includes('robot check') || low.includes('captcha') || low.includes('503 service') || (isAmz && low.length < 5000);
+          if (html && html.includes('<html') && !blocked) break;
+          html = '';
+        } catch (e) {}
       }
 
       if (!html || !html.includes('<html')) {
-        console.error("[Scraper] All fetch methods failed for URL:", url);
-        throw new Error("The target website is heavily protected or temporarily unavailable (all 8 attempt methods failed). Please add product details manually.");
+        return res.status(403).json({ error: "Access Denied by target site. Using AI Scraper instead...", needsAI: true });
       }
 
       const $ = cheerio.load(html);

@@ -232,207 +232,51 @@ export default function AdminDashboard() {
     setTimeout(() => setFeedbackMsg(null), 3000);
   };
 
-  const clientSideScrape = async (url: string) => {
-    let html = '';
-    const encodedUrl = encodeURIComponent(url);
-
-    // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
-    const getProxyRequests = [
-      {
-        name: 'Primary Proxy (AllOrigins)',
-        fn: async () => {
-          const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
-          if (!res.ok) throw new Error("AllOrigins failed");
-          const data = await safeJson(res);
-          if (!data || !data.contents) throw new Error("Empty content");
-          return data.contents;
-        }
-      },
-      {
-        name: 'Stealth Proxy (CorsProxy)',
-        fn: async () => {
-          const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
-          if (!res.ok) throw new Error("Corsproxy failed");
-          return await res.text();
-        }
-      },
-      {
-        name: 'Mobile Proxy (Codetabs)',
-        fn: async () => {
-          const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
-          if (!res.ok) throw new Error("Codetabs failed");
-          return await res.text();
-        }
-      },
-      {
-        name: 'Gratis Proxy (CORS.sh)',
-        fn: async () => {
-          const res = await fetch(`https://proxy.cors.sh/${url}`, {
-            headers: { 'x-cors-gratis': 'true' }
-          });
-          if (!res.ok) throw new Error("CORS.sh failed");
-          return await res.text();
-        }
-      }
-    ];
-
-    for (let i = 0; i < getProxyRequests.length; i++) {
-      const proxy = getProxyRequests[i];
-      try {
-        if (i > 0) await new Promise(r => setTimeout(r, 800)); // Small pause between retries
-        
-        setScrapingStatus(`Trying ${proxy.name}...`);
-        html = await proxy.fn();
-        
-        // Validation logic
-        const lowerHtml = (html || '').toLowerCase();
-        const isBlocked = lowerHtml.includes('robot check') || 
-                          lowerHtml.includes('bot check') || 
-                          lowerHtml.includes('captcha') ||
-                          lowerHtml.includes('automated access') ||
-                          lowerHtml.includes('503 service unavailable') ||
-                          (lowerHtml.length < 1000 && lowerHtml.includes('amazon'));
-
-        if (html && html.includes('<html') && !isBlocked) {
-           console.log(`[Frontend Scraper] ${proxy.name} succeeded!`);
-           break;
-        } else {
-           console.warn(`${proxy.name} returned ${isBlocked ? 'blocked' : 'invalid'} content.`);
-           html = ''; 
-        }
-      } catch (e) {
-        console.warn(`${proxy.name} failed:`, e);
-      }
-    }
-    
-    if (!html || !html.includes('<html')) {
-      throw new Error("Target website blocked all requests (Anti-bot protection). Please manually add the product details below.");
-    }
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-
-    const name = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || 
-                 doc.querySelector('title')?.textContent ||
-                 doc.querySelector('h1')?.textContent?.trim() ||
-                 'Unknown Product';
-    
-    const priceEl = doc.querySelector('meta[property="product:price:amount"]') || 
-                    doc.querySelector('[itemprop="price"]') || 
-                    doc.querySelector('.price, .product-price, .amount, .a-price-whole');
-    
-    const priceText = priceEl?.getAttribute('content') || priceEl?.textContent || '0';
-    const cleanedPrice = formatPrice(String(priceText));
-
-    const oldPriceEl = doc.querySelector('.old-price, .a-text-strike, del');
-    const oldPriceText = oldPriceEl?.textContent || '';
-    const oldPrice = oldPriceText ? formatPrice(String(oldPriceText)) : '';
-
-    const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
-                  doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content') ||
-                  doc.querySelector('img[itemprop="image"]')?.getAttribute('src') ||
-                  doc.querySelector('#landingImage, #imgBlkFront')?.getAttribute('src') || '';
-
-    const additionalImages: string[] = [];
-    const imageElements = Array.from(doc.querySelectorAll('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img'));
-    imageElements.forEach(el => {
-      let src = el.getAttribute('src') || el.getAttribute('data-old-hires') || el.getAttribute('data-src');
-      if (src) {
-        if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
-          src = src.replace(/\._[A-Z0-9_]+_\./, '.');
-        }
-        if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
-          additionalImages.push(src);
-        }
-      }
-    });
-
-    if (additionalImages.length === 0) {
-      const scriptMatch = html.match(/'colorImages':\s*({.+?}),/);
-      if (scriptMatch && scriptMatch[1]) {
-        try {
-          const data = JSON.parse(scriptMatch[1].replace(/'/g, '"'));
-          if (data.initial && Array.isArray(data.initial)) {
-            data.initial.forEach((imgObj: any) => {
-              if (imgObj.hiRes && imgObj.hiRes !== image && !additionalImages.includes(imgObj.hiRes)) {
-                additionalImages.push(imgObj.hiRes);
-              } else if (imgObj.large && imgObj.large !== image && !additionalImages.includes(imgObj.large)) {
-                additionalImages.push(imgObj.large);
-              }
-            });
-          }
-        } catch (e) {}
-      }
-    }
-
-    const description = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || 
-                        doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
-                        doc.querySelector('.description, .product-description, #feature-bullets')?.textContent?.trim() || '';
-
-    const brandEl = doc.querySelector('meta[property="product:brand"]') || doc.querySelector('[itemprop="brand"] [itemprop="name"]') || doc.querySelector('[itemprop="brand"]') || doc.querySelector('#bylineInfo');
-    let brand = brandEl?.getAttribute('content') || brandEl?.textContent?.trim() || '';
-    if (brand) {
-      if (brand.toLowerCase().startsWith('visit the ')) {
-        brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
-      }
-      if (brand.toLowerCase().startsWith('brand: ')) {
-        brand = brand.replace(/brand: /i, '').trim();
-      }
-    } else {
-      brand = 'Unknown';
-    }
-
-    const category = doc.querySelector('meta[property="product:category"]')?.getAttribute('content') || 
-                     doc.querySelector('[itemprop="category"]')?.getAttribute('content') || 
-                     doc.querySelector('.nav-a-content')?.textContent?.trim() || '';
-
-    let discount = '';
-    const discountEl = doc.querySelector('.savingsPercentage, .discount, .badge');
-    if (discountEl) {
-      discount = discountEl.textContent?.trim() || '';
-    }
-
-    const specifications: Record<string, string> = {};
-    
-    // Amazon and generic tables
-    const specRows = Array.from(doc.querySelectorAll('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr'));
-    specRows.forEach(row => {
-      const key = (row.querySelector('th')?.textContent || row.querySelector('td:first-child')?.textContent || '').trim();
-      const value = (row.querySelector('td:not(:first-child)')?.textContent || row.querySelector('td:last-child')?.textContent || '').trim();
+  const magicAIScrape = async (url: string) => {
+    try {
+      setScrapingStatus('Summoning AI Magic Scraper (No Proxies)...');
+      setIsUsingAI(true);
       
-      if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
-        // Clean up common Amazon weird chars (ZWSP, Zero-width space)
-        const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-        const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-        if (cleanKey && cleanVal) {
-          specifications[cleanKey] = cleanVal;
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      
+      const categoryList = PRODUCT_CATEGORIES.map(c => c.title).join(', ');
+      
+      // Using gemini-3.1-pro-preview for best results with Google Search tool
+      const prompt = `
+        Look up this product URL and extract full details: ${url}
+        Search for the product title, current price in INR (₹), brand, description, and key specifications.
+        
+        Return ONLY a JSON object:
+        {
+          "name": "Full product name",
+          "brand": "Brand",
+          "category": "One of: ${categoryList}",
+          "description": "Product summary",
+          "price": "e.g. ₹45,990",
+          "oldPrice": "e.g. ₹52,000",
+          "discount": "e.g. 15% off",
+          "image": "URL of the main high-res product image",
+          "specifications": {"key": "value"}
         }
-      }
-    });
+      `;
 
-    const poRows = Array.from(doc.querySelectorAll('.po-row'));
-    poRows.forEach(row => {
-      const key = row.querySelector('.a-span3')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-      const value = row.querySelector('.a-span9')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-      if (key && value) {
-        specifications[key] = value;
-      }
-    });
+      const response = await ai.models.generateContent({
+        model: "gemini-3.1-pro-preview",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          tools: [{ googleSearch: {} }],
+          toolConfig: { includeServerSideToolInvocations: true }
+        }
+      });
 
-    let featureCount = 1;
-    const bulletItems = Array.from(doc.querySelectorAll('#feature-bullets ul li:not(.a-hidden) span.a-list-item'));
-    bulletItems.forEach(item => {
-      const text = item.textContent?.trim();
-      if (text && !text.includes('Hide') && !text.includes('Show more')) {
-        specifications[`Feature ${featureCount++}`] = text;
-      }
-    });
-
-    if ((!brand || brand === 'Unknown') && specifications['Brand']) {
-      brand = specifications['Brand'];
+      return JSON.parse(response.text);
+    } catch (err: any) {
+      console.error("Magic AI Scrape failed:", err);
+      throw new Error(`Magic Scraper failed: ${err.message}. Please review URL or add manually.`);
+    } finally {
+      setIsUsingAI(false);
     }
-
-    return { name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications };
   };
 
   const detectCategory = (scrapedCat: string, name: string, description: string) => {
@@ -474,100 +318,52 @@ export default function AdminDashboard() {
     return categories.length > 0 ? categories[0].name : 'Laptops';
   };
 
-  const refineWithAI = async (currentData: any, url: string) => {
-    try {
-      setIsUsingAI(true);
-      setScrapingStatus('AI is refining product details...');
-      
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-      const prompt = `
-        You are a product data specialist. I am scraping a product from this URL: ${url}.
-        Here is the data I currently have: ${JSON.stringify(currentData)}.
-        
-        Please refine this data. Especially:
-        1. Ensure the name is clean and professional (remove site-specific suffixes like "Amazon.in: Buy...").
-        2. Format the price correctly in ₹ (Indian Rupees) with commas if missing.
-        3. Extract better specifications if the current ones are messy.
-        4. Detect the best category from: ${categories.map(c => c.name).join(', ')}.
-        
-        Return ONLY a JSON object with these fields:
-        {
-          "name": "string",
-          "brand": "string",
-          "category": "string",
-          "description": "string",
-          "price": "string",
-          "oldPrice": "string",
-          "discount": "string",
-          "specifications": {"key": "value"}
-        }
-      `;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json"
-        }
-      });
-
-      const aiData = JSON.parse(response.text);
-      return { ...currentData, ...aiData };
-    } catch (err) {
-      console.warn("AI refinement failed:", err);
-      return currentData;
-    } finally {
-      setIsUsingAI(false);
-    }
-  };
 
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
     setScrapingStatus('Connecting to scraping engine...');
+    
     try {
-      let productData;
+      let productData: any = null;
       
-      // Step 1: Server-side scrape
+      // Step 1: Server-side stealth scrape
       try {
-        setScrapingStatus('Fetching product data from server...');
+        setScrapingStatus('Attempting secure direct fetch...');
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: scrapeUrl })
         });
         
-        const contentType = response.headers.get("content-type");
-        if (response.ok && contentType && contentType.includes("application/json")) {
-          productData = await response.json();
-        } else {
-          // If response not OK or not JSON, read as text to debug or show error
-          const text = await response.text();
-          let errorMessage = 'Failed to scrape server-side';
-          try {
-            const errData = JSON.parse(text);
-            errorMessage = errData.error || errorMessage;
-          } catch (e) {
-            errorMessage = text.substring(0, 100) || errorMessage;
+        if (response.ok) {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            productData = await response.json();
+            setScrapingStatus('Direct fetch successful!');
+          } else {
+            throw new Error("Invalid response format from server.");
           }
-          throw new Error(errorMessage);
+        } else {
+          const text = await response.text();
+          let msg = 'Direct fetch blocked';
+          try {
+            const err = JSON.parse(text);
+            msg = err.error || msg;
+          } catch(e) {}
+          throw new Error(msg);
         }
-      } catch (backendError: any) {
-        console.warn("Backend scrape failed, falling back to client-side proxy...", backendError.message);
-        setScrapingStatus(`Server-side failed, trying browser-based scraper...`);
-        productData = await clientSideScrape(scrapeUrl);
+      } catch (err: any) {
+        console.warn("Direct fetch failed, using Magic AI Scraper...", err.message);
+        productData = await magicAIScrape(scrapeUrl);
       }
 
-      // Step 2: AI Refinement (Optional but recommended for Amazon)
-      const isAmazon = scrapeUrl.includes('amazon.');
-      if (isAmazon || !productData.name || productData.name === 'Unknown Product') {
-        productData = await refineWithAI(productData, scrapeUrl);
-      }
+      if (!productData) throw new Error("Could not extract product details.");
 
-      // Step 3: Image processing
+      // Step 2: Securing image
       if (productData.image && productData.image.startsWith('http')) {
         try {
-          setScrapingStatus('Securing product images...');
+          setScrapingStatus('Optimizing product images...');
           const uploadRes = await fetch('/api/upload-from-url', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -580,42 +376,42 @@ export default function AdminDashboard() {
             }
           }
         } catch (uploadErr) {
-          console.warn("Failed to auto-upload scraped image:", uploadErr);
+          console.warn("Image optimization failed:", uploadErr);
         }
       }
 
-      // Final Assembly
-      const product = {
+      // Step 3: Update State
+      setFormData({
         name: productData.name || '',
-        brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : '',
-        category: productData.category || detectCategory(productData.category || '', productData.name || '', productData.description || ''),
+        brand: productData.brand || '',
+        category: productData.category || detectCategory('', productData.name || '', productData.description || ''),
         description: productData.description || '',
         price: productData.price || '',
         oldPrice: productData.oldPrice || '',
         discount: productData.discount || '',
-        usageTags: [],
         image: productData.image || '',
-        additionalImages: productData.additionalImages || []
-      };
+        additionalImages: productData.additionalImages || [],
+        usageTags: []
+      } as any);
       
-      setFormData(product);
-      
-      const newSpecs: {key: string, value: string}[] = [];
+      const newSpecs: any[] = [];
       if (productData.specifications) {
-         Object.entries(productData.specifications).forEach(([k, v]) => {
-           newSpecs.push({key: k, value: String(v)});
-         });
+        Object.entries(productData.specifications).forEach(([key, value]) => {
+          if (typeof value === 'string' || typeof value === 'number') {
+            newSpecs.push({ key, value: String(value) });
+          }
+        });
       }
       setSpecs(newSpecs);
       
-      showFeedback('Product details imported successfully! Please review before adding.');
+      showFeedback('Magic Scraper success! Review details before adding.');
       setScrapeUrl('');
 
       setTimeout(() => {
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch (err: any) {
-      showFeedback(`Error scraping product: ${err.message}`);
+      showFeedback(`Scraper Error: ${err.message}`);
     } finally {
       setIsImporting(false);
       setScrapingStatus(null);

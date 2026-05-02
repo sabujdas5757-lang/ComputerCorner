@@ -104,8 +104,8 @@ async function startServer() {
       }
 
       if (!html || !html.includes('<html')) {
-        console.error("[Scraper] All fetch methods failed for URL:", url);
-        throw new Error("The target website is heavily protected or temporarily unavailable (all 8 attempt methods failed). Please add product details manually.");
+        console.error("[Scraper] All spider profiles failed for URL:", url);
+        throw new Error("Target website blocked all direct requests (Anti-bot protection). Please manually add the product details below.");
       }
 
       const $ = cheerio.load(html);

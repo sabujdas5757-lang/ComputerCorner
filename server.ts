@@ -14,6 +14,9 @@ import { ApifyClient } from 'apify-client';
 const app = express();
 const PORT = 3000;
 
+// Version for tracking restarts
+const SERVER_VERSION = "1.0.3";
+
 // Middleware registered synchronously
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -21,54 +24,62 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Global logging
 app.use((req, res, next) => {
-  console.log(`[Request] ${req.method} ${req.path}`);
+  if (req.path.startsWith('/api')) {
+    console.log(`[API Request] ${req.method} ${req.path}`);
+  }
   next();
 });
 
-// --- API ROUTES ---
-// Defined outside startServer to ensure they are available immediately on import/startup
-
-app.get("/api/apify-status", (req, res) => {
-  const rawKey = process.env.APIFY_API_KEY;
-  const hasKey = !!rawKey && rawKey.trim().length > 0;
-  
-  console.log(`[API] /api/apify-status called. Key present: ${hasKey}`);
-
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.json({ 
-    active: hasKey, 
-    message: hasKey ? "Apify API Key found and active" : "Apify API Key missing in server environment",
-    provider: "Apify (Amazon Optimized)",
-    timestamp: Date.now()
-  });
-});
-
-app.get("/api/storage-status", (req, res) => {
-  console.log(`[API] /api/storage-status called`);
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ 
-    configured: !!process.env.BLOB_READ_WRITE_TOKEN,
-    provider: "Vercel Blob",
-    message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing"
-  });
-});
-
-app.get("/api/debug-env", (req, res) => {
-  const keys = Object.keys(process.env);
-  res.json({
-    keys: keys.filter(k => k.includes('API') || k.includes('KEY') || k.includes('BLOB') || k.includes('SUPA')),
-    node_env: process.env.NODE_ENV,
-    apify_present: !!process.env.APIFY_API_KEY,
-    apify_prefix: process.env.APIFY_API_KEY ? process.env.APIFY_API_KEY.substring(0, 4) + '...' : null
-  });
-});
-
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
-
 async function startServer() {
+  console.log(`[Server] Starting version ${SERVER_VERSION}...`);
+  
+  // --- API ROUTES START ---
+  app.get("/api/health", (req, res) => {
+    res.json({ 
+      status: "ok", 
+      version: SERVER_VERSION,
+      timestamp: new Date().toISOString(),
+      env: process.env.NODE_ENV
+    });
+  });
+
+  app.get("/api/apify-status", (req, res) => {
+    const rawKey = process.env.APIFY_API_KEY;
+    const hasKey = !!rawKey && rawKey.trim().length > 0;
+    
+    console.log(`[Diagnostic] /api/apify-status - Key present: ${hasKey}`);
+    if (hasKey) {
+      console.log(`[Diagnostic] Key starts with: ${rawKey.substring(0, 4)}...`);
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ 
+      active: hasKey, 
+      message: hasKey ? "Apify API Key found and active" : "Apify API Key missing in server environment",
+      provider: "Apify (Amazon Optimized)",
+      timestamp: Date.now()
+    });
+  });
+
+  app.get("/api/storage-status", (req, res) => {
+    const hasToken = !!process.env.BLOB_READ_WRITE_TOKEN;
+    res.json({ 
+      configured: hasToken,
+      provider: "Vercel Blob",
+      message: hasToken ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing"
+    });
+  });
+
+  app.get("/api/debug-env", (req, res) => {
+    const keys = Object.keys(process.env);
+    res.json({
+      has_apify: !!process.env.APIFY_API_KEY,
+      apify_len: process.env.APIFY_API_KEY?.length || 0,
+      keys_count: keys.length,
+      apify_prefix: process.env.APIFY_API_KEY ? process.env.APIFY_API_KEY.substring(0, 4) : 'NONE',
+      node_env: process.env.NODE_ENV
+    });
+  });
   // Supabase Configuration (Used for any other future client needs)
   const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
   let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");

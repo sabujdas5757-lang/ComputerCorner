@@ -297,25 +297,29 @@ export default function AdminDashboard() {
           body: JSON.stringify({ url: scrapeUrl })
         });
         
-        if (response.status === 405) {
-          throw new Error("Spider Engine initialization failed. Server configuration error.");
-        }
-
         const contentType = response.headers.get("content-type");
         const bodyText = await response.text();
         
+        if (!response.ok) {
+          // Attempt to extract error message from body if it's JSON
+          let errMsg = `Server returned ${response.status}`;
+          try {
+            const errData = JSON.parse(bodyText);
+            errMsg = errData.error || errMsg;
+          } catch(e) {}
+          throw new Error(errMsg);
+        }
+
         if (!contentType || !contentType.includes("application/json") || !bodyText) {
           console.error("Spider Engine error:", bodyText.substring(0, 100));
-          throw new Error(`Direct crawl failed (Status: ${response.status}).`);
+          throw new Error(`Invalid data received from crawl engine.`);
         }
 
         try {
           productData = JSON.parse(bodyText);
         } catch (parseE) {
-          throw new Error("Spider Engine failed to parse data.");
+          throw new Error("Crawl engine JSON parse error.");
         }
-
-        if (!response.ok) throw new Error(productData?.error || 'Spider blocked by target');
 
         setScrapingStatus('AI Spider refining extracted datasets...');
         setScrapingProgress(60);
@@ -399,7 +403,7 @@ export default function AdminDashboard() {
       if (productData.aiUsed) {
         showFeedback('Product details imported with Smart AI. Review and click "Add Product".');
       } else {
-        showFeedback('Product details imported via standard scraper. Review and click "Add Product".');
+        showFeedback('Product details imported via Spider Engine. Review and click "Add Product".');
       }
       setScrapeUrl('');
 

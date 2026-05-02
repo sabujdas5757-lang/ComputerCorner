@@ -39,19 +39,19 @@ async function startServer() {
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
-    console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
+    console.log(`[Scrapy Spider] Crawl Request: ${url}`);
     
     try {
       let html = '';
       
-      // Professional Scrapy-Style Spider Engine (Direct Crawl)
+      // Enhanced Scrapy-Style Spider profiles with diverse fingerprints
       const spiderProfiles = [
         {
           ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
           headers: {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'en-US,en;q=0.9,hi;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
@@ -59,53 +59,77 @@ async function startServer() {
             'Sec-Fetch-Site': 'none',
             'Sec-Fetch-User': '?1',
             'Cache-Control': 'max-age=0',
-            'Device-Memory': '8',
-            'Viewport-Width': '1920'
+            'DNT': '1',
+            'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'Sec-Ch-Ua-Platform': '"Windows"',
+            'Referer': 'https://www.google.com/'
+          }
+        },
+        {
+          ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Referer': 'https://www.amazon.in/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'cross-site'
           }
         },
         {
           ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
           headers: {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
             'Accept-Language': 'en-GB,en;q=0.9',
-            'DNT': '1'
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Referer': 'https://www.bing.com/'
           }
         }
       ];
 
-      for (const profile of spiderProfiles) {
+      for (let i = 0; i < spiderProfiles.length; i++) {
+        const profile = spiderProfiles[i];
         try {
-          console.log(`[Scrapy Spider] Direct crawl attempt with profile: ${profile.ua.substring(0, 40)}...`);
+          console.log(`[Scrapy Spider] Profile ${i+1}/${spiderProfiles.length} - Crawling via: ${profile.ua.substring(0, 40)}...`);
+          
+          // Mimic Scrapy's DOWNLOAD_DELAY - Random wait (200-800ms)
+          await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 600));
+          
           const response = await axios.get(url, {
-            timeout: 15000,
+            timeout: 25000,
             headers: { 
               'User-Agent': profile.ua,
               ...profile.headers
             },
-            // Direct scraping only - no third party proxies
             validateStatus: (status) => status < 500 
           });
           
           html = response.data;
           
-          if (html && typeof html === 'string' && html.length > 2000 && !html.includes('Robot Check')) {
-            console.log(`[Scrapy Spider] Direct crawl successful (${html.length} bytes)`);
+          // Validate content: Scrapy often checks for specific success markers
+          const isBlocked = html && (html.includes('Robot Check') || html.includes('To discuss automated access') || html.includes('captcha'));
+          const isTooShort = html && typeof html === 'string' && html.length < 2500;
+
+          if (html && typeof html === 'string' && !isBlocked && !isTooShort) {
+            console.log(`[Scrapy Spider] Direct Crawl SUCCESS (${html.length} bytes)`);
             break;
-          } else if (html && html.includes('Robot Check')) {
-            console.log(`[Scrapy Spider] Detected block (Robot Check), attempting secondary profile...`);
-            html = '';
           } else {
-            console.log(`[Scrapy Spider] Fragmented response, retrying...`);
+            console.log(`[Scrapy Spider] Profile ${i+1} ${isBlocked ? 'Blocked' : 'Incomplete'}. Next profile...`);
             html = '';
           }
         } catch (error: any) {
-          console.warn(`[Scrapy Spider] Direct crawl failed for profile: ${error.message}`);
+          console.warn(`[Scrapy Spider] Profile ${i+1} attempt failed: ${error.message}`);
         }
       }
 
       if (!html || !html.includes('<html')) {
-        console.error("[Scraper] All spider profiles failed for URL:", url);
-        throw new Error("Target website blocked all direct requests (Anti-bot protection). Please manually add the product details below.");
+        console.error("[Scraper] Spider Engine: All direct profiles blocked.");
+        throw new Error("Scrapy Spider blocked by Amazon anti-bot. Please manually enter details or try a different URL.");
       }
 
       const $ = cheerio.load(html);

@@ -88,6 +88,17 @@ async function startServer() {
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': 'https://www.google.com/'
           }
+        },
+        {
+          name: "Edge Windows",
+          ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none'
+          }
         }
       ];
 
@@ -255,18 +266,26 @@ async function startServer() {
     });
   }
 
-  // Start listening
-  try {
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server successfully started and listening on 0.0.0.0:${PORT}`);
-    });
-  } catch (listenError) {
-    console.error("Critical error starting server:", listenError);
+  // Start listening only if not in a serverless environment like Vercel
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    try {
+      app.listen(PORT, "0.0.0.0", () => {
+        console.log(`[Spider Engine] Dev server active on 0.0.0.0:${PORT}`);
+      });
+    } catch (listenError) {
+      console.error("Critical error starting server:", listenError);
+    }
   }
 }
 
+// Global error handler for the app
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('[Global Error]', err);
+  res.status(500).json({ error: 'Internal Server Error', details: err.message });
+});
+
 startServer().catch(err => {
-  console.error("Failed to initialize server application:", err);
+  console.error("Failed to initialize spider application:", err);
 });
 
 export default app;

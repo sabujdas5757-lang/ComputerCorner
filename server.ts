@@ -9,117 +9,177 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
-import { GoogleGenAI } from "@google/genai";
 
 const app = express();
 const PORT = 3000;
 
-// Supabase Configuration (Used for any other future client needs)
-const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
-let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
-const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydmR1b3hzYXF0aWl4c2tucG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMjg3MjksImV4cCI6MjA5MjcwNDcyOX0.hfM5tjamYmPKe9t2way_tm0fVQMdnG980u4K_HWUPso";
-const supabaseBucket = process.env.SUPABASE_BUCKET || "products";
+async function startServer() {
+  // Supabase Configuration (Used for any other future client needs)
+  const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
+  let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
+  const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydmR1b3hzYXF0aWl4c2tucG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMjg3MjksImV4cCI6MjA5MjcwNDcyOX0.hfM5tjamYmPKe9t2way_tm0fVQMdnG980u4K_HWUPso";
+  const supabaseBucket = process.env.SUPABASE_BUCKET || "products";
 
-const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
-
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// Global Logging Middleware
-app.use((req, res, next) => {
-  console.log(`[REQUEST] ${req.method} ${req.originalUrl} - Content-Type: ${req.headers['content-type']}`);
-  next();
-});
-
-// Define API Routes first
-const apiRouter = express.Router();
-
-apiRouter.post("/scrape-product", async (req, res) => {
-  const { url } = req.body;
-  if (!url) return res.status(400).json({ error: "URL is required" });
-  console.log(`[Scraper] Processing URL: ${url}`);
+  const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
   
-  try {
-    let productData: any = null;
-    let html = '';
-    const isAmazon = url.includes('amazon.');
+  app.use(cors());
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+  app.use((req, res, next) => {
+    console.log(`REQ: ${req.method} ${req.path}`);
+    next();
+  });
+
+  app.post("/api/scrape-product", async (req, res) => {
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ error: "URL is required" });
+    console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
     
-    const fetchMethods = [
-      async () => {
-        const userAgents = [
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
-        ];
-        
-        const headers: any = {
-          'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Referer': 'https://www.google.com/',
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        };
-        
-        if (isAmazon) {
-          headers['device-memory'] = '8';
-          headers['downlink'] = '10';
+    try {
+      let html = '';
+      
+      const fetchMethods = [
+        // Method 1: Direct fetch with standard UA
+        async () => {
+          const response = await axios.get(url, {
+            timeout: 10000,
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.5',
+              'Referer': 'https://www.google.com/',
+            }
+          });
+          return response.data;
+        },
+        // Method 2: Direct fetch with different UA
+        async () => {
+          const response = await axios.get(url, {
+            timeout: 10000,
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            }
+          });
+          return response.data;
+        },
+        // Method 3: AllOrigins Proxy
+        async () => {
+          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
+            timeout: 20000,
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+          });
+          return proxyRes.data?.contents || '';
+        },
+        // Method 4: Codetabs Proxy
+        async () => {
+          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
+            timeout: 20000,
+            validateStatus: () => true 
+          });
+          if (proxyRes.status !== 200) throw new Error(`Codetabs returned ${proxyRes.status}`);
+          return proxyRes.data;
+        },
+        // Method 5: CorsProxy.io
+        async () => {
+          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
+            timeout: 20000,
+            validateStatus: () => true
+          });
+          if (proxyRes.status !== 200) throw new Error(`CorsProxy returned ${proxyRes.status}`);
+          return proxyRes.data;
+        },
+        // Method 6: ThingProxy
+        async () => {
+          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`, { timeout: 15000 });
+          return proxyRes.data;
+        },
+        // Method 7: Proxy.io (different endpoint)
+        async () => {
+          const proxyRes = await axios.get(`https://proxy.cors.sh/${url}`, { 
+            timeout: 15000,
+            headers: { 'x-cors-gratis': 'true' }
+          });
+          return proxyRes.data;
+        },
+        // Method 8: Direct fetch using native fetch (sometimes axios headers are flagged)
+        async () => {
+          const response = await fetch(url, {
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            },
+            signal: AbortSignal.timeout(10000)
+          } as any);
+          if (!response.ok) throw new Error(`Fetch returned ${response.status}`);
+          return await response.text();
         }
+      ];
 
-        const response = await axios.get(url, { 
-          timeout: 10000, 
-          headers, 
-          maxRedirects: 5, 
-          validateStatus: () => true 
-        });
-        
-        if (response.status !== 200) throw new Error(`Status ${response.status}`);
-        return response.data;
-      },
-      async () => {
-        const response = await axios.get(url, {
-          timeout: 8000,
-          headers: { 
-            'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-            'Accept': 'text/html'
+      for (const method of fetchMethods) {
+        try {
+          html = await method();
+          
+          // Check if we got a real page or a block
+          if (html && 
+              typeof html === 'string' &&
+              html.includes('<html') && 
+              !html.includes('Robot Check') && 
+              !html.includes('Bot Check') &&
+              !html.includes('captcha') &&
+              !html.includes('503 Service Unavailable') &&
+              !html.includes('503 - Service Unavailable') &&
+              html.length > 500) { // Lowered threshold slightly
+            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using a fetch method.`);
+            break;
+          } else {
+            console.log(`[Scraper] Content too short, blocked, or invalid (Length: ${html?.length}), trying next...`);
+            html = '';
           }
-        });
-        return response.data;
+        } catch (error: any) {
+          const status = error.response?.status || 'network error';
+          console.warn(`[Scraper] A fetch method failed (${status}): ${error.message}`);
+        }
       }
-    ];
 
-    for (let i = 0; i < fetchMethods.length; i++) {
-      try {
-        if (i > 0) await new Promise(r => setTimeout(r, 1000));
-        html = await fetchMethods[i]();
-        const low = (html || '').toLowerCase() as string;
-        const blocked = low.includes('robot check') || low.includes('captcha') || low.includes('503 service') || (isAmazon && low.length < 5000);
-        if (html && html.includes('<html') && !blocked) break;
-        html = '';
-      } catch (e) {}
-    }
+      if (!html || !html.includes('<html')) {
+        console.error("[Scraper] All fetch methods failed for URL:", url);
+        throw new Error("The target website is heavily protected or temporarily unavailable (all 8 attempt methods failed). Please add product details manually.");
+      }
 
-    // If direct fetch succeeded, extract initial data
-    if (html && html.includes('<html')) {
       const $ = cheerio.load(html);
       
-      const name = isAmazon ? $('#productTitle').text().trim() : 
-                  ($('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim());
+      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
       
-      let priceRaw = '';
-      if (isAmazon) {
-        priceRaw = $('.a-price-whole').first().text() || 
-                   $('.a-offscreen').first().text() || 
-                   $('#priceblock_ourprice').text() || 
-                   $('#priceblock_dealprice').text();
-      } else {
-        priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
-                   $('[itemprop="price"]').attr('content') ||
-                   $('.price, .product-price, .amount, .a-price-whole, .pdp-price').first().text();
-      }
+      const priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
+                  $('[itemprop="price"]').attr('content') ||
+                  $('.price, .product-price, .amount, .a-price-whole').first().text();
 
-      const oldPriceText = $('.old-price, .a-text-strike, del, .pdp-mrp').first().text();
+      const formatPrice = (p: string | undefined) => {
+        if (!p) return '';
+        let cleaned = String(p).replace(/[^0-9.]/g, '');
+        if (!cleaned || cleaned === '.' || cleaned === '0') return '₹0.00';
+        
+        const num = parseFloat(cleaned);
+        if (isNaN(num)) return p;
+        
+        // Manual formatting to ensure it works even if Intl isn't fully supported in node env
+        const rounded = num.toFixed(2);
+        const [intPart, decimalPart] = rounded.split('.');
+        // Simple comma formatting for Indian style: last 3 digits, then every 2
+        let lastThree = intPart.substring(intPart.length - 3);
+        let otherParts = intPart.substring(0, intPart.length - 3);
+        if (otherParts !== '') {
+            lastThree = ',' + lastThree;
+        }
+        const formattedInt = otherParts.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+        return `₹${formattedInt}.${decimalPart}`;
+      };
+
+      const cleanedPrice = formatPrice(priceRaw);
+      const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
+      const oldPrice = formatPrice(oldPriceText);
       
       const image = $('meta[property="og:image"]').attr('content') || 
                     $('meta[name="twitter:image"]').attr('content') ||
@@ -131,6 +191,7 @@ apiRouter.post("/scrape-product", async (req, res) => {
         let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).data('src');
         if (srcRaw) {
           let src = String(srcRaw);
+          // Amazon specific: remove small image constraint to get full size
           if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
             src = src.replace(/\._[A-Z0-9_]+_\./, '.');
           }
@@ -139,6 +200,24 @@ apiRouter.post("/scrape-product", async (req, res) => {
           }
         }
       });
+      // also try to find amazon image array in js scripts
+      if (additionalImages.length === 0) {
+        const scriptMatch = html.match(/'colorImages':\s*({.+?}),/);
+        if (scriptMatch && scriptMatch[1]) {
+          try {
+            const data = JSON.parse(scriptMatch[1].replace(/'/g, '"'));
+            if (data.initial && Array.isArray(data.initial)) {
+              data.initial.forEach((imgObj: any) => {
+                if (imgObj.hiRes && imgObj.hiRes !== image && !additionalImages.includes(imgObj.hiRes)) {
+                  additionalImages.push(imgObj.hiRes);
+                } else if (imgObj.large && imgObj.large !== image && !additionalImages.includes(imgObj.large)) {
+                  additionalImages.push(imgObj.large);
+                }
+              });
+            }
+          } catch (e) {}
+        }
+      }
                     
       const description = $('meta[property="og:description"]').attr('content') || 
                           $('meta[name="description"]').attr('content') ||
@@ -150,7 +229,14 @@ apiRouter.post("/scrape-product", async (req, res) => {
                     $('#bylineInfo').text().trim() || '';
 
       if (brand) {
-         brand = brand.replace(/visit the /i, '').replace(/ store/i, '').replace(/brand: /i, '').trim();
+         if (brand.toLowerCase().startsWith('visit the ')) {
+            brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
+         }
+         if (brand.toLowerCase().startsWith('brand: ')) {
+            brand = brand.replace(/brand: /i, '').trim();
+         }
+      } else {
+         brand = 'Unknown';
       }
 
       const category = $('meta[property="product:category"]').attr('content') || 
@@ -160,168 +246,178 @@ apiRouter.post("/scrape-product", async (req, res) => {
       const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
       
       const specifications: Record<string, string> = {};
+      
       const parseSpecRow = (_: any, el: any) => {
         const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
         const value = $(el).find('td').not(':first-child').first().text().trim() || $(el).find('td').last().text().trim();
-        if (key && value && !key.toLowerCase().includes('customer reviews')) {
+        
+        if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
+          const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+          const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+          if (cleanKey && cleanVal) {
+            specifications[cleanKey] = cleanVal;
+          }
+        }
+      };
+
+      $('#productDetails_techSpec_section_1 tr').each(parseSpecRow);
+      $('#productDetails_techSpec_section_2 tr').each(parseSpecRow);
+      $('table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr').each(parseSpecRow);
+
+      $('.po-row').each((_, el) => {
+        const key = $(el).find('.a-span3').text().replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+        const value = $(el).find('.a-span9').text().replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
+        if (key && value) {
           specifications[key] = value;
-        }
-      };
-
-      $('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table.a-keyvalue tr').each(parseSpecRow);
-
-      productData = { 
-        name, 
-        price: priceRaw, 
-        oldPrice: oldPriceText, 
-        image, 
-        additionalImages, 
-        description, 
-        brand, 
-        category, 
-        discount, 
-        specifications 
-      };
-    }
-
-    // If direct fetch was blocked, OR it's Amazon (often messy), use Magic AI as primary or refiner
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (apiKey && (!productData || isAmazon || !productData.name || productData.name === 'Unknown Product')) {
-      console.log(`[Scraper] Invoking Magic AI Scraper for ${isAmazon ? 'Amazon refinement' : 'fallback'}...`);
-      const ai = new GoogleGenAI({ apiKey });
-      
-      const prompt = `
-        Extract product details from this URL: ${url}
-        ${productData ? `Use this partially extracted data as an anchor: ${JSON.stringify(productData)}` : 'The website blocked direct automated access, so use your internal knowledge and search tools to find the specifics.'}
-        
-        Focus on:
-        1. Clean, professional product name.
-        2. Accurate price in INR (₹).
-        3. Detailed technical specifications.
-        4. High-resolution main image URL.
-        
-        Return ONLY a JSON object:
-        {
-          "name": "string",
-          "brand": "string",
-          "category": "string",
-          "description": "string",
-          "price": "string (e.g. ₹45,990)",
-          "oldPrice": "string",
-          "discount": "string",
-          "image": "string (URL)",
-          "additionalImages": ["URL_strings"],
-          "specifications": {"key": "value"}
-        }
-      `;
-
-      const aiResponse = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          tools: [{ googleSearch: {} }],
-          toolConfig: { includeServerSideToolInvocations: true }
         }
       });
 
-      if (aiResponse.text) {
-        const aiData = JSON.parse(aiResponse.text);
-        productData = { ...productData, ...aiData };
+      let featureCount = 1;
+      $('#feature-bullets ul li:not(.a-hidden) span.a-list-item').each((_, el) => {
+        const text = $(el).text().trim();
+        if (text && !text.includes('Hide') && !text.includes('Show more')) {
+          specifications[`Feature ${featureCount++}`] = text;
+        }
+      });
+
+      if ((!brand || brand === 'Unknown') && specifications['Brand']) {
+        brand = specifications['Brand'];
       }
+
+      console.log(`[Scraper] Successfully parsed: ${name}`);
+      res.json({ name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications });
+    } catch (error: any) {
+      console.error("[Scraper Error]", error.message);
+      const status = error.response?.status || 500;
+      let message = error.message;
+      
+      if (status === 403 || status === 429) {
+        message = "Access denied by target website. They might be blocking automated tools.";
+      }
+      
+      res.status(status).json({ error: message });
     }
+  });
 
-    if (!productData || !productData.name) {
-      throw new Error("Could not extract any product details from this URL.");
-    }
-
-    console.log(`[Scraper] Finalized extraction for: ${productData.name}`);
-    res.json(productData);
-  } catch (error: any) {
-    console.error("[Scraper Error]", error.message);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-apiRouter.post("/upload-from-url", async (req, res) => {
-  const { url } = req.body;
-  if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
-
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    console.warn("[Upload-From-URL] BLOB_READ_WRITE_TOKEN is missing.");
-    return res.status(503).json({ error: "Vercel Blob storage is not configured." });
-  }
-
-  try {
-    const response = await axios.get(url, { responseType: 'arraybuffer', timeout: 15000 });
-    const buffer = Buffer.from(response.data);
-    const contentType = response.headers['content-type'] as string || 'image/jpeg';
-    
-    const rawFilename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
-    const filename = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const blob = await put(filename, buffer, {
-      access: 'public',
-      contentType: contentType,
-      addRandomSuffix: true
-    });
-
-    res.json({ secure_url: blob.url });
-  } catch (error: any) {
-    console.error("[Upload-From-URL Error]", error.message);
-    res.status(500).json({ error: "Storage error: " + error.message });
-  }
-});
-
-const uploadMiddleware = multer({ 
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 } 
-});
-
-apiRouter.post("/upload-file", uploadMiddleware.single('file'), async (req, res) => {
-  try {
-    const file = (req as any).file;
-    if (!file) return res.status(400).json({ error: "No file uploaded" });
+  // Proxy-save an external image to Vercel Blob
+  app.post("/api/upload-from-url", async (req, res) => {
+    const { url } = req.body;
+    if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
 
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      return res.status(503).json({ error: "Vercel Blob storage is not configured." });
+      console.warn("[Upload-From-URL] BLOB_READ_WRITE_TOKEN is missing. Skipping external upload.");
+      return res.status(503).json({ error: "Vercel Blob storage is not configured (missing token). Please set it in secrets." });
     }
 
-    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const blob = await put(sanitizedName, file.buffer, {
-      access: 'public',
-      contentType: file.mimetype,
-      addRandomSuffix: true
-    });
+    try {
+      console.log(`[Upload-From-URL] Processing image: ${url.substring(0, 50)}...`);
+      const response = await axios.get(url, { responseType: 'arraybuffer', timeout: 15000 });
+      const buffer = Buffer.from(response.data);
+      const contentTypeHeader = response.headers['content-type'] as string;
+      const contentType = typeof contentTypeHeader === 'string' ? contentTypeHeader : 'image/jpeg';
+      
+      const rawFilename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
+      const filename = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const blob = await put(filename, buffer, {
+        access: 'public',
+        contentType: contentType,
+        addRandomSuffix: true
+      });
 
-    res.json({ secure_url: blob.url });
-  } catch (error: any) {
-    console.error("[Upload Error]", error.message);
-    res.status(500).json({ error: "Upload failed: " + error.message });
-  }
-});
-
-apiRouter.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
-
-apiRouter.get("/storage-status", (req, res) => {
-  res.json({ 
-    configured: !!process.env.BLOB_READ_WRITE_TOKEN,
-    provider: "Vercel Blob",
-    aiConfigured: !!process.env.GEMINI_API_KEY,
-    message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing"
+      console.log(`[Upload-From-URL] Successfully saved to Vercel: ${blob.url}`);
+      res.json({ secure_url: blob.url });
+    } catch (error: any) {
+      console.error("[Upload-From-URL Error]", error.message);
+      res.status(500).json({ error: "Storage error: " + (error.message || "Unknown error") });
+    }
   });
-});
 
-// Mounted at /api
-app.use("/api", apiRouter);
+  const uploadMiddleware = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } 
+  });
 
-// Fallback for missing API routes
-app.all("/api/*", (req, res) => {
-  res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
-});
+  app.post("/api/upload-file", uploadMiddleware.single('file'), async (req, res) => {
+    try {
+      const file = (req as any).file;
+      if (!file) {
+        console.warn("[Upload] No file provided in request");
+        return res.status(400).json({ error: "No file uploaded" });
+      }
 
-async function startServer() {
+      console.log(`[Upload] Processing file: ${file.originalname} (${file.size} bytes)`);
+
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        console.error("[Upload] BLOB_READ_WRITE_TOKEN is missing");
+        return res.status(503).json({ error: "Vercel Blob storage is not configured (missing token)." });
+      }
+
+      // Using Vercel Blob
+      const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const blob = await put(sanitizedName, file.buffer, {
+        access: 'public',
+        contentType: file.mimetype,
+        addRandomSuffix: true
+      });
+
+      console.log(`[Upload] Success: ${blob.url}`);
+      res.json({ secure_url: blob.url });
+    } catch (error: any) {
+      console.error("[Upload Error]", error.message || error);
+      res.status(500).json({ error: "Upload failed: " + (error.message || "Unknown server error") });
+    }
+  });
+
+  // API proxy for appwrite images (for backwards compatibility with old products)
+  app.get("/api/images/:fileId", async (req, res) => {
+    try {
+      const fileId = req.params.fileId;
+      if (!process.env.APPWRITE_ENDPOINT || !process.env.APPWRITE_PROJECT_ID || !process.env.APPWRITE_API_KEY || !process.env.APPWRITE_BUCKET_ID) {
+        return res.status(500).send("Appwrite configuration missing");
+      }
+      
+      const response = await axios.get(
+        `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${fileId}/view?project=${process.env.APPWRITE_PROJECT_ID}`, 
+        {
+          headers: {
+            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+            'X-Appwrite-Key': process.env.APPWRITE_API_KEY
+          },
+          responseType: 'arraybuffer'
+        }
+      );
+      
+      const contentType = response.headers['content-type'];
+      if (typeof contentType === 'string') {
+        res.setHeader('Content-Type', contentType);
+      }
+      
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+      res.send(response.data);
+    } catch (err: any) {
+      console.error("Image proxy error:", err.message);
+      res.status(err.response?.status || 500).send(err.message);
+    }
+  });
+
+  // API health
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
+
+  app.get("/api/storage-status", (req, res) => {
+    res.json({ 
+      configured: !!process.env.BLOB_READ_WRITE_TOKEN,
+      provider: "Vercel Blob",
+      message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing in environment variables"
+    });
+  });
+
+  // Fallback for missing API routes to ensure they return JSON, not HTML
+  app.all("/api/*", (req, res) => {
+    res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -331,17 +427,21 @@ async function startServer() {
     app.use(vite.middlewares);
     
     app.get('*', async (req, res, next) => {
+      // Skip API routes as they should have been handled or returned 404 in JSON
       if (req.path.startsWith('/api')) return next();
       
+      // For any other route, serve index.html to support SPA routing
       try {
         const url = req.originalUrl;
         const indexPath = path.resolve(process.cwd(), 'index.html');
         
         if (!fs.existsSync(indexPath)) {
+          console.warn("index.html not found, falling back to basic response");
           return res.status(404).send("Internal Error: Application entry point missing");
         }
 
         let template = fs.readFileSync(indexPath, 'utf-8');
+        // Transform the HTML with Vite's dev server to inject scripts and HMR
         template = await vite.transformIndexHtml(url, template);
         res.status(200).set({ 'Content-Type': 'text/html' }).send(template);
       } catch (e: any) {
@@ -353,15 +453,25 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+    
+    // Support SPA routing in production
     app.get('*', (req, res) => {
-      if (req.path.startsWith('/api')) return res.status(404).json({ error: "API route not found" });
+      // If it's an API route that reached here, it's missing
+      if (req.path.startsWith('/api')) {
+        return res.status(404).json({ error: "API route not found" });
+      }
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server successfully started on 0.0.0.0:${PORT}`);
-  });
+  // Start listening
+  try {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server successfully started and listening on 0.0.0.0:${PORT}`);
+    });
+  } catch (listenError) {
+    console.error("Critical error starting server:", listenError);
+  }
 }
 
 startServer().catch(err => {

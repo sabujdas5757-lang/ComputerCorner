@@ -55,6 +55,26 @@ export default function AdminDashboard() {
   const [apifyActive, setApifyActive] = useState<boolean | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
 
+  const safeJson = async (response: Response) => {
+    const contentType = response.headers.get('content-type');
+    const isJson = contentType && contentType.includes('application/json');
+    
+    try {
+      const text = await response.text();
+      
+      if (!isJson) {
+        console.error(`[API Error] Status ${response.status}. Expected JSON but got ${contentType || 'no content-type'}. Body:`, text.substring(0, 500));
+        throw new Error(`Server returned ${response.status} (${contentType || 'plain/text'}) instead of JSON. Make sure API routes are correctly registered.`);
+      }
+
+      if (!text || text.trim() === '') return null;
+      return JSON.parse(text);
+    } catch (err: any) {
+      console.error("[API Error] Parsing failed:", err.message);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     const checkApify = async () => {
       try {
@@ -63,14 +83,10 @@ export default function AdminDashboard() {
           cache: 'no-store',
           headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
         });
-        if (res.ok) {
-          const data = await res.json();
-          setApifyActive(data.active);
-          console.log("[Admin] Apify status received:", data.active ? "Active" : "Inactive", data.message);
-        } else {
-          console.warn("[Admin] Apify status check failed with status:", res.status);
-          setApifyActive(false);
-        }
+        
+        const data = await safeJson(res);
+        setApifyActive(data.active);
+        console.log("[Admin] Apify status received:", data.active ? "Active" : "Inactive", data.message);
       } catch (err) {
         console.error("[Admin] Failed to check Apify status:", err);
         setApifyActive(false);
@@ -221,33 +237,12 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetch('/api/storage-status')
-      .then(res => res.json())
+      .then(res => safeJson(res))
       .then(data => {
         if (data) setStorageStatus(data);
       })
       .catch(err => console.error("Storage status check failed:", err));
   }, []);
-
-  const safeJson = async (response: Response) => {
-    try {
-      const text = await response.text();
-      if (!text || text.trim() === '') {
-        if (!response.ok) {
-           return { error: `Server returned status ${response.status} with empty body.` };
-        }
-        return null;
-      }
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        console.error("JSON parse error:", e, "Raw text:", text.substring(0, 500));
-        return { error: `Invalid JSON response (Status ${response.status}). The server might be misconfigured or down.` };
-      }
-    } catch (e) {
-      console.error("SafeJSON reading error:", e);
-      return { error: "Failed to read response from server." };
-    }
-  };
 
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);

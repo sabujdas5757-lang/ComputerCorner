@@ -27,35 +27,39 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+  // Debug logging for all requests
   app.use((req, res, next) => {
-    console.log(`REQ: ${req.method} ${req.path}`);
+    console.log(`[Server] ${req.method} ${req.path}`);
     next();
   });
 
+  // --- API ROUTES START ---
+  
   app.get("/api/apify-status", (req, res) => {
-    // Force refresh check
     const rawKey = process.env.APIFY_API_KEY;
     const hasKey = !!rawKey && rawKey.trim().length > 0;
     
-    console.log(`[Status API] Request from ${req.ip} at ${new Date().toISOString()}`);
-    console.log(`[Status API] APIFY_API_KEY present in process.env: ${hasKey}`);
-    if (hasKey) {
-      console.log(`[Status API] Key starts with: ${rawKey.substring(0, 4)}...`);
-    }
+    console.log(`[API] /api/apify-status - Key present: ${hasKey}`);
 
-    // Set headers to prevent ANY caching
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.setHeader('Surrogate-Control', 'no-store');
-
     res.json({ 
       active: hasKey, 
       message: hasKey ? "Apify API Key found and active" : "Apify API Key missing in server environment",
       provider: "Apify (Amazon Optimized)",
-      timestamp: Date.now(),
-      env: process.env.NODE_ENV || 'development'
+      timestamp: Date.now()
     });
+  });
+
+  app.get("/api/storage-status", (req, res) => {
+    res.json({ 
+      configured: !!process.env.BLOB_READ_WRITE_TOKEN,
+      provider: "Vercel Blob",
+      message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing"
+    });
+  });
+
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
   });
 
   app.post("/api/scrape-product", async (req, res) => {
@@ -487,19 +491,6 @@ async function startServer() {
     }
   });
 
-  // API health
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
-  });
-
-  app.get("/api/storage-status", (req, res) => {
-    res.json({ 
-      configured: !!process.env.BLOB_READ_WRITE_TOKEN,
-      provider: "Vercel Blob",
-      message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing in environment variables"
-    });
-  });
-
   // Fallback for missing API routes to ensure they return JSON, not HTML
   app.all("/api/*", (req, res) => {
     res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
@@ -509,12 +500,12 @@ async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "custom",
+      appType: "spa",
     });
     app.use(vite.middlewares);
     
     app.get('*', async (req, res, next) => {
-      // Skip API routes as they should have been handled or returned 404 in JSON
+      // Skip API routes
       if (req.path.startsWith('/api')) return next();
       
       // For any other route, serve index.html to support SPA routing

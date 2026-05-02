@@ -425,15 +425,29 @@ export default function AdminDashboard() {
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch (err: any) {
-      let displayError = "Unknown error occurred";
+      let displayError = "An unexpected error occurred while processing the request.";
       
       if (err instanceof Error) {
-        displayError = err.message;
+        // If it's a JSON string from a known source, try to parse it first
+        if (err.message.trim().startsWith('{')) {
+           try {
+             const parsed = JSON.parse(err.message);
+             displayError = parsed.error || parsed.message || JSON.stringify(parsed);
+           } catch(e) {
+             displayError = err.message;
+           }
+        } else {
+          displayError = err.message;
+        }
       } else if (typeof err === 'string') {
         displayError = err;
       } else if (err && typeof err === 'object') {
-        // Try to extract a message from common JSON error shapes
-        displayError = err.message || err.error || JSON.stringify(err);
+        displayError = err.error || err.message || JSON.stringify(err);
+      }
+      
+      // Cleanup specific ugly messages
+      if (displayError.includes('The page could not be found')) {
+        displayError = "Amazon blocked the automated request. Try using the full product URL instead of a short link.";
       }
       
       showFeedback(`Spider Engine: ${displayError}`);

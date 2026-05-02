@@ -121,28 +121,28 @@ async function startServer() {
             validateStatus: (status) => status < 500 
           });
           
-          const isJsonResponse = response.headers['content-type']?.includes('application/json');
+          const contentType = response.headers['content-type'];
+          const isJsonResponse = contentType && String(contentType).includes('application/json');
           const responseData = response.data;
           html = typeof responseData === 'string' ? responseData : JSON.stringify(responseData);
           
-          // Anti-bot check
-          const isBlocked = html && (
+          // Anti-bot check: Amazon returns a specific JSON block for detected bots on shortlinks
+          // Signatures include: "Robot Check", "captcha", or a specific 404 JSON object
+          const amazonBotDetected = html && (
             html.includes('Robot Check') || 
             html.includes('To discuss automated access') || 
             html.includes('captcha') ||
-            html.includes('/errors/validateCaptcha')
+            html.includes('/errors/validateCaptcha') ||
+            (isJsonResponse && (response.status === 404 || (responseData && responseData.code === '404')))
           );
-          
-          // Detection: Amazon sometimes returns a JSON 404/Error for bot-detected redirects
-          const isExplicitError = isJsonResponse && (response.status === 404 || (responseData && (responseData.code === '404' || responseData.message)));
           
           const isInvalid = !html || html.length < 2000 || !html.includes('<html');
 
-          if (html && !isBlocked && !isInvalid && !isExplicitError) {
+          if (html && !amazonBotDetected && !isInvalid) {
             console.log(`[Scrapy Spider] Success! Extracted ${html.length} bytes.`);
             break;
           } else {
-            console.log(`[Scrapy Spider] Profile ${profile.name} failed: ${isBlocked ? 'Blocked' : (isExplicitError ? 'Gatekeeper Rejected' : 'Incomplete HTML')}. Rotating...`);
+            console.log(`[Scrapy Spider] Profile ${profile.name} failed: ${amazonBotDetected ? 'Amazon Gatekeeper Blocked' : 'Incomplete HTML'}. Rotating...`);
             html = '';
           }
         } catch (error: any) {

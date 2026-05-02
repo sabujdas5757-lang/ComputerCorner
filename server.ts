@@ -9,6 +9,7 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
+import { ApifyClient } from 'apify-client';
 
 const app = express();
 const PORT = 3000;
@@ -37,6 +38,66 @@ async function startServer() {
     console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
     
     try {
+      // Priority 0: Apify for Amazon if API Key exists
+      const isAmazon = url.includes('amazon.com') || url.includes('amazon.in') || url.includes('amzn.to');
+      const apifyKey = process.env.APIFY_API_KEY;
+
+      if (isAmazon && apifyKey) {
+        console.log("[Scraper] Using Apify for Amazon scraping...");
+        try {
+          const client = new ApifyClient({ token: apifyKey });
+          
+          // Using amazon-product-scraper (very reliable)
+          const input = {
+            "categorySelections": [],
+            "maxRequestsPerCrawl": 1,
+            "productUrls": [{ "url": url }],
+            "proxyConfiguration": { "useApifyProxy": true },
+            "scrapeProductDetails": true,
+            "scrapeReviews": false
+          };
+
+          const run = await client.actor("vaclavvoka/amazon-crawler").call(input);
+          const { items } = await client.dataset(run.defaultDatasetId).listItems();
+
+          if (items && items.length > 0) {
+            const item: any = items[0];
+            console.log(`[Scraper] Apify Success for: ${item.title}`);
+            
+            // Format to match existing parser
+            const formatPrice = (p: any) => {
+              if (!p) return '₹0.00';
+              let val = typeof p === 'string' ? p : String(p);
+              let cleaned = val.replace(/[^0-9.]/g, '');
+              const num = parseFloat(cleaned);
+              if (isNaN(num)) return val;
+              const rounded = num.toFixed(2);
+              const [intPart, decimalPart] = rounded.split('.');
+              let lastThree = intPart.substring(intPart.length - 3);
+              let otherParts = intPart.substring(0, intPart.length - 3);
+              if (otherParts !== '') lastThree = ',' + lastThree;
+              const formattedInt = otherParts.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+              return `₹${formattedInt}.${decimalPart}`;
+            };
+
+            return res.json({
+              name: item.title || 'Unknown Product',
+              price: formatPrice(item.price || item.priceValue),
+              oldPrice: formatPrice(item.listPrice || item.oldPrice),
+              image: item.thumbnail || item.image || (item.images && item.images[0]),
+              additionalImages: item.images || [],
+              description: item.description || item.features?.join('\n') || '',
+              brand: item.brand || 'Amazon',
+              category: item.category || '',
+              discount: item.discountPercentage ? `${item.discountPercentage}%` : '',
+              specifications: item.productDetails || item.specifications || {}
+            });
+          }
+        } catch (apifyErr: any) {
+          console.error("[Scraper] Apify failed, falling back to standard methods:", apifyErr.message);
+        }
+      }
+
       let html = '';
       
       const fetchMethods = [

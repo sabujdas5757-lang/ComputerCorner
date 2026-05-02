@@ -52,7 +52,6 @@ export default function AdminDashboard() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
-  const [scrapingProgress, setScrapingProgress] = useState(0);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
 
   const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
@@ -230,7 +229,193 @@ export default function AdminDashboard() {
     setTimeout(() => setFeedbackMsg(null), 3000);
   };
 
+  const clientSideScrape = async (url: string) => {
+    let html = '';
+    const encodedUrl = encodeURIComponent(url);
 
+    // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
+    const getProxyRequests = [
+      {
+        name: 'Proxy A (AllOrigins)',
+        fn: async () => {
+          const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
+          if (!res.ok) throw new Error("AllOrigins failed");
+          const data = await safeJson(res);
+          if (!data || !data.contents) throw new Error("Empty AllOrigins content");
+          return data.contents;
+        }
+      },
+      {
+        name: 'Proxy B (Codetabs)',
+        fn: async () => {
+          const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
+          if (!res.ok) throw new Error("Codetabs failed");
+          return await res.text();
+        }
+      },
+      {
+        name: 'Proxy C (CorsProxy)',
+        fn: async () => {
+          const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
+          if (!res.ok) throw new Error("Corsproxy failed");
+          return await res.text();
+        }
+      }
+    ];
+
+    for (const proxy of getProxyRequests) {
+      try {
+        setScrapingStatus(`Trying ${proxy.name}...`);
+        html = await proxy.fn();
+        
+        // Super basic validation that we actually got HTML and not an anti-bot captcha page
+        if (html && 
+            html.includes('<html') && 
+            !html.includes('api.allorigins.win') && 
+            !html.includes('503 - Service Unavailable') &&
+            !html.includes('503 Service Unavailable') &&
+            !html.includes('Robot Check') &&
+            !html.includes('Bot Check') &&
+            !html.includes('captcha')) {
+           break;
+        } else {
+           console.warn(`${proxy.name} returned blocked content.`);
+           html = ''; // Reset html if it hit a bot check
+        }
+      } catch (e) {
+        console.warn(`${proxy.name} failed:`, e);
+      }
+    }
+    
+    if (!html || !html.includes('<html')) {
+      throw new Error("Target website blocked all requests (Anti-bot protection). Please manually add the product details below.");
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const name = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || 
+                 doc.querySelector('title')?.textContent ||
+                 doc.querySelector('h1')?.textContent?.trim() ||
+                 'Unknown Product';
+    
+    const priceEl = doc.querySelector('meta[property="product:price:amount"]') || 
+                    doc.querySelector('[itemprop="price"]') || 
+                    doc.querySelector('.price, .product-price, .amount, .a-price-whole');
+    
+    const priceText = priceEl?.getAttribute('content') || priceEl?.textContent || '0';
+    const cleanedPrice = formatPrice(String(priceText));
+
+    const oldPriceEl = doc.querySelector('.old-price, .a-text-strike, del');
+    const oldPriceText = oldPriceEl?.textContent || '';
+    const oldPrice = oldPriceText ? formatPrice(String(oldPriceText)) : '';
+
+    const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
+                  doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content') ||
+                  doc.querySelector('img[itemprop="image"]')?.getAttribute('src') ||
+                  doc.querySelector('#landingImage, #imgBlkFront')?.getAttribute('src') || '';
+
+    const additionalImages: string[] = [];
+    const imageElements = Array.from(doc.querySelectorAll('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img'));
+    imageElements.forEach(el => {
+      let src = el.getAttribute('src') || el.getAttribute('data-old-hires') || el.getAttribute('data-src');
+      if (src) {
+        if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
+          src = src.replace(/\._[A-Z0-9_]+_\./, '.');
+        }
+        if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
+          additionalImages.push(src);
+        }
+      }
+    });
+
+    if (additionalImages.length === 0) {
+      const scriptMatch = html.match(/'colorImages':\s*({.+?}),/);
+      if (scriptMatch && scriptMatch[1]) {
+        try {
+          const data = JSON.parse(scriptMatch[1].replace(/'/g, '"'));
+          if (data.initial && Array.isArray(data.initial)) {
+            data.initial.forEach((imgObj: any) => {
+              if (imgObj.hiRes && imgObj.hiRes !== image && !additionalImages.includes(imgObj.hiRes)) {
+                additionalImages.push(imgObj.hiRes);
+              } else if (imgObj.large && imgObj.large !== image && !additionalImages.includes(imgObj.large)) {
+                additionalImages.push(imgObj.large);
+              }
+            });
+          }
+        } catch (e) {}
+      }
+    }
+
+    const description = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || 
+                        doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
+                        doc.querySelector('.description, .product-description, #feature-bullets')?.textContent?.trim() || '';
+
+    const brandEl = doc.querySelector('meta[property="product:brand"]') || doc.querySelector('[itemprop="brand"] [itemprop="name"]') || doc.querySelector('[itemprop="brand"]') || doc.querySelector('#bylineInfo');
+    let brand = brandEl?.getAttribute('content') || brandEl?.textContent?.trim() || '';
+    if (brand) {
+      if (brand.toLowerCase().startsWith('visit the ')) {
+        brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
+      }
+      if (brand.toLowerCase().startsWith('brand: ')) {
+        brand = brand.replace(/brand: /i, '').trim();
+      }
+    } else {
+      brand = 'Unknown';
+    }
+
+    const category = doc.querySelector('meta[property="product:category"]')?.getAttribute('content') || 
+                     doc.querySelector('[itemprop="category"]')?.getAttribute('content') || 
+                     doc.querySelector('.nav-a-content')?.textContent?.trim() || '';
+
+    let discount = '';
+    const discountEl = doc.querySelector('.savingsPercentage, .discount, .badge');
+    if (discountEl) {
+      discount = discountEl.textContent?.trim() || '';
+    }
+
+    const specifications: Record<string, string> = {};
+    
+    // Amazon and generic tables
+    const specRows = Array.from(doc.querySelectorAll('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr'));
+    specRows.forEach(row => {
+      const key = (row.querySelector('th')?.textContent || row.querySelector('td:first-child')?.textContent || '').trim();
+      const value = (row.querySelector('td:not(:first-child)')?.textContent || row.querySelector('td:last-child')?.textContent || '').trim();
+      
+      if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
+        // Clean up common Amazon weird chars (ZWSP, Zero-width space)
+        const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        if (cleanKey && cleanVal) {
+          specifications[cleanKey] = cleanVal;
+        }
+      }
+    });
+
+    const poRows = Array.from(doc.querySelectorAll('.po-row'));
+    poRows.forEach(row => {
+      const key = row.querySelector('.a-span3')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      const value = row.querySelector('.a-span9')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      if (key && value) {
+        specifications[key] = value;
+      }
+    });
+
+    let featureCount = 1;
+    const bulletItems = Array.from(doc.querySelectorAll('#feature-bullets ul li:not(.a-hidden) span.a-list-item'));
+    bulletItems.forEach(item => {
+      const text = item.textContent?.trim();
+      if (text && !text.includes('Hide') && !text.includes('Show more')) {
+        specifications[`Feature ${featureCount++}`] = text;
+      }
+    });
+
+    if ((!brand || brand === 'Unknown') && specifications['Brand']) {
+      brand = specifications['Brand'];
+    }
+
+    return { name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications };
+  };
 
   const detectCategory = (scrapedCat: string, name: string, description: string) => {
     const text = (scrapedCat + ' ' + name + ' ' + description).toLowerCase();
@@ -274,8 +459,7 @@ export default function AdminDashboard() {
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
-    setScrapingStatus('Initializing Smart Engine...');
-    setScrapingProgress(10);
+    setScrapingStatus('Connecting to backend...');
     try {
       // First, check backend health
       try {
@@ -289,58 +473,37 @@ export default function AdminDashboard() {
 
       let productData;
       try {
-        setScrapingStatus('Spider crawling Amazon directly...');
-        setScrapingProgress(30);
+        setScrapingStatus('Querying smart backend engine...');
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: scrapeUrl })
         });
         
         if (response.status === 405) {
-          throw new Error("Server returned 405 (Method Not Allowed). If you are using a static host (like Vercel/Netlify), ensure the backend engine is correctly deployed as a function or server.");
+          throw new Error("405 Method Not Allowed: The server is misconfigured or using a static host. Fallback triggered.");
         }
 
         const contentType = response.headers.get("content-type");
         const bodyText = await response.text();
         
-        if (!response.ok) {
-          // Attempt to extract error message from body if it's JSON
-          let errMsg = `Server returned ${response.status}`;
-          try {
-            const errData = JSON.parse(bodyText);
-            if (errData.error) {
-              errMsg = typeof errData.error === 'string' ? errData.error : JSON.stringify(errData.error);
-            } else if (errData.message) {
-              errMsg = errData.message;
-            } else if (errData.code) {
-              errMsg = `Error ${errData.code}: ${errData.message || 'Failed to fetch target page'}`;
-            }
-          } catch(e) {}
-          throw new Error(errMsg);
-        }
-
         if (!contentType || !contentType.includes("application/json") || !bodyText) {
-          console.error("Spider Engine error:", bodyText.substring(0, 100));
-          throw new Error(`Invalid data received from crawl engine.`);
+          console.error("Invalid response from backend:", bodyText.substring(0, 100));
+          throw new Error(`Server returned a non-JSON or empty response (Status: ${response.status}). Fallback triggered.`);
         }
 
         try {
           productData = JSON.parse(bodyText);
         } catch (parseE) {
-          throw new Error("Crawl engine JSON parse error.");
+          throw new Error("Failed to parse backend JSON. Fallback triggered.");
         }
 
-        setScrapingStatus('AI Spider refining extracted datasets...');
-        setScrapingProgress(60);
+        if (!response.ok) throw new Error(productData?.error || 'Failed to scrape');
 
         // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
         if (productData.image && productData.image.startsWith('http')) {
           try {
-            setScrapingStatus('Saving primary image to cloud storage...');
+            setScrapingStatus('Saving primary image to Vercel storage...');
             const uploadRes = await fetch('/api/upload-from-url', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -386,7 +549,9 @@ export default function AdminDashboard() {
           productData.additionalImages = [...savedImages, ...productData.additionalImages.slice(3)];
         }
       } catch (backendError: any) {
-        throw new Error(backendError.message || "Spider crawl failed (Anti-bot protection active).");
+        console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError.message);
+        setScrapingStatus(`Backend check: ${backendError.message.substring(0, 30)}... Falling back to browser-proxies.`);
+        productData = await clientSideScrape(scrapeUrl);
       }
 
       const product = {
@@ -412,12 +577,7 @@ export default function AdminDashboard() {
       }
       setSpecs(newSpecs);
       
-      setScrapingProgress(100);
-      if (productData.aiUsed) {
-        showFeedback('Product details imported with Smart AI. Review and click "Add Product".');
-      } else {
-        showFeedback('Product details imported via Spider Engine. Review and click "Add Product".');
-      }
+      showFeedback('Product details imported to form. Review and click "Add Product".');
       setScrapeUrl('');
 
       // Scroll to form after import
@@ -425,32 +585,7 @@ export default function AdminDashboard() {
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch (err: any) {
-      let displayError = "An unexpected error occurred while processing the request.";
-      
-      if (err instanceof Error) {
-        // If it's a JSON string from a known source, try to parse it first
-        if (err.message.trim().startsWith('{')) {
-           try {
-             const parsed = JSON.parse(err.message);
-             displayError = parsed.error || parsed.message || JSON.stringify(parsed);
-           } catch(e) {
-             displayError = err.message;
-           }
-        } else {
-          displayError = err.message;
-        }
-      } else if (typeof err === 'string') {
-        displayError = err;
-      } else if (err && typeof err === 'object') {
-        displayError = err.error || err.message || JSON.stringify(err);
-      }
-      
-      // Cleanup specific ugly messages
-      if (displayError.includes('The page could not be found')) {
-        displayError = "Amazon blocked the automated request. Try using the full product URL instead of a short link.";
-      }
-      
-      showFeedback(`Spider Engine: ${displayError}`);
+      showFeedback(`Error scraping/adding product: ${err.message}`);
     } finally {
       setIsImporting(false);
       setScrapingStatus(null);
@@ -1269,80 +1404,27 @@ export default function AdminDashboard() {
               </div>
             </div>
             
-            {/* Scrapy-style Spider Engine */}
+            {/* Scrapper tool */}
             {!editingId && (
-              <div className="mb-8 p-6 bg-primary/5 border border-primary/30 rounded-2xl space-y-4 relative overflow-hidden group shadow-2xl shadow-primary/5">
-                <div className="absolute -top-10 -right-10 p-4 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-12 group-hover:rotate-0">
-                  <Search size={220} className="text-primary" />
-                </div>
-                
-                <div className="flex items-center justify-between relative z-10">
-                  <div>
-                    <h3 className="text-xl font-black text-primary flex items-center gap-3 italic tracking-tighter">
-                       <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-bg-dark not-italic">
-                          <Search size={18} strokeWidth={3} />
-                       </div>
-                       PROFESSIONAL SPIDER ENGINE v2.0
-                    </h3>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.25em] mt-2 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                      Ready to crawl Amazon & Global E-commerce
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3 relative z-10 mt-4">
-                  <div className="flex-1 relative">
-                    <input 
-                      type="text" 
-                      value={scrapeUrl || ''} 
-                      onChange={e => setScrapeUrl(e.target.value)} 
-                      placeholder="https://www.amazon.in/dp/B0..." 
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-4 text-sm focus:border-primary outline-none transition-all placeholder:text-gray-700 font-mono" 
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-600 hidden md:block">
-                       URL DETECTED
-                    </div>
-                  </div>
+              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
+                <p className="text-sm text-gray-400">Import from URL</p>
+                <div className="flex gap-2">
+                  <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
                   <button 
                     type="button" 
                     onClick={handleScrapeProduct} 
-                    disabled={!scrapeUrl || isImporting}
-                    className="bg-primary text-bg-dark px-8 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:scale-100 flex items-center gap-3 shadow-xl shadow-primary/30 min-w-[140px] justify-center"
+                    disabled={isImporting}
+                    className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    {isImporting ? <Loader2 size={18} className="animate-spin" /> : null}
-                    {isImporting ? 'CRAWLING...' : 'SPIDER'}
+                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : null}
+                    {isImporting ? 'Importing...' : 'Import'}
                   </button>
                 </div>
-
-                {isImporting && (
-                  <div className="pt-4 space-y-3 animate-in fade-in slide-in-from-top-4 relative z-10">
-                    <div className="flex justify-between items-end">
-                       <div className="space-y-1">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-primary block">Engine Status</span>
-                          <span className="text-xs text-white font-medium">{scrapingStatus}</span>
-                       </div>
-                       <span className="text-xl font-black text-primary italic">{scrapingProgress}%</span>
-                    </div>
-                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                       <div 
-                         className="h-full bg-gradient-to-r from-primary/50 to-primary transition-all duration-700 ease-out relative" 
-                         style={{ width: `${scrapingProgress}%` }}
-                       >
-                          <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                       </div>
-                    </div>
-                  </div>
-                )}
-                
-                {!isImporting && !scrapingStatus && (
-                  <div className="flex items-center justify-between text-[10px] text-gray-600 font-bold uppercase tracking-widest border-t border-white/5 pt-4">
-                    <div className="flex gap-4">
-                      <span>• AUTO-IMAGE STORAGE</span>
-                      <span>• SMART SPEC PARSING</span>
-                    </div>
-                    <span className="text-primary/50">POWERED BY GEMINI ENGINE</span>
-                  </div>
+                {scrapingStatus && (
+                  <p className="text-xs text-primary mt-2 animate-pulse flex items-center gap-1">
+                    <Loader2 size={12} className="animate-spin" />
+                    {scrapingStatus}
+                  </p>
                 )}
               </div>
             )}

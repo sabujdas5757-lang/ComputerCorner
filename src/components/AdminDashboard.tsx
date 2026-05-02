@@ -475,7 +475,7 @@ export default function AdminDashboard() {
 
       let productData;
       try {
-        setScrapingStatus('Extracting raw data from Amazon...');
+        setScrapingStatus('Spider crawling Amazon directly...');
         setScrapingProgress(30);
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
@@ -484,26 +484,26 @@ export default function AdminDashboard() {
         });
         
         if (response.status === 405) {
-          throw new Error("405 Method Not Allowed: The server is misconfigured or using a static host. Fallback triggered.");
+          throw new Error("Spider Engine initialization failed. Server configuration error.");
         }
 
         const contentType = response.headers.get("content-type");
         const bodyText = await response.text();
         
         if (!contentType || !contentType.includes("application/json") || !bodyText) {
-          console.error("Invalid response from backend:", bodyText.substring(0, 100));
-          throw new Error(`Server returned a non-JSON or empty response (Status: ${response.status}). Fallback triggered.`);
+          console.error("Spider Engine error:", bodyText.substring(0, 100));
+          throw new Error(`Direct crawl failed (Status: ${response.status}).`);
         }
 
         try {
           productData = JSON.parse(bodyText);
         } catch (parseE) {
-          throw new Error("Failed to parse backend JSON. Fallback triggered.");
+          throw new Error("Spider Engine failed to parse data.");
         }
 
-        if (!response.ok) throw new Error(productData?.error || 'Failed to scrape');
+        if (!response.ok) throw new Error(productData?.error || 'Spider blocked by target');
 
-        setScrapingStatus('AI Refining details & matching categories...');
+        setScrapingStatus('AI Spider refining extracted datasets...');
         setScrapingProgress(60);
 
         // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately

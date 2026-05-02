@@ -32,6 +32,15 @@ async function startServer() {
     next();
   });
 
+  app.get("/api/apify-status", (req, res) => {
+    const hasKey = !!process.env.APIFY_API_KEY;
+    res.json({ 
+      active: hasKey, 
+      message: hasKey ? "Apify API Key found" : "Apify API Key missing",
+      provider: "Apify (Amazon Optimized)"
+    });
+  });
+
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });

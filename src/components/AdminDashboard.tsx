@@ -52,7 +52,15 @@ export default function AdminDashboard() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
+  const [apifyActive, setApifyActive] = useState<boolean | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
+
+  useEffect(() => {
+    fetch('/api/apify-status')
+      .then(r => r.json())
+      .then(data => setApifyActive(data.active))
+      .catch(() => setApifyActive(false));
+  }, []);
 
   const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
   const [editingCategory, setEditingCategory] = useState<{id: string, name: string, img: string} | null>(null);
@@ -1407,7 +1415,15 @@ export default function AdminDashboard() {
             {/* Scrapper tool */}
             {!editingId && (
               <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                <p className="text-sm text-gray-400">Import from URL</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Import from URL</p>
+                  {apifyActive !== null && (
+                    <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${apifyActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                      <div className={`w-1 h-1 rounded-full ${apifyActive ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                      {apifyActive ? 'Apify Active' : 'Basic Scraper'}
+                    </div>
+                  )}
+                </div>
                 <div className="flex gap-2">
                   <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
                   <button 

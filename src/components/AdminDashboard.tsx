@@ -58,13 +58,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkApify = async () => {
       try {
-        const res = await fetch('/api/apify-status?t=' + Date.now(), { cache: 'no-store' });
+        console.log("[Admin] Checking Apify status...");
+        const res = await fetch('/api/apify-status?t=' + Date.now(), { 
+          cache: 'no-store',
+          headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+        });
         if (res.ok) {
           const data = await res.json();
           setApifyActive(data.active);
-          console.log("[Admin] Apify status:", data.active ? "Active" : "Inactive");
+          console.log("[Admin] Apify status received:", data.active ? "Active" : "Inactive", data.message);
         } else {
-          console.warn("[Admin] Apify status check returned", res.status);
+          console.warn("[Admin] Apify status check failed with status:", res.status);
           setApifyActive(false);
         }
       } catch (err) {

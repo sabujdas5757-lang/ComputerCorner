@@ -33,12 +33,27 @@ async function startServer() {
   });
 
   app.get("/api/apify-status", (req, res) => {
-    const hasKey = !!process.env.APIFY_API_KEY;
-    console.log(`[Status API] Request from ${req.ip}. APIFY_API_KEY present: ${hasKey}`);
+    // Force refresh check
+    const rawKey = process.env.APIFY_API_KEY;
+    const hasKey = !!rawKey && rawKey.trim().length > 0;
+    
+    console.log(`[Status API] Request from ${req.ip} at ${new Date().toISOString()}`);
+    console.log(`[Status API] APIFY_API_KEY present in process.env: ${hasKey}`);
+    if (hasKey) {
+      console.log(`[Status API] Key starts with: ${rawKey.substring(0, 4)}...`);
+    }
+
+    // Set headers to prevent ANY caching
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+
     res.json({ 
       active: hasKey, 
-      message: hasKey ? "Apify API Key found" : "Apify API Key missing in server environment",
+      message: hasKey ? "Apify API Key found and active" : "Apify API Key missing in server environment",
       provider: "Apify (Amazon Optimized)",
+      timestamp: Date.now(),
       env: process.env.NODE_ENV || 'development'
     });
   });

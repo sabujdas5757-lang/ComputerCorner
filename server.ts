@@ -34,10 +34,12 @@ async function startServer() {
 
   app.get("/api/apify-status", (req, res) => {
     const hasKey = !!process.env.APIFY_API_KEY;
+    console.log(`[Status API] Request from ${req.ip}. APIFY_API_KEY present: ${hasKey}`);
     res.json({ 
       active: hasKey, 
-      message: hasKey ? "Apify API Key found" : "Apify API Key missing",
-      provider: "Apify (Amazon Optimized)"
+      message: hasKey ? "Apify API Key found" : "Apify API Key missing in server environment",
+      provider: "Apify (Amazon Optimized)",
+      env: process.env.NODE_ENV || 'development'
     });
   });
 

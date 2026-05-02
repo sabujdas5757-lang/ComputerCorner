@@ -56,10 +56,23 @@ export default function AdminDashboard() {
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
 
   useEffect(() => {
-    fetch('/api/apify-status')
-      .then(r => r.json())
-      .then(data => setApifyActive(data.active))
-      .catch(() => setApifyActive(false));
+    const checkApify = async () => {
+      try {
+        const res = await fetch('/api/apify-status?t=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          setApifyActive(data.active);
+          console.log("[Admin] Apify status:", data.active ? "Active" : "Inactive");
+        } else {
+          console.warn("[Admin] Apify status check returned", res.status);
+          setApifyActive(false);
+        }
+      } catch (err) {
+        console.error("[Admin] Failed to check Apify status:", err);
+        setApifyActive(false);
+      }
+    };
+    checkApify();
   }, []);
 
   const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
@@ -1415,15 +1428,23 @@ export default function AdminDashboard() {
             {/* Scrapper tool */}
             {!editingId && (
               <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-400">Import from URL</p>
-                  {apifyActive !== null && (
-                    <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${apifyActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                      <div className={`w-1 h-1 rounded-full ${apifyActive ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-                      {apifyActive ? 'Apify Active' : 'Basic Scraper'}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                       <p className="text-sm text-gray-400">Import from URL</p>
+                       {apifyActive === false && (
+                         <span className="text-[10px] text-yellow-500/60 font-medium lowercase">Using basic fetch methods</span>
+                       )}
                     </div>
-                  )}
-                </div>
+                    {apifyActive !== null && (
+                      <div 
+                        title={apifyActive ? "Server has Apify API Key configured" : "Server is missing Apify API Key - defaults to basic scraper"}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${apifyActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                      >
+                        <div className={`w-1 h-1 rounded-full ${apifyActive ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                        {apifyActive ? 'Apify Active' : 'Basic Scraper'}
+                      </div>
+                    )}
+                  </div>
                 <div className="flex gap-2">
                   <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
                   <button 

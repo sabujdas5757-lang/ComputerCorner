@@ -52,48 +52,7 @@ export default function AdminDashboard() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
-  const [apifyActive, setApifyActive] = useState<boolean | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
-
-  const safeJson = async (response: Response) => {
-    const contentType = response.headers.get('content-type');
-    const isJson = contentType && contentType.includes('application/json');
-    
-    try {
-      const text = await response.text();
-      
-      if (!isJson) {
-        console.error(`[API Error] Status ${response.status}. Expected JSON but got ${contentType || 'no content-type'}. Body:`, text.substring(0, 500));
-        throw new Error(`Server returned ${response.status} (${contentType || 'plain/text'}) instead of JSON. Make sure API routes are correctly registered.`);
-      }
-
-      if (!text || text.trim() === '') return null;
-      return JSON.parse(text);
-    } catch (err: any) {
-      console.error("[API Error] Parsing failed:", err.message);
-      throw err;
-    }
-  };
-
-  useEffect(() => {
-    const checkApify = async () => {
-      try {
-        console.log("[Admin] Checking Apify status...");
-        const res = await fetch('/api/apify-status?t=' + Date.now(), { 
-          cache: 'no-store',
-          headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
-        });
-        
-        const data = await safeJson(res);
-        setApifyActive(data.active);
-        console.log("[Admin] Apify status received:", data.active ? "Active" : "Inactive", data.message);
-      } catch (err) {
-        console.error("[Admin] Failed to check Apify status:", err);
-        setApifyActive(false);
-      }
-    };
-    checkApify();
-  }, []);
 
   const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
   const [editingCategory, setEditingCategory] = useState<{id: string, name: string, img: string} | null>(null);
@@ -237,12 +196,33 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetch('/api/storage-status')
-      .then(res => safeJson(res))
+      .then(res => res.json())
       .then(data => {
         if (data) setStorageStatus(data);
       })
       .catch(err => console.error("Storage status check failed:", err));
   }, []);
+
+  const safeJson = async (response: Response) => {
+    try {
+      const text = await response.text();
+      if (!text || text.trim() === '') {
+        if (!response.ok) {
+           return { error: `Server returned status ${response.status} with empty body.` };
+        }
+        return null;
+      }
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        console.error("JSON parse error:", e, "Raw text:", text.substring(0, 500));
+        return { error: `Invalid JSON response (Status ${response.status}). The server might be misconfigured or down.` };
+      }
+    } catch (e) {
+      console.error("SafeJSON reading error:", e);
+      return { error: "Failed to read response from server." };
+    }
+  };
 
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
@@ -1427,23 +1407,7 @@ export default function AdminDashboard() {
             {/* Scrapper tool */}
             {!editingId && (
               <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                       <p className="text-sm text-gray-400">Import from URL</p>
-                       {apifyActive === false && (
-                         <span className="text-[10px] text-yellow-500/60 font-medium lowercase">Using basic fetch methods</span>
-                       )}
-                    </div>
-                    {apifyActive !== null && (
-                      <div 
-                        title={apifyActive ? "Server has Apify API Key configured" : "Server is missing Apify API Key - defaults to basic scraper"}
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${apifyActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
-                      >
-                        <div className={`w-1 h-1 rounded-full ${apifyActive ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-                        {apifyActive ? 'Apify Active' : 'Basic Scraper'}
-                      </div>
-                    )}
-                  </div>
+                <p className="text-sm text-gray-400">Import from URL</p>
                 <div className="flex gap-2">
                   <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
                   <button 

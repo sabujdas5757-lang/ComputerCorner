@@ -9,77 +9,11 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
-import { ApifyClient } from 'apify-client';
 
 const app = express();
 const PORT = 3000;
 
-// Version for tracking restarts
-const SERVER_VERSION = "1.0.3";
-
-// Middleware registered synchronously
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-// Global logging
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    console.log(`[API Request] ${req.method} ${req.path}`);
-  }
-  next();
-});
-
 async function startServer() {
-  console.log(`[Server] Starting version ${SERVER_VERSION}...`);
-  
-  // --- API ROUTES START ---
-  app.get("/api/health", (req, res) => {
-    res.json({ 
-      status: "ok", 
-      version: SERVER_VERSION,
-      timestamp: new Date().toISOString(),
-      env: process.env.NODE_ENV
-    });
-  });
-
-  app.get("/api/apify-status", (req, res) => {
-    const rawKey = process.env.APIFY_API_KEY;
-    const hasKey = !!rawKey && rawKey.trim().length > 0;
-    
-    console.log(`[Diagnostic] /api/apify-status - Key present: ${hasKey}`);
-    if (hasKey) {
-      console.log(`[Diagnostic] Key starts with: ${rawKey.substring(0, 4)}...`);
-    }
-
-    res.setHeader('Content-Type', 'application/json');
-    res.json({ 
-      active: hasKey, 
-      message: hasKey ? "Apify API Key found and active" : "Apify API Key missing in server environment",
-      provider: "Apify (Amazon Optimized)",
-      timestamp: Date.now()
-    });
-  });
-
-  app.get("/api/storage-status", (req, res) => {
-    const hasToken = !!process.env.BLOB_READ_WRITE_TOKEN;
-    res.json({ 
-      configured: hasToken,
-      provider: "Vercel Blob",
-      message: hasToken ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing"
-    });
-  });
-
-  app.get("/api/debug-env", (req, res) => {
-    const keys = Object.keys(process.env);
-    res.json({
-      has_apify: !!process.env.APIFY_API_KEY,
-      apify_len: process.env.APIFY_API_KEY?.length || 0,
-      keys_count: keys.length,
-      apify_prefix: process.env.APIFY_API_KEY ? process.env.APIFY_API_KEY.substring(0, 4) : 'NONE',
-      node_env: process.env.NODE_ENV
-    });
-  });
   // Supabase Configuration (Used for any other future client needs)
   const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
   let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
@@ -88,72 +22,21 @@ async function startServer() {
 
   const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
   
+  app.use(cors());
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+  app.use((req, res, next) => {
+    console.log(`REQ: ${req.method} ${req.path}`);
+    next();
+  });
+
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
     console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
     
     try {
-      // Priority 0: Apify for Amazon if API Key exists
-      const isAmazon = url.includes('amazon.com') || url.includes('amazon.in') || url.includes('amzn.to');
-      const apifyKey = process.env.APIFY_API_KEY;
-
-      if (isAmazon && apifyKey) {
-        console.log("[Scraper] Using Apify for Amazon scraping...");
-        try {
-          const client = new ApifyClient({ token: apifyKey });
-          
-          // Using amazon-product-scraper (very reliable)
-          const input = {
-            "categorySelections": [],
-            "maxRequestsPerCrawl": 1,
-            "productUrls": [{ "url": url }],
-            "proxyConfiguration": { "useApifyProxy": true },
-            "scrapeProductDetails": true,
-            "scrapeReviews": false
-          };
-
-          const run = await client.actor("vaclavvoka/amazon-crawler").call(input);
-          const { items } = await client.dataset(run.defaultDatasetId).listItems();
-
-          if (items && items.length > 0) {
-            const item: any = items[0];
-            console.log(`[Scraper] Apify Success for: ${item.title}`);
-            
-            // Format to match existing parser
-            const formatPrice = (p: any) => {
-              if (!p) return '₹0.00';
-              let val = typeof p === 'string' ? p : String(p);
-              let cleaned = val.replace(/[^0-9.]/g, '');
-              const num = parseFloat(cleaned);
-              if (isNaN(num)) return val;
-              const rounded = num.toFixed(2);
-              const [intPart, decimalPart] = rounded.split('.');
-              let lastThree = intPart.substring(intPart.length - 3);
-              let otherParts = intPart.substring(0, intPart.length - 3);
-              if (otherParts !== '') lastThree = ',' + lastThree;
-              const formattedInt = otherParts.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-              return `₹${formattedInt}.${decimalPart}`;
-            };
-
-            return res.json({
-              name: item.title || 'Unknown Product',
-              price: formatPrice(item.price || item.priceValue),
-              oldPrice: formatPrice(item.listPrice || item.oldPrice),
-              image: item.thumbnail || item.image || (item.images && item.images[0]),
-              additionalImages: item.images || [],
-              description: item.description || item.features?.join('\n') || '',
-              brand: item.brand || 'Amazon',
-              category: item.category || '',
-              discount: item.discountPercentage ? `${item.discountPercentage}%` : '',
-              specifications: item.productDetails || item.specifications || {}
-            });
-          }
-        } catch (apifyErr: any) {
-          console.error("[Scraper] Apify failed, falling back to standard methods:", apifyErr.message);
-        }
-      }
-
       let html = '';
       
       const fetchMethods = [
@@ -517,6 +400,19 @@ async function startServer() {
     }
   });
 
+  // API health
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
+
+  app.get("/api/storage-status", (req, res) => {
+    res.json({ 
+      configured: !!process.env.BLOB_READ_WRITE_TOKEN,
+      provider: "Vercel Blob",
+      message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing in environment variables"
+    });
+  });
+
   // Fallback for missing API routes to ensure they return JSON, not HTML
   app.all("/api/*", (req, res) => {
     res.status(404).json({ error: `API route not found: ${req.method} ${req.path}` });
@@ -526,12 +422,12 @@ async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: "custom",
     });
     app.use(vite.middlewares);
     
     app.get('*', async (req, res, next) => {
-      // Skip API routes
+      // Skip API routes as they should have been handled or returned 404 in JSON
       if (req.path.startsWith('/api')) return next();
       
       // For any other route, serve index.html to support SPA routing

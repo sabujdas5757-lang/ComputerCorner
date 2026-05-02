@@ -239,17 +239,25 @@ export default function AdminDashboard() {
     // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
     const getProxyRequests = [
       {
-        name: 'Proxy A (AllOrigins)',
+        name: 'Primary Proxy (AllOrigins)',
         fn: async () => {
           const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
           if (!res.ok) throw new Error("AllOrigins failed");
           const data = await safeJson(res);
-          if (!data || !data.contents) throw new Error("Empty AllOrigins content");
+          if (!data || !data.contents) throw new Error("Empty content");
           return data.contents;
         }
       },
       {
-        name: 'Proxy B (Codetabs)',
+        name: 'Stealth Proxy (CorsProxy)',
+        fn: async () => {
+          const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
+          if (!res.ok) throw new Error("Corsproxy failed");
+          return await res.text();
+        }
+      },
+      {
+        name: 'Mobile Proxy (Codetabs)',
         fn: async () => {
           const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
           if (!res.ok) throw new Error("Codetabs failed");
@@ -257,33 +265,40 @@ export default function AdminDashboard() {
         }
       },
       {
-        name: 'Proxy C (CorsProxy)',
+        name: 'Gratis Proxy (CORS.sh)',
         fn: async () => {
-          const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
-          if (!res.ok) throw new Error("Corsproxy failed");
+          const res = await fetch(`https://proxy.cors.sh/${url}`, {
+            headers: { 'x-cors-gratis': 'true' }
+          });
+          if (!res.ok) throw new Error("CORS.sh failed");
           return await res.text();
         }
       }
     ];
 
-    for (const proxy of getProxyRequests) {
+    for (let i = 0; i < getProxyRequests.length; i++) {
+      const proxy = getProxyRequests[i];
       try {
+        if (i > 0) await new Promise(r => setTimeout(r, 800)); // Small pause between retries
+        
         setScrapingStatus(`Trying ${proxy.name}...`);
         html = await proxy.fn();
         
-        // Super basic validation that we actually got HTML and not an anti-bot captcha page
-        if (html && 
-            html.includes('<html') && 
-            !html.includes('api.allorigins.win') && 
-            !html.includes('503 - Service Unavailable') &&
-            !html.includes('503 Service Unavailable') &&
-            !html.includes('Robot Check') &&
-            !html.includes('Bot Check') &&
-            !html.includes('captcha')) {
+        // Validation logic
+        const lowerHtml = (html || '').toLowerCase();
+        const isBlocked = lowerHtml.includes('robot check') || 
+                          lowerHtml.includes('bot check') || 
+                          lowerHtml.includes('captcha') ||
+                          lowerHtml.includes('automated access') ||
+                          lowerHtml.includes('503 service unavailable') ||
+                          (lowerHtml.length < 1000 && lowerHtml.includes('amazon'));
+
+        if (html && html.includes('<html') && !isBlocked) {
+           console.log(`[Frontend Scraper] ${proxy.name} succeeded!`);
            break;
         } else {
-           console.warn(`${proxy.name} returned blocked content.`);
-           html = ''; // Reset html if it hit a bot check
+           console.warn(`${proxy.name} returned ${isBlocked ? 'blocked' : 'invalid'} content.`);
+           html = ''; 
         }
       } catch (e) {
         console.warn(`${proxy.name} failed:`, e);
@@ -522,11 +537,20 @@ export default function AdminDashboard() {
           body: JSON.stringify({ url: scrapeUrl })
         });
         
-        if (response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (response.ok && contentType && contentType.includes("application/json")) {
           productData = await response.json();
         } else {
-          const errData = await response.json();
-          throw new Error(errData.error || 'Failed to scrape server-side');
+          // If response not OK or not JSON, read as text to debug or show error
+          const text = await response.text();
+          let errorMessage = 'Failed to scrape server-side';
+          try {
+            const errData = JSON.parse(text);
+            errorMessage = errData.error || errorMessage;
+          } catch (e) {
+            errorMessage = text.substring(0, 100) || errorMessage;
+          }
+          throw new Error(errorMessage);
         }
       } catch (backendError: any) {
         console.warn("Backend scrape failed, falling back to client-side proxy...", backendError.message);

@@ -274,11 +274,11 @@ async function startServer() {
     });
   }
 
-  // Start listening only if not in a serverless environment like Vercel
-  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+  // Start listening (Cloud Run needs this, Vercel doesn't)
+  if (!process.env.VERCEL) {
     try {
       app.listen(PORT, "0.0.0.0", () => {
-        console.log(`[Spider Engine] Dev server active on 0.0.0.0:${PORT}`);
+        console.log(`[Spider Engine] Server active on port ${PORT}`);
       });
     } catch (listenError) {
       console.error("Critical error starting server:", listenError);

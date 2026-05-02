@@ -425,7 +425,17 @@ export default function AdminDashboard() {
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch (err: any) {
-      const displayError = err instanceof Error ? err.message : (typeof err === 'string' ? err : JSON.stringify(err));
+      let displayError = "Unknown error occurred";
+      
+      if (err instanceof Error) {
+        displayError = err.message;
+      } else if (typeof err === 'string') {
+        displayError = err;
+      } else if (err && typeof err === 'object') {
+        // Try to extract a message from common JSON error shapes
+        displayError = err.message || err.error || JSON.stringify(err);
+      }
+      
       showFeedback(`Spider Engine: ${displayError}`);
     } finally {
       setIsImporting(false);

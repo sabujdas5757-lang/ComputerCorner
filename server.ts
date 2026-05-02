@@ -44,19 +44,23 @@ async function startServer() {
     try {
       let html = '';
       
-      // Professional Spider Engine logic
+      // Professional Scrapy-Style Spider Engine (Direct Crawl)
       const spiderProfiles = [
         {
           ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
           headers: {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
             'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
             'Sec-Fetch-Mode': 'navigate',
             'Sec-Fetch-Site': 'none',
             'Sec-Fetch-User': '?1',
             'Cache-Control': 'max-age=0',
+            'Device-Memory': '8',
+            'Viewport-Width': '1920'
           }
         },
         {
@@ -64,33 +68,38 @@ async function startServer() {
           headers: {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-GB,en;q=0.9',
+            'DNT': '1'
           }
         }
       ];
 
       for (const profile of spiderProfiles) {
         try {
-          console.log(`[Scrapy Spider] Initiating crawl with UA: ${profile.ua.substring(0, 30)}...`);
+          console.log(`[Scrapy Spider] Direct crawl attempt with profile: ${profile.ua.substring(0, 40)}...`);
           const response = await axios.get(url, {
             timeout: 15000,
             headers: { 
               'User-Agent': profile.ua,
               ...profile.headers
             },
-            validateStatus: (status) => status < 500 // Allow 404/403 for custom handling
+            // Direct scraping only - no third party proxies
+            validateStatus: (status) => status < 500 
           });
           
           html = response.data;
           
-          if (html && typeof html === 'string' && html.length > 1000 && !html.includes('Robot Check')) {
-            console.log(`[Scrapy Spider] Crawl successful (${html.length} bytes)`);
+          if (html && typeof html === 'string' && html.length > 2000 && !html.includes('Robot Check')) {
+            console.log(`[Scrapy Spider] Direct crawl successful (${html.length} bytes)`);
             break;
+          } else if (html && html.includes('Robot Check')) {
+            console.log(`[Scrapy Spider] Detected block (Robot Check), attempting secondary profile...`);
+            html = '';
           } else {
-            console.log(`[Scrapy Spider] Blocked or incomplete response, retrying with different profile...`);
+            console.log(`[Scrapy Spider] Fragmented response, retrying...`);
             html = '';
           }
         } catch (error: any) {
-          console.warn(`[Scrapy Spider] Profile failed: ${error.message}`);
+          console.warn(`[Scrapy Spider] Direct crawl failed for profile: ${error.message}`);
         }
       }
 

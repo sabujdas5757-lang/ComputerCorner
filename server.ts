@@ -67,6 +67,27 @@ async function startServer() {
           }
         },
         {
+          ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-GB,en;q=0.9',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Referer': 'https://www.bing.com/'
+          }
+        },
+        {
+          ua: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://www.google.com/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+          }
+        },
+        {
           ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
           headers: {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -77,17 +98,6 @@ async function startServer() {
             'Sec-Fetch-Dest': 'document',
             'Sec-Fetch-Mode': 'navigate',
             'Sec-Fetch-Site': 'cross-site'
-          }
-        },
-        {
-          ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-          headers: {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-            'Accept-Language': 'en-GB,en;q=0.9',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'same-origin',
-            'Referer': 'https://www.bing.com/'
           }
         }
       ];
@@ -450,34 +460,9 @@ async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "custom",
+      appType: "spa", // Changed from custom to spa for better standard behavior
     });
     app.use(vite.middlewares);
-    
-    app.get('*', async (req, res, next) => {
-      // Skip API routes as they should have been handled or returned 404 in JSON
-      if (req.path.startsWith('/api')) return next();
-      
-      // For any other route, serve index.html to support SPA routing
-      try {
-        const url = req.originalUrl;
-        const indexPath = path.resolve(process.cwd(), 'index.html');
-        
-        if (!fs.existsSync(indexPath)) {
-          console.warn("index.html not found, falling back to basic response");
-          return res.status(404).send("Internal Error: Application entry point missing");
-        }
-
-        let template = fs.readFileSync(indexPath, 'utf-8');
-        // Transform the HTML with Vite's dev server to inject scripts and HMR
-        template = await vite.transformIndexHtml(url, template);
-        res.status(200).set({ 'Content-Type': 'text/html' }).send(template);
-      } catch (e: any) {
-        if (vite) vite.ssrFixStacktrace(e);
-        console.error("Vite Transform Error:", e);
-        res.status(500).send(e.toString());
-      }
-    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));

@@ -44,107 +44,53 @@ async function startServer() {
     try {
       let html = '';
       
-      const fetchMethods = [
-        // Method 1: Direct fetch with standard UA
-        async () => {
-          const response = await axios.get(url, {
-            timeout: 10000,
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-              'Accept-Language': 'en-US,en;q=0.5',
-              'Referer': 'https://www.google.com/',
-            }
-          });
-          return response.data;
+      // Professional Spider Engine logic
+      const spiderProfiles = [
+        {
+          ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
+          }
         },
-        // Method 2: Direct fetch with different UA
-        async () => {
-          const response = await axios.get(url, {
-            timeout: 10000,
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            }
-          });
-          return response.data;
-        },
-        // Method 3: AllOrigins Proxy
-        async () => {
-          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            headers: { 'User-Agent': 'Mozilla/5.0' }
-          });
-          return proxyRes.data?.contents || '';
-        },
-        // Method 4: Codetabs Proxy
-        async () => {
-          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            validateStatus: () => true 
-          });
-          if (proxyRes.status !== 200) throw new Error(`Codetabs returned ${proxyRes.status}`);
-          return proxyRes.data;
-        },
-        // Method 5: CorsProxy.io
-        async () => {
-          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            validateStatus: () => true
-          });
-          if (proxyRes.status !== 200) throw new Error(`CorsProxy returned ${proxyRes.status}`);
-          return proxyRes.data;
-        },
-        // Method 6: ThingProxy
-        async () => {
-          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`, { timeout: 15000 });
-          return proxyRes.data;
-        },
-        // Method 7: Proxy.io (different endpoint)
-        async () => {
-          const proxyRes = await axios.get(`https://proxy.cors.sh/${url}`, { 
-            timeout: 15000,
-            headers: { 'x-cors-gratis': 'true' }
-          });
-          return proxyRes.data;
-        },
-        // Method 8: Direct fetch using native fetch (sometimes axios headers are flagged)
-        async () => {
-          const response = await fetch(url, {
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            },
-            signal: AbortSignal.timeout(10000)
-          } as any);
-          if (!response.ok) throw new Error(`Fetch returned ${response.status}`);
-          return await response.text();
+        {
+          ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-GB,en;q=0.9',
+          }
         }
       ];
 
-      for (const method of fetchMethods) {
+      for (const profile of spiderProfiles) {
         try {
-          html = await method();
+          console.log(`[Scrapy Spider] Initiating crawl with UA: ${profile.ua.substring(0, 30)}...`);
+          const response = await axios.get(url, {
+            timeout: 15000,
+            headers: { 
+              'User-Agent': profile.ua,
+              ...profile.headers
+            },
+            validateStatus: (status) => status < 500 // Allow 404/403 for custom handling
+          });
           
-          // Check if we got a real page or a block
-          if (html && 
-              typeof html === 'string' &&
-              html.includes('<html') && 
-              !html.includes('Robot Check') && 
-              !html.includes('Bot Check') &&
-              !html.includes('captcha') &&
-              !html.includes('503 Service Unavailable') &&
-              !html.includes('503 - Service Unavailable') &&
-              html.length > 500) { // Lowered threshold slightly
-            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using a fetch method.`);
+          html = response.data;
+          
+          if (html && typeof html === 'string' && html.length > 1000 && !html.includes('Robot Check')) {
+            console.log(`[Scrapy Spider] Crawl successful (${html.length} bytes)`);
             break;
           } else {
-            console.log(`[Scraper] Content too short, blocked, or invalid (Length: ${html?.length}), trying next...`);
+            console.log(`[Scrapy Spider] Blocked or incomplete response, retrying with different profile...`);
             html = '';
           }
         } catch (error: any) {
-          const status = error.response?.status || 'network error';
-          console.warn(`[Scraper] A fetch method failed (${status}): ${error.message}`);
+          console.warn(`[Scrapy Spider] Profile failed: ${error.message}`);
         }
       }
 

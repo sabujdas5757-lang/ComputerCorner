@@ -9,7 +9,6 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
-import { GoogleGenAI, Type } from "@google/genai";
 
 const app = express();
 const PORT = 3000;
@@ -38,7 +37,6 @@ async function startServer() {
     console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
     
     try {
-      let productData: any = null;
       let html = '';
       const isAmazon = url.includes('amazon.');
       
@@ -47,6 +45,7 @@ async function startServer() {
           const userAgents = [
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
           ];
           
           const headers: any = {
@@ -54,6 +53,8 @@ async function startServer() {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': 'https://www.google.com/',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
           };
           
           if (isAmazon) {
@@ -61,14 +62,23 @@ async function startServer() {
             headers['downlink'] = '10';
           }
 
-          const response = await axios.get(url, { timeout: 15000, headers, maxRedirects: 5, validateStatus: () => true });
+          const response = await axios.get(url, { 
+            timeout: 10000, 
+            headers, 
+            maxRedirects: 5, 
+            validateStatus: () => true 
+          });
+          
           if (response.status !== 200) throw new Error(`Status ${response.status}`);
           return response.data;
         },
         async () => {
           const response = await axios.get(url, {
-            timeout: 12000,
-            headers: { 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1' }
+            timeout: 8000,
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+              'Accept': 'text/html'
+            }
           });
           return response.data;
         }
@@ -79,71 +89,86 @@ async function startServer() {
           if (i > 0) await new Promise(r => setTimeout(r, 1000));
           html = await fetchMethods[i]();
           const low = (html || '').toLowerCase() as string;
-          const isAmz = url.includes('amazon');
-          const blocked = low.includes('robot check') || low.includes('captcha') || low.includes('503 service') || (isAmz && low.length < 5000);
+          const blocked = low.includes('robot check') || low.includes('captcha') || low.includes('503 service') || (isAmazon && low.length < 5000);
           if (html && html.includes('<html') && !blocked) break;
           html = '';
         } catch (e) {}
       }
 
-      // If we got HTML, try to parse it first (Fast and cheap)
-      if (html && html.includes('<html')) {
-        const $ = cheerio.load(html);
-        const name = isAmazon ? $('#productTitle').text().trim() : 
-                    ($('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim());
-        
-        if (name && name !== 'Unknown Product') {
-          // ... (existing parsing logic remains as a fallback/initial pass)
-          // For brevity, let's assume we use AI for the high-quality grounding.
+      if (!html || !html.includes('<html')) {
+        return res.status(403).json({ error: "Access denied by target website. Falling back to AI Magic Scraper...", needsAI: true });
+      }
+
+      const $ = cheerio.load(html);
+      
+      const name = isAmazon ? $('#productTitle').text().trim() : 
+                  ($('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim());
+      
+      let priceRaw = '';
+      if (isAmazon) {
+        priceRaw = $('.a-price-whole').first().text() || 
+                   $('.a-offscreen').first().text() || 
+                   $('#priceblock_ourprice').text() || 
+                   $('#priceblock_dealprice').text();
+      } else {
+        priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
+                   $('[itemprop="price"]').attr('content') ||
+                   $('.price, .product-price, .amount, .a-price-whole, .pdp-price').first().text();
+      }
+
+      const oldPriceText = $('.old-price, .a-text-strike, del, .pdp-mrp').first().text();
+      
+      const image = $('meta[property="og:image"]').attr('content') || 
+                    $('meta[name="twitter:image"]').attr('content') ||
+                    $('img[itemprop="image"]').attr('src') ||
+                    $('#landingImage, #imgBlkFront').attr('src');
+                    
+      const additionalImages: string[] = [];
+      $('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img').each((_, el) => {
+        let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).data('src');
+        if (srcRaw) {
+          let src = String(srcRaw);
+          if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
+            src = src.replace(/\._[A-Z0-9_]+_\./, '.');
+          }
+          if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
+            additionalImages.push(src);
+          }
         }
+      });
+                    
+      const description = $('meta[property="og:description"]').attr('content') || 
+                          $('meta[name="description"]').attr('content') ||
+                          $('.description, .product-description, #feature-bullets').first().text().trim();
+      
+      let brand = $('meta[property="product:brand"]').attr('content') || 
+                    $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
+                    $('[itemprop="brand"]').text().trim() ||
+                    $('#bylineInfo').text().trim() || '';
+
+      if (brand) {
+         brand = brand.replace(/visit the /i, '').replace(/ store/i, '').replace(/brand: /i, '').trim();
       }
 
-      // If HTML was blocked or requested "best scraper", use AI grounding
-      if (!html || !html.includes('<html') || isAmazon) {
-        console.log(`[Scraper] Using AI Magic Scraper for URL: ${url}`);
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-        
-        const prompt = `
-          Extract product details from this URL: ${url}
-          You should search the web for the current price, full specifications, and high-resolution image of this product.
-          
-          Return ONLY a JSON object:
-          {
-            "name": "Full professional product name",
-            "brand": "Brand name",
-            "category": "Detected category",
-            "description": "Product summary",
-            "price": "e.g. ₹45,990",
-            "oldPrice": "e.g. ₹52,000",
-            "discount": "e.g. 15% off",
-            "image": "URL of the main high-res product image",
-            "additionalImages": ["url1", "url2"],
-            "specifications": {"Attribute": "Value"}
-          }
-        `;
+      const category = $('meta[property="product:category"]').attr('content') || 
+                       $('[itemprop="category"]').attr('content') ||
+                       $('.nav-a-content').first().text().trim() || '';
 
-        const aiResponse = await ai.models.generateContent({
-          model: "gemini-3.1-pro-preview",
-          contents: prompt,
-          config: {
-            responseMimeType: "application/json",
-            tools: [{ googleSearch: {} }],
-            toolConfig: { includeServerSideToolInvocations: true }
-          }
-        });
+      const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
+      
+      const specifications: Record<string, string> = {};
+      const parseSpecRow = (_: any, el: any) => {
+        const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
+        const value = $(el).find('td').not(':first-child').first().text().trim() || $(el).find('td').last().text().trim();
+        if (key && value && !key.toLowerCase().includes('customer reviews')) {
+          specifications[key] = value;
+        }
+      };
 
-        productData = JSON.parse(aiResponse.text);
-      } else {
-        // ... (this part would be the manual parse if AI wasn't used)
-        // For consistency, let's just make the AI the "Magic" tool
-      }
+      $('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table.a-keyvalue tr').each(parseSpecRow);
 
-      if (productData) {
-        res.json(productData);
-      } else {
-        throw new Error("Could not extract data");
-      }
-
+      console.log(`[Scraper] Successfully parsed: ${name}`);
+      res.json({ name, price: priceRaw, oldPrice: oldPriceText, image, additionalImages, description, brand, category, discount, specifications });
     } catch (error: any) {
       console.error("[Scraper Error]", error.message);
       res.status(500).json({ error: error.message });

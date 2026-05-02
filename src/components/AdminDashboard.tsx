@@ -808,6 +808,39 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Diagnostic Tools */}
+        <div className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-2xl border border-white/10">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mr-2">Diagnostics:</span>
+          <button 
+            onClick={async () => {
+              try {
+                const res = await fetch('/api/health');
+                const data = await res.json();
+                showFeedback(`API Health: ${data.status}`);
+              } catch (err: any) {
+                showFeedback(`Health Error: ${err.message}`);
+              }
+            }}
+            className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs transition-colors"
+          >
+            Check API Health
+          </button>
+          <button 
+            onClick={async () => {
+              try {
+                const res = await fetch('/api/storage-status');
+                const data = await res.json();
+                showFeedback(`Storage: ${data.message}`);
+              } catch (err: any) {
+                showFeedback(`Storage Error: ${err.message}`);
+              }
+            }}
+            className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs transition-colors"
+          >
+            Storage Status
+          </button>
+        </div>
+
         {/* Home Page Layout Management */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* Category Management Section */}

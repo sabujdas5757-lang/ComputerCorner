@@ -52,6 +52,7 @@ export default function AdminDashboard() {
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
+  const [scrapingProgress, setScrapingProgress] = useState(0);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
 
   const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
@@ -459,7 +460,8 @@ export default function AdminDashboard() {
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
-    setScrapingStatus('Connecting to backend...');
+    setScrapingStatus('Initializing Smart Engine...');
+    setScrapingProgress(10);
     try {
       // First, check backend health
       try {
@@ -473,7 +475,8 @@ export default function AdminDashboard() {
 
       let productData;
       try {
-        setScrapingStatus('Querying smart backend engine...');
+        setScrapingStatus('Extracting raw data from Amazon...');
+        setScrapingProgress(30);
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -500,10 +503,13 @@ export default function AdminDashboard() {
 
         if (!response.ok) throw new Error(productData?.error || 'Failed to scrape');
 
+        setScrapingStatus('AI Refining details & matching categories...');
+        setScrapingProgress(60);
+
         // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
         if (productData.image && productData.image.startsWith('http')) {
           try {
-            setScrapingStatus('Saving primary image to Vercel storage...');
+            setScrapingStatus('Saving primary image to cloud storage...');
             const uploadRes = await fetch('/api/upload-from-url', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -577,7 +583,12 @@ export default function AdminDashboard() {
       }
       setSpecs(newSpecs);
       
-      showFeedback('Product details imported to form. Review and click "Add Product".');
+      setScrapingProgress(100);
+      if (productData.aiUsed) {
+        showFeedback('Product details imported with Smart AI. Review and click "Add Product".');
+      } else {
+        showFeedback('Product details imported via standard scraper. Review and click "Add Product".');
+      }
       setScrapeUrl('');
 
       // Scroll to form after import
@@ -1404,26 +1415,61 @@ export default function AdminDashboard() {
               </div>
             </div>
             
-            {/* Scrapper tool */}
+            {/* Scraper Tool - Smart AI Engine */}
             {!editingId && (
-              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                <p className="text-sm text-gray-400">Import from URL</p>
-                <div className="flex gap-2">
-                  <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+              <div className="mb-8 p-6 bg-primary/5 border border-primary/20 rounded-2xl space-y-4 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Search size={80} className="text-primary" />
+                </div>
+                <div className="flex items-center justify-between relative z-10">
+                  <div>
+                    <h3 className="text-lg font-bold text-primary flex items-center gap-2">
+                       <Search size={20} />
+                       Smart AI Scraper
+                    </h3>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                      Import images, pricing, and specs from Amazon URL
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 relative z-10">
+                  <input 
+                    type="text" 
+                    value={scrapeUrl || ''} 
+                    onChange={e => setScrapeUrl(e.target.value)} 
+                    placeholder="https://www.amazon.in/dp/..." 
+                    className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-all" 
+                  />
                   <button 
                     type="button" 
                     onClick={handleScrapeProduct} 
                     disabled={isImporting}
-                    className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="bg-primary text-bg-dark px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100 flex items-center gap-2 shadow-lg shadow-primary/20"
                   >
-                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : null}
-                    {isImporting ? 'Importing...' : 'Import'}
+                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+                    {isImporting ? 'SCRAPING...' : 'SCRAP'}
                   </button>
                 </div>
-                {scrapingStatus && (
-                  <p className="text-xs text-primary mt-2 animate-pulse flex items-center gap-1">
-                    <Loader2 size={12} className="animate-spin" />
-                    {scrapingStatus}
+
+                {isImporting && (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2 relative z-10">
+                    <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-primary">
+                       <span>{scrapingStatus}</span>
+                       <span>{scrapingProgress}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                       <div 
+                         className="h-full bg-primary transition-all duration-500 ease-out" 
+                         style={{ width: `${scrapingProgress}%` }}
+                       />
+                    </div>
+                  </div>
+                )}
+                
+                {!isImporting && !scrapingStatus && (
+                  <p className="text-[9px] text-gray-600 font-medium italic">
+                    Note: Powered by AI for high-accuracy extraction.
                   </p>
                 )}
               </div>

@@ -9,9 +9,14 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
 const PORT = 3000;
+
+const genAI = process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "MY_GEMINI_API_KEY" 
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) 
+  : null;
 
 async function startServer() {
   // Supabase Configuration (Used for any other future client needs)
@@ -150,9 +155,53 @@ async function startServer() {
 
       const $ = cheerio.load(html);
       
-      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
+      // Attempt AI parsing if Gemini is available
+      let aiResult: any = null;
+      if (genAI) {
+        try {
+          console.log("[Scraper] Attempting AI-assisted extraction...");
+          const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+          
+          // Only send essential parts of HTML to save tokens and avoid noise
+          // Amazon often has huge IDs and class names, we prioritize readable text
+          const bodyText = $('body').text().replace(/\s+/g, ' ').substring(0, 12000); 
+          const titleText = $('title').text();
+          
+          const prompt = `Extract product details from this text:
+          Title: ${titleText}
+          Content: ${bodyText}
+          
+          Return JSON only with these fields:
+          - name (string: clear, concise product title)
+          - price (string: include currency ₹)
+          - oldPrice (string: original price before discount)
+          - discount (string: % off)
+          - brand (string)
+          - category (string: Broad category like Laptops, Accessories, etc.)
+          - description (string: 2-3 sentence summary of features)
+          - specificationJson (object: key-value pairs of technical specs)
+          
+          If info is missing, leave empty. No talk, just pure JSON.`;
+
+          const result = await model.generateContent(prompt);
+          const responseText = result.response.text();
+          const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            aiResult = JSON.parse(jsonMatch[0]);
+            console.log("[Scraper] AI extraction successful:", aiResult.name);
+          }
+        } catch (aiErr: any) {
+          if (aiErr.message?.includes('API_KEY_INVALID') || aiErr.message?.includes('400')) {
+             console.error("[Scraper] Critical: Gemini API Key is invalid or expired. Add a valid key in Secrets.");
+          } else {
+             console.warn("[Scraper] AI extraction fallback failed:", aiErr.message);
+          }
+        }
+      }
+
+      const name = aiResult?.name || $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
       
-      const priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
+      const priceRaw = aiResult?.price || $('meta[property="product:price:amount"]').attr('content') || 
                   $('[itemprop="price"]').attr('content') ||
                   $('.price, .product-price, .amount, .a-price-whole').first().text();
 
@@ -178,7 +227,7 @@ async function startServer() {
       };
 
       const cleanedPrice = formatPrice(priceRaw);
-      const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
+      const oldPriceText = aiResult?.oldPrice || $('.old-price, .a-text-strike, del').first().text();
       const oldPrice = formatPrice(oldPriceText);
       
       const image = $('meta[property="og:image"]').attr('content') || 
@@ -219,11 +268,11 @@ async function startServer() {
         }
       }
                     
-      const description = $('meta[property="og:description"]').attr('content') || 
+      const description = aiResult?.description || $('meta[property="og:description"]').attr('content') || 
                           $('meta[name="description"]').attr('content') ||
                           $('.description, .product-description, #feature-bullets').first().text().trim();
       
-      let brand = $('meta[property="product:brand"]').attr('content') || 
+      let brand = aiResult?.brand || $('meta[property="product:brand"]').attr('content') || 
                     $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
                     $('[itemprop="brand"]').text().trim() ||
                     $('#bylineInfo').text().trim() || '';
@@ -239,13 +288,13 @@ async function startServer() {
          brand = 'Unknown';
       }
 
-      const category = $('meta[property="product:category"]').attr('content') || 
+      const category = aiResult?.category || $('meta[property="product:category"]').attr('content') || 
                        $('[itemprop="category"]').attr('content') ||
                        $('.nav-a-content').first().text().trim() || '';
 
-      const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
+      const discount = aiResult?.discount || $('.savingsPercentage, .discount, .badge').first().text().trim();
       
-      const specifications: Record<string, string> = {};
+      const specifications: Record<string, string> = aiResult?.specificationJson || {};
       
       const parseSpecRow = (_: any, el: any) => {
         const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
@@ -285,7 +334,7 @@ async function startServer() {
       }
 
       console.log(`[Scraper] Successfully parsed: ${name}`);
-      res.json({ name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications });
+      res.json({ name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications, aiUsed: !!aiResult });
     } catch (error: any) {
       console.error("[Scraper Error]", error.message);
       const status = error.response?.status || 500;

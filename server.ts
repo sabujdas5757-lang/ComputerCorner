@@ -208,8 +208,69 @@ async function startServer() {
       });
 
     } catch (error: any) {
-      console.error("[Scrapy Spider Error]", error.message);
-      res.status(500).json({ error: error.message });
+      console.error("[Scrapy Spider Error]", error.message || error);
+      res.status(500).json({ error: String(error.message || error || "Unknown scraping error") });
+    }
+  });
+
+  // RESTORED: Proxy-save an external image to Vercel Blob
+  apiRouter.post("/upload-from-url", async (req, res) => {
+    const { url } = req.body;
+    if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
+
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.warn("[Upload-From-URL] BLOB_READ_WRITE_TOKEN is missing.");
+      return res.status(503).json({ error: "Cloud storage is not configured (missing token)." });
+    }
+
+    try {
+      console.log(`[Upload-From-URL] Fetching external asset: ${url.substring(0, 50)}...`);
+      const response = await axios.get(url, { responseType: 'arraybuffer', timeout: 15000 });
+      const buffer = Buffer.from(response.data);
+      const contentType = response.headers['content-type'] || 'image/jpeg';
+      
+      const rawFilename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
+      const filename = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const blob = await put(filename, buffer, {
+        access: 'public',
+        contentType: String(contentType),
+        addRandomSuffix: true
+      });
+
+      console.log(`[Upload-From-URL] Saved to cloud: ${blob.url}`);
+      res.json({ secure_url: blob.url });
+    } catch (error: any) {
+      console.error("[Upload-From-URL Error]", error.message || error);
+      res.status(500).json({ error: "Storage error: " + (error.message || "Unknown error") });
+    }
+  });
+
+  const uploadMiddleware = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } 
+  });
+
+  // RESTORED: Direct file upload to Vercel Blob
+  apiRouter.post("/upload-file", uploadMiddleware.single('file'), async (req, res) => {
+    try {
+      const file = (req as any).file;
+      if (!file) return res.status(400).json({ error: "No file uploaded" });
+
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        return res.status(503).json({ error: "Cloud storage is not configured." });
+      }
+
+      const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const blob = await put(sanitizedName, file.buffer, {
+        access: 'public',
+        contentType: file.mimetype,
+        addRandomSuffix: true
+      });
+
+      res.json({ secure_url: blob.url });
+    } catch (error: any) {
+      console.error("[Upload Error]", error.message || error);
+      res.status(500).json({ error: String(error.message || "Upload failed") });
     }
   });
 

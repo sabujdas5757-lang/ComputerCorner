@@ -312,7 +312,7 @@ export default function AdminDashboard() {
           let errMsg = `Server returned ${response.status}`;
           try {
             const errData = JSON.parse(bodyText);
-            errMsg = errData.error || errMsg;
+            errMsg = (typeof errData.error === 'string' ? errData.error : (errData.error ? JSON.stringify(errData.error) : null)) || errMsg;
           } catch(e) {}
           throw new Error(errMsg);
         }
@@ -419,7 +419,8 @@ export default function AdminDashboard() {
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     } catch (err: any) {
-      showFeedback(`Error scraping/adding product: ${err.message}`);
+      const displayError = err instanceof Error ? err.message : (typeof err === 'string' ? err : JSON.stringify(err));
+      showFeedback(`Spider Engine: ${displayError}`);
     } finally {
       setIsImporting(false);
       setScrapingStatus(null);

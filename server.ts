@@ -113,7 +113,7 @@ async function startServer() {
           
           const response = await axios.get(url, {
             timeout: 25000,
-            maxRedirects: 5,
+            maxRedirects: 10, // Increased for shortened links
             headers: { 
               'User-Agent': profile.ua,
               ...profile.headers
@@ -121,19 +121,20 @@ async function startServer() {
             validateStatus: (status) => status < 500 
           });
           
-          html = response.data;
+          html = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
           
           // Anti-bot check
           const isBlocked = html && (
             html.includes('Robot Check') || 
             html.includes('To discuss automated access') || 
             html.includes('captcha') ||
-            html.includes('/errors/validateCaptcha')
+            html.includes('/errors/validateCaptcha') ||
+            (typeof response.data === 'object' && response.status === 404) // Detect JSON blocks
           );
           
-          const isInvalid = !html || typeof html !== 'string' || html.length < 2000;
+          const isInvalid = !html || html.length < 2000;
 
-          if (html && !isBlocked && !isInvalid) {
+          if (html && !isBlocked && !isInvalid && html.includes('<html')) {
             console.log(`[Scrapy Spider] Success! Extracted ${html.length} bytes.`);
             break;
           } else {

@@ -312,7 +312,13 @@ export default function AdminDashboard() {
           let errMsg = `Server returned ${response.status}`;
           try {
             const errData = JSON.parse(bodyText);
-            errMsg = (typeof errData.error === 'string' ? errData.error : (errData.error ? JSON.stringify(errData.error) : null)) || errMsg;
+            if (errData.error) {
+              errMsg = typeof errData.error === 'string' ? errData.error : JSON.stringify(errData.error);
+            } else if (errData.message) {
+              errMsg = errData.message;
+            } else if (errData.code) {
+              errMsg = `Error ${errData.code}: ${errData.message || 'Failed to fetch target page'}`;
+            }
           } catch(e) {}
           throw new Error(errMsg);
         }

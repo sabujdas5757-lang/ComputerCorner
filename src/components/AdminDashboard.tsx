@@ -293,10 +293,17 @@ export default function AdminDashboard() {
         setScrapingProgress(30);
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify({ url: scrapeUrl })
         });
         
+        if (response.status === 405) {
+          throw new Error("Server returned 405 (Method Not Allowed). If you are using a static host (like Vercel/Netlify), ensure the backend engine is correctly deployed as a function or server.");
+        }
+
         const contentType = response.headers.get("content-type");
         const bodyText = await response.text();
         

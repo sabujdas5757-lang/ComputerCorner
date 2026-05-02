@@ -9,6 +9,7 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
+import { GoogleGenAI } from "@google/genai";
 
 const app = express();
 const PORT = 3000;
@@ -37,6 +38,7 @@ async function startServer() {
     console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
     
     try {
+      let productData: any = null;
       let html = '';
       const isAmazon = url.includes('amazon.');
       
@@ -95,80 +97,143 @@ async function startServer() {
         } catch (e) {}
       }
 
-      if (!html || !html.includes('<html')) {
-        return res.status(403).json({ error: "Access denied by target website. Falling back to AI Magic Scraper...", needsAI: true });
-      }
-
-      const $ = cheerio.load(html);
-      
-      const name = isAmazon ? $('#productTitle').text().trim() : 
-                  ($('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim());
-      
-      let priceRaw = '';
-      if (isAmazon) {
-        priceRaw = $('.a-price-whole').first().text() || 
-                   $('.a-offscreen').first().text() || 
-                   $('#priceblock_ourprice').text() || 
-                   $('#priceblock_dealprice').text();
-      } else {
-        priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
-                   $('[itemprop="price"]').attr('content') ||
-                   $('.price, .product-price, .amount, .a-price-whole, .pdp-price').first().text();
-      }
-
-      const oldPriceText = $('.old-price, .a-text-strike, del, .pdp-mrp').first().text();
-      
-      const image = $('meta[property="og:image"]').attr('content') || 
-                    $('meta[name="twitter:image"]').attr('content') ||
-                    $('img[itemprop="image"]').attr('src') ||
-                    $('#landingImage, #imgBlkFront').attr('src');
-                    
-      const additionalImages: string[] = [];
-      $('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img').each((_, el) => {
-        let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).data('src');
-        if (srcRaw) {
-          let src = String(srcRaw);
-          if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
-            src = src.replace(/\._[A-Z0-9_]+_\./, '.');
-          }
-          if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
-            additionalImages.push(src);
-          }
+      // If direct fetch succeeded, extract initial data
+      if (html && html.includes('<html')) {
+        const $ = cheerio.load(html);
+        
+        const name = isAmazon ? $('#productTitle').text().trim() : 
+                    ($('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim());
+        
+        let priceRaw = '';
+        if (isAmazon) {
+          priceRaw = $('.a-price-whole').first().text() || 
+                     $('.a-offscreen').first().text() || 
+                     $('#priceblock_ourprice').text() || 
+                     $('#priceblock_dealprice').text();
+        } else {
+          priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
+                     $('[itemprop="price"]').attr('content') ||
+                     $('.price, .product-price, .amount, .a-price-whole, .pdp-price').first().text();
         }
-      });
-                    
-      const description = $('meta[property="og:description"]').attr('content') || 
-                          $('meta[name="description"]').attr('content') ||
-                          $('.description, .product-description, #feature-bullets').first().text().trim();
-      
-      let brand = $('meta[property="product:brand"]').attr('content') || 
-                    $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
-                    $('[itemprop="brand"]').text().trim() ||
-                    $('#bylineInfo').text().trim() || '';
 
-      if (brand) {
-         brand = brand.replace(/visit the /i, '').replace(/ store/i, '').replace(/brand: /i, '').trim();
+        const oldPriceText = $('.old-price, .a-text-strike, del, .pdp-mrp').first().text();
+        
+        const image = $('meta[property="og:image"]').attr('content') || 
+                      $('meta[name="twitter:image"]').attr('content') ||
+                      $('img[itemprop="image"]').attr('src') ||
+                      $('#landingImage, #imgBlkFront').attr('src');
+                      
+        const additionalImages: string[] = [];
+        $('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img').each((_, el) => {
+          let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).data('src');
+          if (srcRaw) {
+            let src = String(srcRaw);
+            if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
+              src = src.replace(/\._[A-Z0-9_]+_\./, '.');
+            }
+            if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
+              additionalImages.push(src);
+            }
+          }
+        });
+                      
+        const description = $('meta[property="og:description"]').attr('content') || 
+                            $('meta[name="description"]').attr('content') ||
+                            $('.description, .product-description, #feature-bullets').first().text().trim();
+        
+        let brand = $('meta[property="product:brand"]').attr('content') || 
+                      $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
+                      $('[itemprop="brand"]').text().trim() ||
+                      $('#bylineInfo').text().trim() || '';
+
+        if (brand) {
+           brand = brand.replace(/visit the /i, '').replace(/ store/i, '').replace(/brand: /i, '').trim();
+        }
+
+        const category = $('meta[property="product:category"]').attr('content') || 
+                         $('[itemprop="category"]').attr('content') ||
+                         $('.nav-a-content').first().text().trim() || '';
+
+        const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
+        
+        const specifications: Record<string, string> = {};
+        const parseSpecRow = (_: any, el: any) => {
+          const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
+          const value = $(el).find('td').not(':first-child').first().text().trim() || $(el).find('td').last().text().trim();
+          if (key && value && !key.toLowerCase().includes('customer reviews')) {
+            specifications[key] = value;
+          }
+        };
+
+        $('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table.a-keyvalue tr').each(parseSpecRow);
+
+        productData = { 
+          name, 
+          price: priceRaw, 
+          oldPrice: oldPriceText, 
+          image, 
+          additionalImages, 
+          description, 
+          brand, 
+          category, 
+          discount, 
+          specifications 
+        };
       }
 
-      const category = $('meta[property="product:category"]').attr('content') || 
-                       $('[itemprop="category"]').attr('content') ||
-                       $('.nav-a-content').first().text().trim() || '';
+      // If direct fetch was blocked, OR it's Amazon (often messy), use Magic AI as primary or refiner
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (apiKey && (!productData || isAmazon || !productData.name || productData.name === 'Unknown Product')) {
+        console.log(`[Scraper] Invoking Magic AI Scraper for ${isAmazon ? 'Amazon refinement' : 'fallback'}...`);
+        const ai = new GoogleGenAI({ apiKey });
+        
+        const prompt = `
+          Extract product details from this URL: ${url}
+          ${productData ? `Use this partially extracted data as an anchor: ${JSON.stringify(productData)}` : 'The website blocked direct automated access, so use your internal knowledge and search tools to find the specifics.'}
+          
+          Focus on:
+          1. Clean, professional product name.
+          2. Accurate price in INR (₹).
+          3. Detailed technical specifications.
+          4. High-resolution main image URL.
+          
+          Return ONLY a JSON object:
+          {
+            "name": "string",
+            "brand": "string",
+            "category": "string",
+            "description": "string",
+            "price": "string (e.g. ₹45,990)",
+            "oldPrice": "string",
+            "discount": "string",
+            "image": "string (URL)",
+            "additionalImages": ["URL_strings"],
+            "specifications": {"key": "value"}
+          }
+        `;
 
-      const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
-      
-      const specifications: Record<string, string> = {};
-      const parseSpecRow = (_: any, el: any) => {
-        const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
-        const value = $(el).find('td').not(':first-child').first().text().trim() || $(el).find('td').last().text().trim();
-        if (key && value && !key.toLowerCase().includes('customer reviews')) {
-          specifications[key] = value;
+        const aiResponse = await ai.models.generateContent({
+          model: "gemini-3.1-pro-preview",
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            tools: [{ googleSearch: {} }],
+            toolConfig: { includeServerSideToolInvocations: true }
+          }
+        });
+
+        if (aiResponse.text) {
+          const aiData = JSON.parse(aiResponse.text);
+          productData = { ...productData, ...aiData };
         }
-      };
+      }
 
-      $('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table.a-keyvalue tr').each(parseSpecRow);
+      if (!productData || !productData.name) {
+        throw new Error("Could not extract any product details from this URL.");
+      }
 
-      console.log(`[Scraper] Successfully parsed: ${name}`);
-      res.json({ name, price: priceRaw, oldPrice: oldPriceText, image, additionalImages, description, brand, category, discount, specifications });
+      console.log(`[Scraper] Finalized extraction for: ${productData.name}`);
+      res.json(productData);
     } catch (error: any) {
       console.error("[Scraper Error]", error.message);
       res.status(500).json({ error: error.message });

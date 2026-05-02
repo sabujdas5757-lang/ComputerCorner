@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Sparkles, Wand2, Zap, Link as LinkIcon } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
-import { GoogleGenAI, Type } from "@google/genai";
 import { motion, AnimatePresence } from 'motion/react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
@@ -52,7 +51,6 @@ export default function AdminDashboard() {
   const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
   const [confirmingAllDelete, setConfirmingAllDelete] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
-  const [isUsingAI, setIsUsingAI] = useState(false);
 
   const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
@@ -271,56 +269,6 @@ export default function AdminDashboard() {
     return categories.length > 0 ? categories[0].name : 'Laptops';
   };
 
-  const magicAIScrape = async (url: string) => {
-    try {
-      setScrapingStatus('Summoning AI Magic Scraper...');
-      setIsUsingAI(true);
-      
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) throw new Error("GEMINI_API_KEY is not configured in the environment.");
-      
-      const ai = new GoogleGenAI({ apiKey });
-      const categoryList = categories.map(c => c.name).join(', ');
-      
-      const prompt = `
-        Act as a product data expert. Research this product URL: ${url}
-        Extract the full professional name, current price in INR (₹), old price if any, brand, description, and detailed technical specifications.
-        
-        Return ONLY a raw JSON object with this exact structure:
-        {
-          "name": "Full clean product name",
-          "brand": "Brand",
-          "category": "One of: ${categoryList}",
-          "description": "2-3 sentence summary",
-          "price": "₹XX,XXX",
-          "oldPrice": "₹XX,XXX (optional)",
-          "discount": "XX% off (optional)",
-          "image": "Direct link to highest resolution main product image",
-          "additionalImages": ["image_url_1", "image_url_2"],
-          "specifications": {"Attribute Name": "Value"}
-        }
-      `;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          tools: [{ googleSearch: {} }],
-          toolConfig: { includeServerSideToolInvocations: true }
-        }
-      });
-
-      if (!response.text) throw new Error("AI returned empty content");
-      return JSON.parse(response.text);
-    } catch (err: any) {
-      console.error("Magic AI Scrape failed:", err);
-      throw new Error(`Magic Scraper encountered an error: ${err.message}`);
-    } finally {
-      setIsUsingAI(false);
-    }
-  };
-
   const handleScrapeProduct = async () => {
     if (!scrapeUrl) return;
     setIsImporting(true);
@@ -329,28 +277,22 @@ export default function AdminDashboard() {
     try {
       let productData: any = null;
       
-      // Attempt Server-Side Direct Fetch First (Fastest)
-      try {
-        setScrapingStatus('Attempting secure direct fetch...');
-        const response = await fetch('/api/scrape-product', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: scrapeUrl })
-        });
-        
-        if (response.ok) {
-          productData = await response.json();
-          setScrapingStatus('Successfully extracted data!');
-        } else {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error || 'Direct fetch blocked');
-        }
-      } catch (err: any) {
-        console.warn("Direct fetch failed, falling back to Magic AI Scraper...", err.message);
-        productData = await magicAIScrape(scrapeUrl);
+      setScrapingStatus('Extracting product intelligence...');
+      const response = await fetch('/api/scrape-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: scrapeUrl })
+      });
+      
+      if (response.ok) {
+        productData = await response.json();
+        setScrapingStatus('Extraction successful!');
+      } else {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Extraction failed');
       }
 
-      if (!productData) throw new Error("Failed to extract product details from this URL.");
+      if (!productData) throw new Error("Could not extract product details.");
 
       // Image Optimization
       if (productData.image && productData.image.startsWith('http')) {

@@ -1414,7 +1414,7 @@ export default function AdminDashboard() {
               <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-4">
                 <div>
                   <label className="text-sm font-bold text-white flex items-center justify-between mb-2">
-                    Scraper API (Recommended)
+                    Scraper API (Spider / Autoparse Enabled)
                     <a href="https://www.scraperapi.com/" target="_blank" rel="noreferrer" className="text-xs text-primary underline">Get Key</a>
                   </label>
                   <input type="password" value={scraperApiKey} onChange={e => setScraperApiKey(e.target.value)} placeholder="Enter ScraperAPI Key (Optional)..." className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />

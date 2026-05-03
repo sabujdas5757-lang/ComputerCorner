@@ -154,16 +154,16 @@ async function startServer() {
       let html = '';
       
       const fetchMethodsMap = [
-        // Method 0: Scraper API (If configured)
+        // Method 0: Scraper API (If configured) - Using AutoParse (Spider)
         async () => {
            const apiKey = scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
            if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
-           console.log("[Scraper] Attempting Scraper API...");
-           const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(url)}`, { 
+           console.log("[Scraper] Attempting Scraper API (Spider/AutoParse)...");
+           const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&autoparse=true&url=${encodeURIComponent(url)}`, { 
              timeout: 25000,
              maxContentLength: 5000000
            });
-           return typeof response.data === 'string' ? response.data : '';
+           return response.data;
         },
         // Method 1: Jina AI (Most robust for product details)
         async () => {
@@ -194,6 +194,28 @@ async function startServer() {
         try {
           console.log(`[Scraper] Attempting Method ${i + 1}...`);
           const res = await fetchMethodsMap[i]();
+          if (res && typeof res === 'object' && !res.includes && !res.error) {
+             // ScraperAPI AutoParse / Spider returned JSON directly!
+             console.log(`[Scraper] Success with Method ${i + 1} (JSON)`);
+             
+             // Format price from ScraperAPI format
+             let parsedPrice = res.pricing || res.price || '';
+             if (parsedPrice) parsedPrice = String(parsedPrice).replace(/[^0-9.]/g, '');
+             
+             return res.json({
+               name: res.name || res.title || '',
+               price: `₹${parsedPrice}`,
+               oldPrice: res.list_price || res.oldPrice || '',
+               discount: '',
+               image: (res.images && res.images.length > 0) ? res.images[0] : res.image || '',
+               additionalImages: res.images ? res.images.slice(1, 4) : [],
+               brand: res.brand || 'Unknown',
+               category: res.category || '',
+               description: res.description || res.full_description || '',
+               specifications: res.product_information || res.specifications || {},
+               usageTags: []
+             });
+          }
           if (res && typeof res === 'string' && res.includes('<html') && !res.includes('Robot Check') && res.length > 500) {
             html = res;
             console.log(`[Scraper] Success with Method ${i + 1}`);

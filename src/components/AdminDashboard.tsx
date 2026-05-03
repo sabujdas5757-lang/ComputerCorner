@@ -43,7 +43,7 @@ export default function AdminDashboard() {
   }, [products, searchQuery]);
 
   const [scrapeUrl, setScrapeUrl] = useState('');
-  const [scraperApiKey, setScraperApiKey] = useState(localStorage.getItem('scraperApiKey') || '');
+  const [scraperApiKey, setScraperApiKey] = useState(localStorage.getItem('scraperApiKey') || '5d5e88487260af181c9730311f19d12a');
 
   // Save to localStorage when changed
   useEffect(() => {
@@ -246,28 +246,20 @@ export default function AdminDashboard() {
     // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
     const getProxyRequests = [
       {
-        name: 'Proxy A (AllOrigins)',
+        name: 'ScraperAPI',
         fn: async () => {
-          const res = await fetch(`https://api.allorigins.win/get?url=${encodedUrl}`);
-          if (!res.ok) throw new Error("AllOrigins failed");
-          const data = await safeJson(res);
-          if (!data || !data.contents) throw new Error("Empty AllOrigins content");
-          return data.contents;
-        }
-      },
-      {
-        name: 'Proxy B (Codetabs)',
-        fn: async () => {
-          const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`);
-          if (!res.ok) throw new Error("Codetabs failed");
+          const proxyKey = scraperApiKey || "5d5e88487260af181c9730311f19d12a";
+          if (!proxyKey) throw new Error("ScraperAPI key not provided");
+          const res = await fetch(`http://api.scraperapi.com?api_key=${proxyKey}&url=${encodedUrl}`);
+          if (!res.ok) throw new Error("ScraperAPI failed");
           return await res.text();
         }
       },
       {
-        name: 'Proxy C (CorsProxy)',
+        name: 'Proxy A (ScraperAPI backend/Jina)',
         fn: async () => {
-          const res = await fetch(`https://corsproxy.io/?${encodedUrl}`);
-          if (!res.ok) throw new Error("Corsproxy failed");
+          const res = await fetch(`https://r.jina.ai/${url}`);
+          if (!res.ok) throw new Error("Jina failed");
           return await res.text();
         }
       }
@@ -281,7 +273,6 @@ export default function AdminDashboard() {
         // Super basic validation that we actually got HTML and not an anti-bot captcha page
         if (html && 
             html.includes('<html') && 
-            !html.includes('api.allorigins.win') && 
             !html.includes('503 - Service Unavailable') &&
             !html.includes('503 Service Unavailable') &&
             !html.includes('Robot Check') &&

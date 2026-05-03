@@ -49,9 +49,10 @@ async function startServer() {
       const fetchMethods = [
         // Method 0: Scraper API (If configured)
         async () => {
-           if (!process.env.SCRAPER_API_KEY) throw new Error("SCRAPER_API_KEY is not configured");
+           const apiKey = req.body.scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
+           if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
            console.log("[Search Scraper] Attempting Scraper API...");
-           const response = await axios.get(`http://api.scraperapi.com?api_key=${process.env.SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`, { 
+           const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(url)}`, { 
              timeout: 25000,
              maxContentLength: 5000000
            });
@@ -76,15 +77,6 @@ async function startServer() {
                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                'Accept-Language': 'en-US,en;q=0.5'
              },
-             timeout: 8000,
-             maxContentLength: 5000000
-           });
-           return typeof response.data === 'string' ? response.data : '';
-        },
-        // Method 3: AllOrigins Raw Proxy
-        async () => {
-           console.log("[Search Scraper] Attempting M3 (AllOrigins)...");
-           const response = await axios.get(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, { 
              timeout: 8000,
              maxContentLength: 5000000
            });
@@ -164,7 +156,7 @@ async function startServer() {
       const fetchMethodsMap = [
         // Method 0: Scraper API (If configured)
         async () => {
-           const apiKey = scraperApiKey || process.env.SCRAPER_API_KEY;
+           const apiKey = scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
            if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
            console.log("[Scraper] Attempting Scraper API...");
            const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(url)}`, { 
@@ -194,14 +186,6 @@ async function startServer() {
             }
           });
           return response.data;
-        },
-        // Method 3: AllOrigins Raw
-        async () => {
-          const proxyRes = await axios.get(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, { 
-            timeout: 8000,
-            maxContentLength: 5000000
-          });
-          return proxyRes.data;
         }
       ];
 

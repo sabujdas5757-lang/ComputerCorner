@@ -250,8 +250,12 @@ export default function AdminDashboard() {
         fn: async () => {
           const proxyKey = scraperApiKey || "5d5e88487260af181c9730311f19d12a";
           if (!proxyKey) throw new Error("ScraperAPI key not provided");
-          const res = await fetch(`http://api.scraperapi.com?api_key=${proxyKey}&url=${encodedUrl}`);
-          if (!res.ok) throw new Error("ScraperAPI failed");
+          let apiUrl = `https://api.scraperapi.com?api_key=${proxyKey}&premium=true&url=${encodedUrl}`;
+          if (url.includes('.in/')) {
+             apiUrl += '&country_code=in';
+          }
+          const res = await fetch(apiUrl);
+          if (!res.ok) throw new Error("ScraperAPI failed with status " + res.status);
           return await res.text();
         }
       },
@@ -1414,7 +1418,7 @@ export default function AdminDashboard() {
               <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-4">
                 <div>
                   <label className="text-sm font-bold text-white flex items-center justify-between mb-2">
-                    Scraper API (Spider / Autoparse Enabled)
+                    Scrapy Spider (Scraper API Key)
                     <a href="https://www.scraperapi.com/" target="_blank" rel="noreferrer" className="text-xs text-primary underline">Get Key</a>
                   </label>
                   <input type="password" value={scraperApiKey} onChange={e => setScraperApiKey(e.target.value)} placeholder="Enter ScraperAPI Key (Optional)..." className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />

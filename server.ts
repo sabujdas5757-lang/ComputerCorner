@@ -52,8 +52,12 @@ async function startServer() {
            const apiKey = req.body.scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
            if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
            console.log("[Search Scraper] Attempting Scraper API...");
-           const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(url)}`, { 
-             timeout: 25000,
+           let apiUrl = `https://api.scraperapi.com?api_key=${apiKey}&premium=true&url=${encodeURIComponent(url)}`;
+           if (url.includes('.in/')) {
+               apiUrl += '&country_code=in';
+           }
+           const response = await axios.get(apiUrl, { 
+             timeout: 50000,
              maxContentLength: 5000000
            });
            return typeof response.data === 'string' ? response.data : '';
@@ -154,13 +158,17 @@ async function startServer() {
       let html = '';
       
       const fetchMethodsMap = [
-        // Method 0: Scraper API (If configured) - Using AutoParse (Spider)
+        // Method 0: Scraper API (If configured) - Using Premium Residential Proxies
         async () => {
            const apiKey = scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
            if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
-           console.log("[Scraper] Attempting Scraper API (Spider/AutoParse)...");
-           const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&autoparse=true&url=${encodeURIComponent(url)}`, { 
-             timeout: 25000,
+           console.log("[Scraper] Attempting Scraper API (Premium)...");
+           let apiUrl = `https://api.scraperapi.com?api_key=${apiKey}&premium=true&url=${encodeURIComponent(url)}`;
+           if (url.includes('.in/')) {
+               apiUrl += '&country_code=in';
+           }
+           const response = await axios.get(apiUrl, { 
+             timeout: 50000,
              maxContentLength: 5000000
            });
            return response.data;
@@ -193,31 +201,35 @@ async function startServer() {
       for (let i = 0; i < fetchMethodsMap.length; i++) {
         try {
           console.log(`[Scraper] Attempting Method ${i + 1}...`);
-          const res = await fetchMethodsMap[i]();
-          if (res && typeof res === 'object' && !res.includes && !res.error) {
+          const fetchedData = await fetchMethodsMap[i]();
+          if (fetchedData && typeof fetchedData === 'object' && !fetchedData.includes && !fetchedData.error) {
              // ScraperAPI AutoParse / Spider returned JSON directly!
              console.log(`[Scraper] Success with Method ${i + 1} (JSON)`);
              
              // Format price from ScraperAPI format
-             let parsedPrice = res.pricing || res.price || '';
+             let parsedPrice = fetchedData.pricing || fetchedData.price || '';
              if (parsedPrice) parsedPrice = String(parsedPrice).replace(/[^0-9.]/g, '');
              
              return res.json({
-               name: res.name || res.title || '',
+               name: fetchedData.name || fetchedData.title || '',
                price: `₹${parsedPrice}`,
-               oldPrice: res.list_price || res.oldPrice || '',
+               oldPrice: fetchedData.list_price || fetchedData.oldPrice || '',
                discount: '',
-               image: (res.images && res.images.length > 0) ? res.images[0] : res.image || '',
-               additionalImages: res.images ? res.images.slice(1, 4) : [],
-               brand: res.brand || 'Unknown',
-               category: res.category || '',
-               description: res.description || res.full_description || '',
-               specifications: res.product_information || res.specifications || {},
+               image: (fetchedData.images && fetchedData.images.length > 0) ? fetchedData.images[0] : fetchedData.image || '',
+               additionalImages: fetchedData.images ? fetchedData.images.slice(1, 4) : [],
+               brand: fetchedData.brand || 'Unknown',
+               category: fetchedData.category || '',
+               description: fetchedData.description || fetchedData.full_description || '',
+               specifications: fetchedData.product_information || fetchedData.specifications || {},
                usageTags: []
              });
           }
-          if (res && typeof res === 'string' && res.includes('<html') && !res.includes('Robot Check') && res.length > 500) {
-            html = res;
+          if (fetchedData && typeof fetchedData === 'string' && fetchedData.includes('<html') && !fetchedData.includes('Robot Check') && fetchedData.length > 500) {
+            if (fetchedData.includes('503 - Service Unavailable') || fetchedData.includes('503 Service Unavailable') || fetchedData.includes('captcha')) {
+              console.warn(`[Scraper] Method ${i + 1} returned a blocked/error page. Skipping.`);
+              continue;
+            }
+            html = fetchedData;
             console.log(`[Scraper] Success with Method ${i + 1}`);
             break;
           }
@@ -234,6 +246,11 @@ async function startServer() {
       const $ = cheerio.load(html);
       
       const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
+      
+      if (name && (name.includes('503') || name.includes('Service Unavailable') || name.includes('Page Not Found') || name === 'Unknown Product' || name.includes('Robot Check'))) {
+          console.error(`[Scraper] Parsed name is ${name}. This means the scrape failed or the page isn't a product.`);
+          throw new Error(`The target website returned an error page or invalid content (${name}). Please add details manually.`);
+      }
       
       const priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
                   $('[itemprop="price"]').attr('content') ||

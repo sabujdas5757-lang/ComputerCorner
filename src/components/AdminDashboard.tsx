@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Database } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
@@ -1034,6 +1034,10 @@ export default function AdminDashboard() {
             </div>
           )}
           <div className="flex gap-4">
+            <Link to="/admin/scraper" className="px-6 py-2 bg-[#00ff41]/20 text-[#00ff41] border border-[#00ff41]/20 rounded-xl hover:bg-[#00ff41]/30 transition-colors flex items-center gap-2 font-mono text-sm">
+              <Database size={16} />
+              Spiders
+            </Link>
             <Link to="/" className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
               Back to Home
             </Link>

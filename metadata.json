@@ -1,6 +1,6 @@
 {
   "name": "Computer Corner",
-  "description": "Premium computer sales and services in Jhargram. Authorized dealer for HP, Asus, Dell, and more.",
+  "description": "Premium computer sales and services with integrated Amazon product scraping tools for inventory research.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }

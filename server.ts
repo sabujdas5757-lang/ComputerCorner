@@ -31,6 +31,119 @@ async function startServer() {
     next();
   });
 
+  app.post("/api/scrape-amazon-search", async (req, res) => {
+    const { query: searchQuery } = req.body;
+    if (!searchQuery) return res.status(400).json({ error: "Search query is required" });
+    
+    const url = `https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}`;
+    console.log(`[Search Scraper] Searching for: ${searchQuery}`);
+
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    try {
+      let html = '';
+      const uas = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0'
+      ];
+
+      const getHeaders = () => ({
+        'User-Agent': uas[Math.floor(Math.random() * uas.length)],
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Referer': 'https://www.google.com/',
+        'DNT': '1',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'cross-site',
+        'Sec-Fetch-User': '?1'
+      });
+
+      const methods = [
+        async () => {
+           const response = await axios.get(url, {
+             headers: getHeaders(),
+             timeout: 15000,
+             validateStatus: () => true
+           });
+           return response.data;
+        },
+        async () => {
+           const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { timeout: 20000 });
+           return proxyRes.data?.contents || '';
+        },
+        async () => {
+           const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { timeout: 20000 });
+           return proxyRes.data;
+        }
+      ];
+
+      for (let i = 0; i < methods.length; i++) {
+        try {
+          html = await methods[i]();
+          if (html && (html.includes('s-result-item') || html.includes('s-main-slot')) && !html.includes('Robot Check')) {
+            console.log(`[Search Scraper] Method ${i+1} succeeded. Content length: ${html.length}`);
+            break;
+          }
+          console.warn(`[Search Scraper] Method ${i+1} failed/blocked. Content length: ${html?.length || 0}`);
+          if (i < methods.length - 1) await sleep(1500 + Math.random() * 2000); 
+        } catch (e: any) {
+          console.warn(`[Search Scraper] Method ${i+1} error: ${e.message}`);
+        }
+      }
+
+      if (!html || html.includes('Robot Check') || html.includes('api-services-support@amazon.com')) {
+        throw new Error("Amazon bot detection triggered. Try again later or use a more specific search term.");
+      }
+
+      const $ = cheerio.load(html);
+      const results: any[] = [];
+
+      // More generic selector to catch variations
+      $('.s-result-item').each((_, el) => {
+        const $el = $(el);
+        const asin = $el.attr('data-asin');
+        if (!asin) return; // Only process items with ASIN
+
+        let title = $el.find('h2 a span').first().text().trim();
+        if (!title) title = $el.find('.a-size-medium.a-color-base.a-text-normal').first().text().trim();
+        if (!title) title = $el.find('.a-size-base-plus.a-color-base.a-text-normal').first().text().trim();
+        
+        let price = $el.find('.a-price-whole').first().text().trim();
+        let symbol = $el.find('.a-price-symbol').first().text().trim() || '₹';
+        
+        let image = $el.find('.s-image').attr('src');
+        let rating = $el.find('.a-icon-star-small .a-icon-alt, .a-icon-star .a-icon-alt').first().text().trim();
+        let reviews = $el.find('.a-size-small .a-link-normal .a-size-base, .a-section.a-spacing-none.a-spacing-top-micro .a-row.a-size-small .a-size-base').first().text().trim();
+        
+        const path = $el.find('h2 a').attr('href');
+        const link = path ? (path.startsWith('http') ? path : 'https://www.amazon.in' + path) : '';
+
+        if (title && (price || image)) {
+          results.push({
+            title,
+            price: price ? `${symbol}${price}` : 'Check Price',
+            image,
+            rating,
+            reviews,
+            url: link,
+            asin
+          });
+        }
+      });
+
+      console.log(`[Search Scraper] Found ${results.length} results for "${searchQuery}"`);
+      res.json({ results });
+    } catch (error: any) {
+      console.error("[Search Scraper Error]", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });

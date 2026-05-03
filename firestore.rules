@@ -9,7 +9,7 @@ service cloud.firestore {
     // Helper functions
     function isSignedIn() { return request.auth != null; }
     
-    // Hardened Admin Check: Checks specific emails
+    // Hardened Admin Check: Checks specific emails and verified status
     function isAdmin() { 
       return isSignedIn() && 
              (request.auth.token.email == 'computercorner@gmail.com' || 

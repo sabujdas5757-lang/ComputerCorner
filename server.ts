@@ -39,8 +39,9 @@ async function startServer() {
       return res.status(400).json({ error: "Search query is required" });
     }
     
+    // Construct search URL
     const url = `https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}`;
-    console.log(`[Search Scraper] Initiating search for: "${searchQuery}"`);
+    console.log(`[Search Scraper] SCRAPING_START: "${searchQuery}"`);
 
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -48,9 +49,9 @@ async function startServer() {
       let html = '';
       const uas = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0'
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
       ];
 
       const getHeaders = () => ({
@@ -61,6 +62,10 @@ async function startServer() {
         'Referer': 'https://www.google.com/',
         'DNT': '1',
         'Upgrade-Insecure-Requests': '1',
+        'Cache-Control': 'max-age=0',
+        'Sec-Ch-Ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-Site': 'cross-site',
@@ -68,46 +73,70 @@ async function startServer() {
       });
 
       const methods = [
+        // Method 1: AllOrigins (usually very reliable if direct fetch is blocked)
         async () => {
-           console.log("[Search Scraper] Trying Method 1: Direct Fetch");
-           const response = await axios.get(url, {
-             headers: getHeaders(),
-             timeout: 10000,
-             validateStatus: () => true
+           console.log("[Search Scraper] M1: AllOrigins Proxy");
+           const response = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
+             timeout: 15000 
+           });
+           return response.data?.contents || '';
+        },
+        // Method 2: CorsProxy.io
+        async () => {
+           console.log("[Search Scraper] M2: CorsProxy.io");
+           const response = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
+             timeout: 15000 
            });
            return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
         },
+        // Method 3: Codetabs Proxy
         async () => {
-           console.log("[Search Scraper] Trying Method 2: AllOrigins Proxy");
-           const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { timeout: 15000 });
-           const content = proxyRes.data?.contents;
-           return typeof content === 'string' ? content : '';
+           console.log("[Search Scraper] M3: Codetabs Proxy");
+           const response = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
+             timeout: 15000 
+           });
+           return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
         },
+        // Method 4: Direct Fetch with specialized headers
         async () => {
-           console.log("[Search Scraper] Trying Method 3: CorsProxy.io");
-           const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { timeout: 15000 });
-           return typeof proxyRes.data === 'string' ? proxyRes.data : JSON.stringify(proxyRes.data);
+           console.log("[Search Scraper] M4: Direct with browser headers");
+           const response = await axios.get(url, {
+             headers: getHeaders(),
+             timeout: 8000,
+             validateStatus: () => true
+           });
+           return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
         }
       ];
 
       for (let i = 0; i < methods.length; i++) {
         try {
           html = await methods[i]();
-          if (html && (html.includes('s-result-item') || html.includes('s-main-slot')) && !html.includes('Robot Check')) {
-            console.log(`[Search Scraper] Method ${i+1} succeeded. Length: ${html.length}`);
-            break;
+          // Check for valid Amazon content and absence of Robot Check
+          if (html && (html.includes('s-result-item') || html.includes('s-search-results') || html.includes('s-main-slot'))) {
+            if (!html.includes('Robot Check') && !html.includes('api-services-support@amazon.com')) {
+              console.log(`[Search Scraper] Success with Method ${i+1}. Length: ${html.length}`);
+              break;
+            } else {
+              console.warn(`[Search Scraper] Method ${i+1} flagged as bot/captcha.`);
+              html = ''; // Reset to try next method
+            }
+          } else {
+             console.warn(`[Search Scraper] Method ${i+1} returned invalid content markers.`);
+             html = '';
           }
-          console.warn(`[Search Scraper] Method ${i+1} insufficient/blocked. Length: ${html?.length || 0}`);
-          if (i < methods.length - 1) await sleep(1000 + Math.random() * 1000); 
+          if (i < methods.length - 1) await sleep(500); // Shorter sleep between methods
         } catch (e: any) {
           console.warn(`[Search Scraper] Method ${i+1} error: ${e.message}`);
         }
       }
 
-      if (!html || html.includes('Robot Check') || html.includes('api-services-support@amazon.com')) {
-        console.error("[Search Scraper] All methods failed to bypass bot detection.");
+      if (!html) {
+        console.error("[Search Scraper] CRITICAL_FAILURE: All extraction routes blocked.");
         hasResponded = true;
-        return res.status(503).json({ error: "Amazon blocked the request. Please try a different search term or wait a few minutes." });
+        return res.status(503).json({ 
+          error: "Amazon detection is active. Search was throttled. Please try a more specific query or wait a minute before retrying." 
+        });
       }
 
       const $ = cheerio.load(html);
@@ -145,13 +174,13 @@ async function startServer() {
         }
       });
 
-      console.log(`[Search Scraper] Successfully extracted ${results.length} items.`);
+      console.log(`[Search Scraper] EXTRACTED_COUNT: ${results.length}`);
       hasResponded = true;
       res.json({ results });
     } catch (error: any) {
-      console.error("[Search Scraper Fatal Error]", error.message);
+      console.error("[Search Scraper Internal Error]", error.message);
       if (!hasResponded) {
-        res.status(500).json({ error: "Internal server error during scraping: " + error.message });
+        res.status(500).json({ error: "Scraper process encountered a fatal error: " + error.message });
       }
     }
   });

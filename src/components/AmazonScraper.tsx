@@ -71,12 +71,16 @@ export default function AmazonScraper() {
       });
 
       const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
+      let data;
+      
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
         const text = await response.text();
-        throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}...`);
+        console.error("Non-JSON response:", text);
+        addLog(`CRITICAL: Server returned HTML instead of data. Likely a proxy timeout.`);
+        throw new Error(`The scraping process took too long or was blocked by the network. Please wait 10 seconds and try again.`);
       }
-
-      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Scraping failed');

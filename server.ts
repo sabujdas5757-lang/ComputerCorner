@@ -32,11 +32,15 @@ async function startServer() {
   });
 
   app.post("/api/scrape-amazon-search", async (req, res) => {
+    let hasResponded = false;
     const { query: searchQuery } = req.body;
-    if (!searchQuery) return res.status(400).json({ error: "Search query is required" });
+    
+    if (!searchQuery) {
+      return res.status(400).json({ error: "Search query is required" });
+    }
     
     const url = `https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}`;
-    console.log(`[Search Scraper] Searching for: ${searchQuery}`);
+    console.log(`[Search Scraper] Initiating search for: "${searchQuery}"`);
 
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -65,20 +69,24 @@ async function startServer() {
 
       const methods = [
         async () => {
+           console.log("[Search Scraper] Trying Method 1: Direct Fetch");
            const response = await axios.get(url, {
              headers: getHeaders(),
-             timeout: 15000,
+             timeout: 10000,
              validateStatus: () => true
            });
-           return response.data;
+           return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
         },
         async () => {
-           const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { timeout: 20000 });
-           return proxyRes.data?.contents || '';
+           console.log("[Search Scraper] Trying Method 2: AllOrigins Proxy");
+           const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { timeout: 15000 });
+           const content = proxyRes.data?.contents;
+           return typeof content === 'string' ? content : '';
         },
         async () => {
-           const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { timeout: 20000 });
-           return proxyRes.data;
+           console.log("[Search Scraper] Trying Method 3: CorsProxy.io");
+           const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { timeout: 15000 });
+           return typeof proxyRes.data === 'string' ? proxyRes.data : JSON.stringify(proxyRes.data);
         }
       ];
 
@@ -86,28 +94,29 @@ async function startServer() {
         try {
           html = await methods[i]();
           if (html && (html.includes('s-result-item') || html.includes('s-main-slot')) && !html.includes('Robot Check')) {
-            console.log(`[Search Scraper] Method ${i+1} succeeded. Content length: ${html.length}`);
+            console.log(`[Search Scraper] Method ${i+1} succeeded. Length: ${html.length}`);
             break;
           }
-          console.warn(`[Search Scraper] Method ${i+1} failed/blocked. Content length: ${html?.length || 0}`);
-          if (i < methods.length - 1) await sleep(1500 + Math.random() * 2000); 
+          console.warn(`[Search Scraper] Method ${i+1} insufficient/blocked. Length: ${html?.length || 0}`);
+          if (i < methods.length - 1) await sleep(1000 + Math.random() * 1000); 
         } catch (e: any) {
           console.warn(`[Search Scraper] Method ${i+1} error: ${e.message}`);
         }
       }
 
       if (!html || html.includes('Robot Check') || html.includes('api-services-support@amazon.com')) {
-        throw new Error("Amazon bot detection triggered. Try again later or use a more specific search term.");
+        console.error("[Search Scraper] All methods failed to bypass bot detection.");
+        hasResponded = true;
+        return res.status(503).json({ error: "Amazon blocked the request. Please try a different search term or wait a few minutes." });
       }
 
       const $ = cheerio.load(html);
       const results: any[] = [];
 
-      // More generic selector to catch variations
       $('.s-result-item').each((_, el) => {
         const $el = $(el);
         const asin = $el.attr('data-asin');
-        if (!asin) return; // Only process items with ASIN
+        if (!asin) return;
 
         let title = $el.find('h2 a span').first().text().trim();
         if (!title) title = $el.find('.a-size-medium.a-color-base.a-text-normal').first().text().trim();
@@ -136,11 +145,14 @@ async function startServer() {
         }
       });
 
-      console.log(`[Search Scraper] Found ${results.length} results for "${searchQuery}"`);
+      console.log(`[Search Scraper] Successfully extracted ${results.length} items.`);
+      hasResponded = true;
       res.json({ results });
     } catch (error: any) {
-      console.error("[Search Scraper Error]", error.message);
-      res.status(500).json({ error: error.message });
+      console.error("[Search Scraper Fatal Error]", error.message);
+      if (!hasResponded) {
+        res.status(500).json({ error: "Internal server error during scraping: " + error.message });
+      }
     }
   });
 

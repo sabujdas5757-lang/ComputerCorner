@@ -13,6 +13,8 @@ import { createClient } from '@supabase/supabase-js';
 const app = express();
 const PORT = 3000;
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 async function startServer() {
   // Supabase Configuration (Used for any other future client needs)
   const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
@@ -39,103 +41,78 @@ async function startServer() {
       return res.status(400).json({ error: "Search query is required" });
     }
     
-    // Construct search URL
     const url = `https://www.amazon.in/s?k=${encodeURIComponent(searchQuery)}`;
     console.log(`[Search Scraper] SCRAPING_START: "${searchQuery}"`);
-
-    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
+    
     try {
       let html = '';
-      const uas = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-      ];
-
-      const getHeaders = () => ({
-        'User-Agent': uas[Math.floor(Math.random() * uas.length)],
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Referer': 'https://www.google.com/',
-        'DNT': '1',
-        'Upgrade-Insecure-Requests': '1',
-        'Cache-Control': 'max-age=0',
-        'Sec-Ch-Ua': '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Windows"',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'cross-site',
-        'Sec-Fetch-User': '?1'
-      });
-
-      const methods = [
-        // Method 1: AllOrigins (usually very reliable if direct fetch is blocked)
+      const fetchMethods = [
+        // Method 0: Scraper API (If configured)
         async () => {
-           console.log("[Search Scraper] M1: AllOrigins Proxy");
-           const response = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
-             timeout: 15000 
+           if (!process.env.SCRAPER_API_KEY) throw new Error("SCRAPER_API_KEY is not configured");
+           console.log("[Search Scraper] Attempting Scraper API...");
+           const response = await axios.get(`http://api.scraperapi.com?api_key=${process.env.SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`, { 
+             timeout: 25000,
+             maxContentLength: 5000000
            });
-           return response.data?.contents || '';
+           return typeof response.data === 'string' ? response.data : '';
         },
-        // Method 2: CorsProxy.io
+        // Method 1: Jina AI (Most reliable)
         async () => {
-           console.log("[Search Scraper] M2: CorsProxy.io");
-           const response = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
-             timeout: 15000 
-           });
-           return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
-        },
-        // Method 3: Codetabs Proxy
-        async () => {
-           console.log("[Search Scraper] M3: Codetabs Proxy");
-           const response = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
-             timeout: 15000 
-           });
-           return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
-        },
-        // Method 4: Direct Fetch with specialized headers
-        async () => {
-           console.log("[Search Scraper] M4: Direct with browser headers");
-           const response = await axios.get(url, {
-             headers: getHeaders(),
+           console.log("[Search Scraper] Attempting M1 (Jina)...");
+           const response = await axios.get(`https://r.jina.ai/${url}`, { 
+             headers: { 'X-Return-Format': 'html', 'Accept': 'text/html' },
              timeout: 8000,
-             validateStatus: () => true
+             maxContentLength: 5000000
            });
-           return typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
+           return typeof response.data === 'string' ? response.data : '';
+        },
+        // Method 2: Googlebot UA
+        async () => {
+           console.log("[Search Scraper] Attempting M2 (Direct/Googlebot)...");
+           const response = await axios.get(url, { 
+             headers: { 
+               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+               'Accept-Language': 'en-US,en;q=0.5'
+             },
+             timeout: 8000,
+             maxContentLength: 5000000
+           });
+           return typeof response.data === 'string' ? response.data : '';
+        },
+        // Method 3: AllOrigins Raw Proxy
+        async () => {
+           console.log("[Search Scraper] Attempting M3 (AllOrigins)...");
+           const response = await axios.get(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, { 
+             timeout: 8000,
+             maxContentLength: 5000000
+           });
+           return typeof response.data === 'string' ? response.data : '';
         }
       ];
 
-      for (let i = 0; i < methods.length; i++) {
+      // Sequential execution to prevent OOM crashes (which cause the "Starting Server..." page)
+      for (let i = 0; i < fetchMethods.length; i++) {
         try {
-          html = await methods[i]();
-          // Check for valid Amazon content and absence of Robot Check
-          if (html && (html.includes('s-result-item') || html.includes('s-search-results') || html.includes('s-main-slot'))) {
-            if (!html.includes('Robot Check') && !html.includes('api-services-support@amazon.com')) {
-              console.log(`[Search Scraper] Success with Method ${i+1}. Length: ${html.length}`);
+          const res = await fetchMethods[i]();
+          if (res && res.length > 500 && (res.includes('s-result-item') || res.includes('s-main-slot') || res.includes('aria-label="Results"'))) {
+            if (!res.includes('Robot Check')) {
+              html = res;
+              console.log(`[Search Scraper] Method ${i + 1} Success! Content size: ${res.length}`);
               break;
-            } else {
-              console.warn(`[Search Scraper] Method ${i+1} flagged as bot/captcha.`);
-              html = ''; // Reset to try next method
             }
-          } else {
-             console.warn(`[Search Scraper] Method ${i+1} returned invalid content markers.`);
-             html = '';
           }
-          if (i < methods.length - 1) await sleep(500); // Shorter sleep between methods
+          console.warn(`[Search Scraper] Method ${i + 1} returned invalid content or Robot Check.`);
         } catch (e: any) {
-          console.warn(`[Search Scraper] Method ${i+1} error: ${e.message}`);
+          console.warn(`[Search Scraper] Method ${i + 1} failed: ${e.message}`);
         }
       }
 
       if (!html) {
-        console.error("[Search Scraper] CRITICAL_FAILURE: All extraction routes blocked.");
         hasResponded = true;
         return res.status(503).json({ 
-          error: "Amazon detection is active. Search was throttled. Please try a more specific query or wait a minute before retrying." 
+          error: "Amazon detection is active. Your search was throttled. Please try a more specific search term (e.g., 'Asus Vivobook Ryzen 5') or try again in a few minutes." 
         });
       }
 
@@ -149,157 +126,103 @@ async function startServer() {
 
         let title = $el.find('h2 a span').first().text().trim();
         if (!title) title = $el.find('.a-size-medium.a-color-base.a-text-normal').first().text().trim();
-        if (!title) title = $el.find('.a-size-base-plus.a-color-base.a-text-normal').first().text().trim();
         
         let price = $el.find('.a-price-whole').first().text().trim();
         let symbol = $el.find('.a-price-symbol').first().text().trim() || '₹';
         
         let image = $el.find('.s-image').attr('src');
         let rating = $el.find('.a-icon-star-small .a-icon-alt, .a-icon-star .a-icon-alt').first().text().trim();
-        let reviews = $el.find('.a-size-small .a-link-normal .a-size-base, .a-section.a-spacing-none.a-spacing-top-micro .a-row.a-size-small .a-size-base').first().text().trim();
+        let reviews = $el.find('.a-size-small .a-link-normal .a-size-base').first().text().trim();
         
         const path = $el.find('h2 a').attr('href');
         const link = path ? (path.startsWith('http') ? path : 'https://www.amazon.in' + path) : '';
 
         if (title && (price || image)) {
-          results.push({
-            title,
-            price: price ? `${symbol}${price}` : 'Check Price',
-            image,
-            rating,
-            reviews,
-            url: link,
-            asin
-          });
+          results.push({ title, price: price ? `${symbol}${price}` : 'Check Price', image, rating, reviews, url: link, asin });
         }
       });
 
-      console.log(`[Search Scraper] EXTRACTED_COUNT: ${results.length}`);
+      console.log(`[Search Scraper] SUCCESS: Found ${results.length} items.`);
       hasResponded = true;
       res.json({ results });
     } catch (error: any) {
-      console.error("[Search Scraper Internal Error]", error.message);
+      console.error("[Search Scraper Error]", error.message);
       if (!hasResponded) {
-        res.status(500).json({ error: "Scraper process encountered a fatal error: " + error.message });
+        res.status(500).json({ error: "Internal scraper failure: " + error.message });
       }
     }
   });
 
   app.post("/api/scrape-product", async (req, res) => {
-    const { url } = req.body;
+    const { url, scraperApiKey } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
-    console.log(`[Scraper] [${req.method}] ${req.path} - URL: ${url}`);
+    console.log(`[Scraper] START: ${url.substring(0, 50)}...`);
     
     try {
       let html = '';
       
-      const fetchMethods = [
-        // Method 1: Direct fetch with standard UA
+      const fetchMethodsMap = [
+        // Method 0: Scraper API (If configured)
+        async () => {
+           const apiKey = scraperApiKey || process.env.SCRAPER_API_KEY;
+           if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
+           console.log("[Scraper] Attempting Scraper API...");
+           const response = await axios.get(`http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(url)}`, { 
+             timeout: 25000,
+             maxContentLength: 5000000
+           });
+           return typeof response.data === 'string' ? response.data : '';
+        },
+        // Method 1: Jina AI (Most robust for product details)
+        async () => {
+          const response = await axios.get(`https://r.jina.ai/${url}`, { 
+            headers: { 'X-Return-Format': 'html' },
+            timeout: 8000,
+            maxContentLength: 5000000 
+          });
+          return response.data;
+        },
+        // Method 2: Direct fetch with Googlebot headers
         async () => {
           const response = await axios.get(url, {
-            timeout: 10000,
+            timeout: 8000,
+            maxContentLength: 5000000,
             headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
               'Accept-Language': 'en-US,en;q=0.5',
-              'Referer': 'https://www.google.com/',
             }
           });
           return response.data;
         },
-        // Method 2: Direct fetch with different UA
+        // Method 3: AllOrigins Raw
         async () => {
-          const response = await axios.get(url, {
-            timeout: 10000,
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            }
-          });
-          return response.data;
-        },
-        // Method 3: AllOrigins Proxy
-        async () => {
-          const proxyRes = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            headers: { 'User-Agent': 'Mozilla/5.0' }
-          });
-          return proxyRes.data?.contents || '';
-        },
-        // Method 4: Codetabs Proxy
-        async () => {
-          const proxyRes = await axios.get(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            validateStatus: () => true 
-          });
-          if (proxyRes.status !== 200) throw new Error(`Codetabs returned ${proxyRes.status}`);
-          return proxyRes.data;
-        },
-        // Method 5: CorsProxy.io
-        async () => {
-          const proxyRes = await axios.get(`https://corsproxy.io/?${encodeURIComponent(url)}`, { 
-            timeout: 20000,
-            validateStatus: () => true
-          });
-          if (proxyRes.status !== 200) throw new Error(`CorsProxy returned ${proxyRes.status}`);
-          return proxyRes.data;
-        },
-        // Method 6: ThingProxy
-        async () => {
-          const proxyRes = await axios.get(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`, { timeout: 15000 });
-          return proxyRes.data;
-        },
-        // Method 7: Proxy.io (different endpoint)
-        async () => {
-          const proxyRes = await axios.get(`https://proxy.cors.sh/${url}`, { 
-            timeout: 15000,
-            headers: { 'x-cors-gratis': 'true' }
+          const proxyRes = await axios.get(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, { 
+            timeout: 8000,
+            maxContentLength: 5000000
           });
           return proxyRes.data;
-        },
-        // Method 8: Direct fetch using native fetch (sometimes axios headers are flagged)
-        async () => {
-          const response = await fetch(url, {
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            },
-            signal: AbortSignal.timeout(10000)
-          } as any);
-          if (!response.ok) throw new Error(`Fetch returned ${response.status}`);
-          return await response.text();
         }
       ];
 
-      for (const method of fetchMethods) {
+      // Sequential fetch to prevent OOM
+      for (let i = 0; i < fetchMethodsMap.length; i++) {
         try {
-          html = await method();
-          
-          // Check if we got a real page or a block
-          if (html && 
-              typeof html === 'string' &&
-              html.includes('<html') && 
-              !html.includes('Robot Check') && 
-              !html.includes('Bot Check') &&
-              !html.includes('captcha') &&
-              !html.includes('503 Service Unavailable') &&
-              !html.includes('503 - Service Unavailable') &&
-              html.length > 500) { // Lowered threshold slightly
-            console.log(`[Scraper] Successfully fetched content (${html.length} chars) using a fetch method.`);
+          console.log(`[Scraper] Attempting Method ${i + 1}...`);
+          const res = await fetchMethodsMap[i]();
+          if (res && typeof res === 'string' && res.includes('<html') && !res.includes('Robot Check') && res.length > 500) {
+            html = res;
+            console.log(`[Scraper] Success with Method ${i + 1}`);
             break;
-          } else {
-            console.log(`[Scraper] Content too short, blocked, or invalid (Length: ${html?.length}), trying next...`);
-            html = '';
           }
-        } catch (error: any) {
-          const status = error.response?.status || 'network error';
-          console.warn(`[Scraper] A fetch method failed (${status}): ${error.message}`);
+        } catch (e: any) {
+          console.warn(`[Scraper] Method ${i + 1} failed: ${e.message}`);
         }
       }
 
-      if (!html || !html.includes('<html')) {
-        console.error("[Scraper] All fetch methods failed for URL:", url);
-        throw new Error("The target website is heavily protected or temporarily unavailable (all 8 attempt methods failed). Please add product details manually.");
+      if (!html) {
+        console.error("[Scraper] ALL product fetch methods failed.");
+        throw new Error("The website is currently blocking extraction. Please try one more time or add details manually.");
       }
 
       const $ = cheerio.load(html);

@@ -70,25 +70,37 @@ export default function AmazonScraper() {
         body: JSON.stringify({ query: query_term })
       });
 
-      const contentType = response.headers.get("content-type");
       let data;
+      const contentType = response.headers.get("content-type");
       
       if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
         const text = await response.text();
-        console.error("Non-JSON response:", text);
-        addLog(`CRITICAL: Server returned HTML instead of data. Likely a proxy timeout.`);
-        throw new Error(`The scraping process took too long or was blocked by the network. Please wait 10 seconds and try again.`);
+        console.error("Non-JSON response received:", text.substring(0, 500));
+        
+        if (text.includes("Starting Server") || text.includes("Please wait while your application starts")) {
+          throw new Error("The backend server is currently initializing or warming up. This is normal during site updates. Please wait about 10-15 seconds and try again.");
+        }
+        
+        if (text.includes("503") || text.includes("Service Temporarily Unavailable")) {
+          throw new Error("The scraping infrastructure is temporarily overloaded. Please try again in 30 seconds.");
+        }
+
+        throw new Error("Received an unexpected response from the server. This can happen if the scraping request takes too long. Please try a simpler search term.");
       }
 
       if (!response.ok) {
         throw new Error(data.error || 'Scraping failed');
       }
 
-      addLog(`Successfully parsed HTML response.`);
-      addLog(`Extraction complete. Found ${data.results.length} product nodes.`);
-      setResults(data.results);
+      const found = data.results || [];
+      setResults(found);
+      addLog(`SUCCESS: Found ${found.length} items.`);
+      if (found.length === 0) {
+        addLog("WARNING: No results were found on the page.");
+        setError("No products found for this term. Try a more specific search.");
+      }
     } catch (err: any) {
       addLog(`CRITICAL ERROR: ${err.message}`);
       setError(err.message);
@@ -110,17 +122,46 @@ export default function AmazonScraper() {
     }
 
     setSaveLoading(true);
+    let fullDetails = null;
+
     try {
-      // Clean price string (remove symbols for storage consistency)
-      const cleanPrice = selectedProduct.price.replace(/[^0-9.]/g, '');
+      addLog(`Fetching comprehensive details for ${selectedProduct.asin}...`);
+      const response = await fetch('/api/scrape-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: selectedProduct.url })
+      });
+      
+      if (response.ok) {
+        fullDetails = await response.json();
+        addLog(`SUCCESS: Extracted full specs, images & pricing.`);
+      } else {
+        const errData = await response.json().catch(() => ({}));
+        addLog(`WARNING: Deep scrape failed (${errData?.error || 'Unknown'}). Using basic data.`);
+      }
+    } catch (err: any) {
+      addLog(`WARNING: Deep scrape error: ${err.message}. Using basic data.`);
+    }
+
+    try {
+      const finalPrice = fullDetails?.price || selectedProduct.price;
+      const finalName = fullDetails?.name || selectedProduct.title;
+      const finalBrand = (fullDetails?.brand && fullDetails.brand !== 'Unknown') ? fullDetails.brand : addForm.brand;
+      const finalCategory = addForm.category;
+      const finalDescription = fullDetails?.description || `Source: Amazon (ASIN: ${selectedProduct.asin})\nRating: ${selectedProduct.rating}\nReviews: ${selectedProduct.reviews}`;
+      const finalImage = fullDetails?.image || selectedProduct.image;
       
       const newProduct = {
-        name: selectedProduct.title,
-        brand: addForm.brand,
-        category: addForm.category,
-        price: cleanPrice,
-        image: selectedProduct.image,
-        description: `Source: Amazon (ASIN: ${selectedProduct.asin})\nRating: ${selectedProduct.rating}\nReviews: ${selectedProduct.reviews}`,
+        name: finalName,
+        brand: finalBrand,
+        category: finalCategory,
+        price: finalPrice,
+        oldPrice: fullDetails?.oldPrice || '',
+        discount: fullDetails?.discount || '',
+        image: finalImage,
+        additionalImages: fullDetails?.additionalImages || [],
+        specifications: fullDetails?.specifications || {},
+        description: finalDescription,
         isHotSelling: addForm.isHotSelling,
         showInHomeGrid: addForm.showInHomeGrid,
         createdAt: new Date().toISOString(),
@@ -129,7 +170,7 @@ export default function AmazonScraper() {
 
       await addProduct(newProduct);
       setSaveSuccess(selectedProduct.asin);
-      addLog(`SUCCESS: Added "${selectedProduct.title}" to catalog.`);
+      addLog(`SUCCESS: Added "${finalName}" to catalog.`);
       
       setTimeout(() => {
         setShowAddModal(false);

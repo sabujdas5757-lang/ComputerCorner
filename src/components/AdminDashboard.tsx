@@ -43,6 +43,16 @@ export default function AdminDashboard() {
   }, [products, searchQuery]);
 
   const [scrapeUrl, setScrapeUrl] = useState('');
+  const [scraperApiKey, setScraperApiKey] = useState(localStorage.getItem('scraperApiKey') || '');
+
+  // Save to localStorage when changed
+  useEffect(() => {
+    if (scraperApiKey) {
+      localStorage.setItem('scraperApiKey', scraperApiKey);
+    } else {
+      localStorage.removeItem('scraperApiKey');
+    }
+  }, [scraperApiKey]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -477,7 +487,7 @@ export default function AdminDashboard() {
         const response = await fetch('/api/scrape-product', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: scrapeUrl })
+          body: JSON.stringify({ url: scrapeUrl, scraperApiKey: scraperApiKey })
         });
         
         if (response.status === 405) {
@@ -1410,13 +1420,21 @@ export default function AdminDashboard() {
             
             {/* Scrapper tool */}
             {!editingId && (
-              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                <p className="text-sm text-gray-400">Import from URL</p>
-                <div className="flex gap-2">
-                  <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
-                  <button 
-                    type="button" 
-                    onClick={handleScrapeProduct} 
+              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-4">
+                <div>
+                  <label className="text-sm font-bold text-white flex items-center justify-between mb-2">
+                    Scraper API (Recommended)
+                    <a href="https://www.scraperapi.com/" target="_blank" rel="noreferrer" className="text-xs text-primary underline">Get Key</a>
+                  </label>
+                  <input type="password" value={scraperApiKey} onChange={e => setScraperApiKey(e.target.value)} placeholder="Enter ScraperAPI Key (Optional)..." className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-400 mb-2 block">Import from Amazon URL</label>
+                  <div className="flex gap-2">
+                    <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter Amazon product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+                    <button 
+                      type="button" 
+                      onClick={handleScrapeProduct} 
                     disabled={isImporting}
                     className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
@@ -1430,6 +1448,7 @@ export default function AdminDashboard() {
                     {scrapingStatus}
                   </p>
                 )}
+                </div>
               </div>
             )}
 

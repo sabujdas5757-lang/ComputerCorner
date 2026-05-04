@@ -22,17 +22,27 @@ const PORT = 3000;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function startServer() {
-  // Supabase Configuration (Used for any other future client needs)
-  const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
-  let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
-  const supabaseKey = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpydmR1b3hzYXF0aWl4c2tucG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMjg3MjksImV4cCI6MjA5MjcwNDcyOX0.hfM5tjamYmPKe9t2way_tm0fVQMdnG980u4K_HWUPso";
+  // Supabase Configuration
+  const rawSupabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
   const supabaseBucket = process.env.SUPABASE_BUCKET || "products";
+
+  let supabase = null;
+  if (rawSupabaseUrl && supabaseKey) {
+    try {
+      const supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
+      supabase = createClient(supabaseUrl, supabaseKey);
+      console.log("[Storage] Supabase client initialized.");
+    } catch (e: any) {
+      console.error("[Storage] Failed to initialize Supabase:", e.message);
+    }
+  } else {
+    console.log("[Storage] Supabase not configured (missing URL or Key).");
+  }
 
   const firecrawlApiKey = process.env.FIRECRAWL_API_KEY || "fc-41fffa08d219415a98e026b53da7a8e4";
   const firecrawl = firecrawlApiKey ? new FirecrawlApp({ apiKey: firecrawlApiKey }) : null;
 
-  const supabase = supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
-  
   app.use(cors());
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));

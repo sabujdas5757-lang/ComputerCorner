@@ -713,11 +713,23 @@ export default function AdminDashboard() {
             <p className="text-gray-400 mt-2">Manage products and inventory</p>
           </div>
           {storageStatus && !storageStatus.configured ? (
-            <div className="flex-1 max-w-md bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-3 text-red-500">
-              <AlertCircle size={20} className="flex-shrink-0" />
+            <div className="flex-1 max-w-lg bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-2xl flex items-start gap-4 text-red-500">
+              <AlertCircle size={24} className="flex-shrink-0 mt-0.5" />
               <div className="text-xs">
-                <p className="font-bold">Storage Missing</p>
-                <p className="opacity-80">Images will not be saved permanently. Please set tokens.</p>
+                <p className="font-bold text-sm mb-1">Permanent Storage Missing</p>
+                <p className="opacity-90 leading-relaxed">
+                  Images won't persist across restarts. To fix this:
+                  <br />
+                  1. Click <b>Settings</b> in the top left menu of AI Studio.
+                  <br />
+                  2. Add <b>BLOB_READ_WRITE_TOKEN</b> (Vercel) or <b>SUPABASE_ANON_KEY</b>.
+                </p>
+                <button 
+                  onClick={() => window.open('https://vercel.com/docs/storage/vercel-blob/using-blob-sdk#get-started', '_blank')}
+                  className="mt-2 text-primary font-bold hover:underline"
+                >
+                  Get a Vercel Token →
+                </button>
               </div>
             </div>
           ) : storageStatus && (

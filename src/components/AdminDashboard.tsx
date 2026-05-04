@@ -7,7 +7,6 @@ import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
-import { GoogleGenAI } from "@google/genai";
 
 const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'MacBook'];
 
@@ -43,7 +42,17 @@ export default function AdminDashboard() {
     );
   }, [products, searchQuery]);
 
+  const [scrapeUrl, setScrapeUrl] = useState('');
+  const [scraperApiKey, setScraperApiKey] = useState(localStorage.getItem('scraperApiKey') || '5d5e88487260af181c9730311f19d12a');
+
   // Save to localStorage when changed
+  useEffect(() => {
+    if (scraperApiKey) {
+      localStorage.setItem('scraperApiKey', scraperApiKey);
+    } else {
+      localStorage.removeItem('scraperApiKey');
+    }
+  }, [scraperApiKey]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -52,6 +61,7 @@ export default function AdminDashboard() {
   const [confirmingAllDelete, setConfirmingAllDelete] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
+  const [scrapingStatus, setScrapingStatus] = useState<string | null>(null);
   const [storageStatus, setStorageStatus] = useState<{configured: boolean, message: string} | null>(null);
 
   const [categories, setCategories] = useState<{id: string, name: string, img: string}[]>([]);
@@ -195,23 +205,12 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    const checkStorage = async () => {
-      try {
-        const res = await fetch('/api/storage-status');
-        const data = await safeJson(res);
-        if (data && !data.error) {
-          setStorageStatus(data);
-        } else {
-          const errorMsg = data?.error || `Server returned status ${res.status}`;
-          console.error("Storage status check error:", errorMsg);
-          setStorageStatus({configured: false, message: "Storage status check failed: " + errorMsg});
-        }
-      } catch (err: any) {
-        console.error("Storage status check failed:", err.message);
-        setStorageStatus({configured: false, message: "Storage status check failed: " + err.message});
-      }
-    };
-    checkStorage();
+    fetch('/api/storage-status')
+      .then(res => res.json())
+      .then(data => {
+        if (data) setStorageStatus(data);
+      })
+      .catch(err => console.error("Storage status check failed:", err));
   }, []);
 
   const safeJson = async (response: Response) => {
@@ -238,6 +237,249 @@ export default function AdminDashboard() {
   const showFeedback = (msg: string) => {
     setFeedbackMsg(msg);
     setTimeout(() => setFeedbackMsg(null), 3000);
+  };
+
+  const clientSideScrape = async (url: string) => {
+    let html = '';
+    const encodedUrl = encodeURIComponent(url);
+
+    // Try multiple proxy services. Amazon is notoriously hard to scrape from free proxies.
+    const getProxyRequests = [
+      {
+        name: 'ScraperAPI',
+        fn: async () => {
+          const proxyKey = scraperApiKey || "5d5e88487260af181c9730311f19d12a";
+           if (!proxyKey) throw new Error("ScraperAPI key not provided");
+           
+           // Use Structured Amazon Endpoint if possible
+           const asinMatch = url.match(/(?:\/dp\/|\/gp\/product\/)([A-Z0-9]{10})/);
+           const tldMatch = url.match(/amazon\.([a-z\.]+)/i);
+           
+           if (asinMatch && tldMatch) {
+               let apiUrl = `https://api.scraperapi.com/structured/amazon/product?api_key=${proxyKey}&asin=${asinMatch[1]}&tld=${tldMatch[1]}`;
+               const res = await fetch(apiUrl);
+               if (!res.ok) throw new Error("ScraperAPI failed with status " + res.status);
+               
+               // The Structured API returns JSON. We need to format it into HTML for our parser!
+               const jsonData = await res.json();
+               let parsedPrice = jsonData.pricing || jsonData.price || '';
+               if (parsedPrice) parsedPrice = String(parsedPrice).replace(/[^0-9.]/g, '');
+               
+               // Mock an HTML page so parseFromString works
+               return `
+                 <html>
+                   <head>
+                     <title>${jsonData.name || jsonData.title || ''}</title>
+                     <meta property="product:brand" content="${jsonData.brand || ''}">
+                     <meta property="product:price:amount" content="${parsedPrice}">
+                   </head>
+                   <body>
+                     <img id="landingImage" src="${jsonData.images ? jsonData.images[0] : ''}">
+                     <div id="feature-bullets">${jsonData.feature_bullets ? jsonData.feature_bullets.join('\\n') : ''}</div>
+                     <div id="altImages">
+                        ${jsonData.images ? jsonData.images.map((img: string) => `<img src="${img}">`).join('') : ''}
+                     </div>
+                   </body>
+                 </html>
+               `;
+           }
+
+          let apiUrl = `https://api.scraperapi.com?api_key=${proxyKey}&autoparse=true&premium=true&url=${encodedUrl}`;
+          if (url.includes('.in/')) {
+             apiUrl += '&country_code=in';
+          }
+          const res = await fetch(apiUrl);
+          if (!res.ok) throw new Error("ScraperAPI failed with status " + res.status);
+          
+          const textData = await res.text();
+          try {
+             // If autoparse returns JSON, we wrap it in HTML
+             const jsonData = JSON.parse(textData);
+             let parsedPrice = jsonData.pricing || jsonData.price || '';
+             if (parsedPrice) parsedPrice = String(parsedPrice).replace(/[^0-9.]/g, '');
+             
+             return `
+                 <html>
+                   <head>
+                     <title>${jsonData.name || jsonData.title || ''}</title>
+                     <meta property="product:brand" content="${jsonData.brand || ''}">
+                     <meta property="product:price:amount" content="${parsedPrice}">
+                   </head>
+                   <body>
+                     <img id="landingImage" src="${jsonData.images ? jsonData.images[0] : ''}">
+                     <div id="feature-bullets">${jsonData.feature_bullets ? jsonData.feature_bullets.join('\\n') : ''}</div>
+                     <div id="altImages">
+                        ${jsonData.images ? jsonData.images.map((img: string) => `<img src="${img}">`).join('') : ''}
+                     </div>
+                   </body>
+                 </html>
+             `;
+          } catch(e) {
+             return textData;
+          }
+        }
+      },
+      {
+        name: 'Proxy A (ScraperAPI backend/Jina)',
+        fn: async () => {
+          const res = await fetch(`https://r.jina.ai/${url}`);
+          if (!res.ok) throw new Error("Jina failed");
+          return await res.text();
+        }
+      }
+    ];
+
+    for (const proxy of getProxyRequests) {
+      try {
+        setScrapingStatus(`Trying ${proxy.name}...`);
+        html = await proxy.fn();
+        
+        // Super basic validation that we actually got HTML and not an anti-bot captcha page
+        if (html && 
+            html.includes('<html') && 
+            !html.includes('503 - Service Unavailable') &&
+            !html.includes('503 Service Unavailable') &&
+            !html.includes('Robot Check') &&
+            !html.includes('Bot Check') &&
+            !html.includes('captcha')) {
+           break;
+        } else {
+           console.warn(`${proxy.name} returned blocked content.`);
+           html = ''; // Reset html if it hit a bot check
+        }
+      } catch (e) {
+        console.warn(`${proxy.name} failed:`, e);
+      }
+    }
+    
+    if (!html || !html.includes('<html')) {
+      throw new Error("Target website blocked all requests (Anti-bot protection). Please manually add the product details below.");
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const name = doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || 
+                 doc.querySelector('title')?.textContent ||
+                 doc.querySelector('h1')?.textContent?.trim() ||
+                 'Unknown Product';
+    
+    const priceEl = doc.querySelector('meta[property="product:price:amount"]') || 
+                    doc.querySelector('[itemprop="price"]') || 
+                    doc.querySelector('.price, .product-price, .amount, .a-price-whole');
+    
+    const priceText = priceEl?.getAttribute('content') || priceEl?.textContent || '0';
+    const cleanedPrice = formatPrice(String(priceText));
+
+    const oldPriceEl = doc.querySelector('.old-price, .a-text-strike, del');
+    const oldPriceText = oldPriceEl?.textContent || '';
+    const oldPrice = oldPriceText ? formatPrice(String(oldPriceText)) : '';
+
+    const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
+                  doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content') ||
+                  doc.querySelector('img[itemprop="image"]')?.getAttribute('src') ||
+                  doc.querySelector('#landingImage, #imgBlkFront')?.getAttribute('src') || '';
+
+    const additionalImages: string[] = [];
+    const imageElements = Array.from(doc.querySelectorAll('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img'));
+    imageElements.forEach(el => {
+      let src = el.getAttribute('src') || el.getAttribute('data-old-hires') || el.getAttribute('data-src');
+      if (src) {
+        if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
+          src = src.replace(/\._[A-Z0-9_]+_\./, '.');
+        }
+        if (src !== image && !additionalImages.includes(src) && src.startsWith('http')) {
+          additionalImages.push(src);
+        }
+      }
+    });
+
+    if (additionalImages.length === 0) {
+      const scriptMatch = html.match(/'colorImages':\s*({.+?}),/);
+      if (scriptMatch && scriptMatch[1]) {
+        try {
+          const data = JSON.parse(scriptMatch[1].replace(/'/g, '"'));
+          if (data.initial && Array.isArray(data.initial)) {
+            data.initial.forEach((imgObj: any) => {
+              if (imgObj.hiRes && imgObj.hiRes !== image && !additionalImages.includes(imgObj.hiRes)) {
+                additionalImages.push(imgObj.hiRes);
+              } else if (imgObj.large && imgObj.large !== image && !additionalImages.includes(imgObj.large)) {
+                additionalImages.push(imgObj.large);
+              }
+            });
+          }
+        } catch (e) {}
+      }
+    }
+
+    const description = doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || 
+                        doc.querySelector('meta[name="description"]')?.getAttribute('content') ||
+                        doc.querySelector('.description, .product-description, #feature-bullets')?.textContent?.trim() || '';
+
+    const brandEl = doc.querySelector('meta[property="product:brand"]') || doc.querySelector('[itemprop="brand"] [itemprop="name"]') || doc.querySelector('[itemprop="brand"]') || doc.querySelector('#bylineInfo');
+    let brand = brandEl?.getAttribute('content') || brandEl?.textContent?.trim() || '';
+    if (brand) {
+      if (brand.toLowerCase().startsWith('visit the ')) {
+        brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
+      }
+      if (brand.toLowerCase().startsWith('brand: ')) {
+        brand = brand.replace(/brand: /i, '').trim();
+      }
+    } else {
+      brand = 'Unknown';
+    }
+
+    const category = doc.querySelector('meta[property="product:category"]')?.getAttribute('content') || 
+                     doc.querySelector('[itemprop="category"]')?.getAttribute('content') || 
+                     doc.querySelector('.nav-a-content')?.textContent?.trim() || '';
+
+    let discount = '';
+    const discountEl = doc.querySelector('.savingsPercentage, .discount, .badge');
+    if (discountEl) {
+      discount = discountEl.textContent?.trim() || '';
+    }
+
+    const specifications: Record<string, string> = {};
+    
+    // Amazon and generic tables
+    const specRows = Array.from(doc.querySelectorAll('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr'));
+    specRows.forEach(row => {
+      const key = (row.querySelector('th')?.textContent || row.querySelector('td:first-child')?.textContent || '').trim();
+      const value = (row.querySelector('td:not(:first-child)')?.textContent || row.querySelector('td:last-child')?.textContent || '').trim();
+      
+      if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
+        // Clean up common Amazon weird chars (ZWSP, Zero-width space)
+        const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        if (cleanKey && cleanVal) {
+          specifications[cleanKey] = cleanVal;
+        }
+      }
+    });
+
+    const poRows = Array.from(doc.querySelectorAll('.po-row'));
+    poRows.forEach(row => {
+      const key = row.querySelector('.a-span3')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      const value = row.querySelector('.a-span9')?.textContent?.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+      if (key && value) {
+        specifications[key] = value;
+      }
+    });
+
+    let featureCount = 1;
+    const bulletItems = Array.from(doc.querySelectorAll('#feature-bullets ul li:not(.a-hidden) span.a-list-item'));
+    bulletItems.forEach(item => {
+      const text = item.textContent?.trim();
+      if (text && !text.includes('Hide') && !text.includes('Show more')) {
+        specifications[`Feature ${featureCount++}`] = text;
+      }
+    });
+
+    if ((!brand || brand === 'Unknown') && specifications['Brand']) {
+      brand = specifications['Brand'];
+    }
+
+    return { name, price: cleanedPrice, oldPrice, image, additionalImages, description, brand, category, discount, specifications };
   };
 
   const detectCategory = (scrapedCat: string, name: string, description: string) => {
@@ -277,6 +519,148 @@ export default function AdminDashboard() {
     }
 
     return categories.length > 0 ? categories[0].name : 'Laptops';
+  };
+
+  const handleScrapeProduct = async () => {
+    if (!scrapeUrl) return;
+    setIsImporting(true);
+    setScrapingStatus('Connecting to backend...');
+    try {
+      // First, check backend health
+      try {
+        const healthRes = await fetch('/api/health');
+        if (!healthRes.ok) {
+           console.warn("Backend health check failed:", healthRes.status);
+        }
+      } catch (healthErr) {
+        console.error("Backend health check error:", healthErr);
+      }
+
+      let productData;
+      try {
+        setScrapingStatus('Querying smart backend engine...');
+        const response = await fetch('/api/scrape-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: scrapeUrl, scraperApiKey: scraperApiKey })
+        });
+        
+        if (response.status === 405) {
+          throw new Error("405 Method Not Allowed: The server is misconfigured or using a static host. Fallback triggered.");
+        }
+
+        const contentType = response.headers.get("content-type");
+        const bodyText = await response.text();
+        
+        if (!contentType || !contentType.includes("application/json") || !bodyText) {
+          console.error("Invalid response from backend:", bodyText.substring(0, 100));
+          throw new Error(`Server returned a non-JSON or empty response (Status: ${response.status}). Fallback triggered.`);
+        }
+
+        try {
+          productData = JSON.parse(bodyText);
+        } catch (parseE) {
+          throw new Error("Failed to parse backend JSON. Fallback triggered.");
+        }
+
+        if (!response.ok) throw new Error(productData?.error || 'Failed to scrape');
+
+        // AUTOMATIC STORAGE: Upload the scraped image to Vercel Blob immediately
+        if (productData.image && productData.image.startsWith('http')) {
+          try {
+            setScrapingStatus('Saving primary image to Vercel storage...');
+            const uploadRes = await fetch('/api/upload-from-url', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: productData.image })
+            });
+            if (uploadRes.ok) {
+              const uploadData = await safeJson(uploadRes);
+              if (uploadData?.secure_url) {
+                productData.image = uploadData.secure_url;
+              }
+            }
+          } catch (uploadErr) {
+            console.warn("Failed to auto-upload scraped image:", uploadErr);
+          }
+        }
+
+        // Also try to upload additional images if there are a few
+        if (productData.additionalImages && Array.isArray(productData.additionalImages)) {
+          const topImages = productData.additionalImages.slice(0, 3); // Just the first few to save time/quota
+          const savedImages: string[] = [];
+          
+          for (const imgUrl of topImages) {
+            try {
+              const uploadRes = await fetch('/api/upload-from-url', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: imgUrl })
+              });
+              if (uploadRes.ok) {
+                const uploadData = await safeJson(uploadRes);
+                if (uploadData?.secure_url) {
+                  savedImages.push(uploadData.secure_url);
+                } else {
+                  savedImages.push(imgUrl);
+                }
+              } else {
+                savedImages.push(imgUrl);
+              }
+            } catch (e) {
+              savedImages.push(imgUrl);
+            }
+          }
+          productData.additionalImages = [...savedImages, ...productData.additionalImages.slice(3)];
+        }
+      } catch (backendError: any) {
+        console.warn("Backend scrape failed or unavailable, falling back to client-side proxy...", backendError.message);
+        const errMsg = backendError.message || '';
+        
+        if (errMsg.includes('404 Page Not Found') || errMsg.includes('does not exist on Amazon')) {
+          throw new Error("This product does not exist on Amazon (404 Page Not Found).");
+        }
+        
+        setScrapingStatus(`Backend check: ${backendError.message.substring(0, 30)}... Falling back to browser-proxies.`);
+        productData = await clientSideScrape(scrapeUrl);
+      }
+
+      const product = {
+        name: productData.name || '',
+        brand: productData.brand && productData.brand.toLowerCase() !== 'unknown' ? productData.brand : '',
+        category: detectCategory(productData.category || '', productData.name || '', productData.description || ''),
+        description: productData.description || '',
+        price: productData.price || '',
+        oldPrice: productData.oldPrice || '',
+        discount: productData.discount || '',
+        usageTags: [],
+        image: productData.image || '',
+        additionalImages: productData.additionalImages || []
+      };
+      
+      setFormData(product);
+      
+      const newSpecs: {key: string, value: string}[] = [];
+      if (productData.specifications) {
+         Object.entries(productData.specifications).forEach(([k, v]) => {
+           newSpecs.push({key: k, value: String(v)});
+         });
+      }
+      setSpecs(newSpecs);
+      
+      showFeedback('Product details imported to form. Review and click "Add Product".');
+      setScrapeUrl('');
+
+      // Scroll to form after import
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    } catch (err: any) {
+      showFeedback(`Error scraping/adding product: ${err.message}`);
+    } finally {
+      setIsImporting(false);
+      setScrapingStatus(null);
+    }
   };
 
   const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -501,7 +885,6 @@ export default function AdminDashboard() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [addUrlInput, setAddUrlInput] = useState('');
-  const [scrapeMode, setScrapeMode] = useState<'standard' | 'firecrawl' | 'playwright'>('playwright');
 
   const handleAddSpec = () => {
     setSpecs([...specs, { key: '', value: '' }]);
@@ -712,36 +1095,20 @@ export default function AdminDashboard() {
             <h1 className="text-4xl font-bold">Admin Portal</h1>
             <p className="text-gray-400 mt-2">Manage products and inventory</p>
           </div>
-          {storageStatus && !storageStatus.configured ? (
-            <div className="flex-1 max-w-lg bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-2xl flex items-start gap-4 text-red-500">
-              <AlertCircle size={24} className="flex-shrink-0 mt-0.5" />
+          {storageStatus && !storageStatus.configured && (
+            <div className="flex-1 max-w-md bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-3 text-red-500">
+              <AlertCircle size={20} className="flex-shrink-0" />
               <div className="text-xs">
-                <p className="font-bold text-sm mb-1">Permanent Storage Missing</p>
-                <p className="opacity-90 leading-relaxed">
-                  Images won't persist across restarts. To fix this:
-                  <br />
-                  1. Click <b>Settings</b> in the top left menu of AI Studio.
-                  <br />
-                  2. Add <b>BLOB_READ_WRITE_TOKEN</b> (Vercel) or <b>SUPABASE_ANON_KEY</b>.
-                </p>
-                <button 
-                  onClick={() => window.open('https://vercel.com/docs/storage/vercel-blob/using-blob-sdk#get-started', '_blank')}
-                  className="mt-2 text-primary font-bold hover:underline"
-                >
-                  Get a Vercel Token →
-                </button>
-              </div>
-            </div>
-          ) : storageStatus && (
-            <div className="flex-1 max-w-md bg-primary/10 border border-primary/20 px-4 py-2 rounded-xl flex items-center gap-3 text-primary">
-              <Database size={20} className="flex-shrink-0" />
-              <div className="text-xs">
-                <p className="font-bold">Storage Ready</p>
-                <p className="opacity-80">Using {storageStatus.provider}</p>
+                <p className="font-bold">Storage Missing</p>
+                <p className="opacity-80">Images will not be saved permanently. Please set tokens.</p>
               </div>
             </div>
           )}
-          <div className="flex flex-wrap gap-4" id="admin-header-actions">
+          <div className="flex gap-4">
+            <Link to="/admin/scraper" className="px-6 py-2 bg-[#00ff41]/20 text-[#00ff41] border border-[#00ff41]/20 rounded-xl hover:bg-[#00ff41]/30 transition-colors flex items-center gap-2 font-mono text-sm">
+              <Database size={16} />
+              Spiders
+            </Link>
             <Link to="/" className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
               Back to Home
             </Link>
@@ -1098,13 +1465,11 @@ export default function AdminDashboard() {
               </h2>
               <div className="flex gap-2">
                 {!editingId && (
-                  <div className="flex gap-2">
-                    <label className="text-sm bg-white/5 border border-white/10 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-2 text-primary whitespace-nowrap">
-                      <Upload size={16} />
-                      <span>Bulk Upload (.xlsx, .jpg)</span>
-                      <input type="file" multiple accept=".xlsx, .xls, .csv, .jpg, .jpeg, .png" onChange={handleBulkUpload} className="hidden" />
-                    </label>
-                  </div>
+                  <label className="text-sm bg-white/5 border border-white/10 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-2 text-primary whitespace-nowrap">
+                    <Upload size={16} />
+                    <span>Bulk Upload (.xlsx, .jpg)</span>
+                    <input type="file" multiple accept=".xlsx, .xls, .csv, .jpg, .jpeg, .png" onChange={handleBulkUpload} className="hidden" />
+                  </label>
                 )}
                 {editingId && (
                   <button onClick={handleCancelEdit} className="text-sm text-gray-400 hover:text-white transition-colors">
@@ -1114,149 +1479,41 @@ export default function AdminDashboard() {
               </div>
             </div>
             
-            
-            {/* Scrape Tool */}
-            <div className="mb-8 p-6 bg-black/40 border border-white/5 rounded-2xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <h2 className="text-lg font-bold text-white">Fetch Product Data from URL</h2>
-                <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
-                  {(['standard', 'firecrawl', 'playwright'] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setScrapeMode(mode)}
-                      className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all uppercase tracking-wider ${
-                        scrapeMode === mode 
-                          ? 'bg-primary text-bg-dark shadow-lg' 
-                          : 'text-gray-400 hover:text-white'
-                      }`}
-                    >
-                      {mode}
-                    </button>
-                  ))}
+            {/* Scrapper tool */}
+            {!editingId && (
+              <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl space-y-4">
+                <div>
+                  <label className="text-sm font-bold text-white flex items-center justify-between mb-2">
+                    Scrapy Spider (Scraper API Key)
+                    <a href="https://www.scraperapi.com/" target="_blank" rel="noreferrer" className="text-xs text-primary underline">Get Key</a>
+                  </label>
+                  <input type="password" value={scraperApiKey} onChange={e => setScraperApiKey(e.target.value)} placeholder="Enter ScraperAPI Key (Optional)..." className="w-full bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-400 mb-2 block">Import from Amazon URL</label>
+                  <div className="flex gap-2">
+                    <input type="text" value={scrapeUrl || ''} onChange={e => setScrapeUrl(e.target.value)} placeholder="Enter Amazon product URL..." className="flex-1 bg-bg-dark border border-white/10 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" />
+                    <button 
+                      type="button" 
+                      onClick={handleScrapeProduct} 
+                    disabled={isImporting}
+                    className="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isImporting ? <Loader2 size={16} className="animate-spin" /> : null}
+                    {isImporting ? 'Importing...' : 'Import'}
+                  </button>
+                </div>
+                {scrapingStatus && (
+                  <p className="text-xs text-primary mt-2 animate-pulse flex items-center gap-1">
+                    <Loader2 size={12} className="animate-spin" />
+                    {scrapingStatus}
+                  </p>
+                )}
                 </div>
               </div>
-              
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  value={addUrlInput}
-                  onChange={(e) => setAddUrlInput(e.target.value)}
-                  placeholder="Paste Amazon, Flipkart, or Asus product URL..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary text-white"
-                />
-                <button
-                  onClick={async () => {
-                    if (!addUrlInput) return;
-                    setLoading(true);
-                    try {
-                      showFeedback(`Fetching data using ${scrapeMode}...`);
-                      const endpoint = scrapeMode === 'firecrawl' 
-                        ? '/api/firecrawl-scrape' 
-                        : (scrapeMode === 'playwright' ? '/api/playwright-scrape' : '/api/scrape-product');
-                        
-                      const res = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: addUrlInput })
-                      });
-                      let data = await safeJson(res);
-                      if (!data || data.error) throw new Error(data?.error || "Unknown scrape error");
-                      
-                      // If playwright mode and raw text is present, refine using Gemini on the client
-                      if (scrapeMode === 'playwright' && data.textContent) {
-                        try {
-                          showFeedback("Refining data with Gemini AI...");
-                          const geminiKey = process.env.GEMINI_API_KEY;
-                          if (!geminiKey) {
-                            console.warn("GEMINI_API_KEY not found in frontend environment.");
-                          } else {
-                            const ai = new GoogleGenAI({ apiKey: geminiKey });
-                            const prompt = `Extract product details from this page content. Return ONLY a valid JSON object.
-                            Include: name, price (numeric string), brand/manufacturer, description, category, and an exhaustive list of technical specifications.
-                            
-                            Be very thorough with specifications. Extract everything like Processor, RAM, GPU, Storage, Display details, Battery, OS, ports, dimensions, weight, and any specialized features.
-                            
-                            Format: {
-                              "name": "Full Product Name",
-                              "price": "1299.99",
-                              "brand": "Manufacturer Name",
-                              "description": "Short marketing description",
-                              "category": "Laptops | Accessories | etc",
-                              "specifications": { 
-                                "Processor": "Intel Core i7-1355U",
-                                "RAM": "16GB LPDDR5",
-                                "Storage": "512GB SSD",
-                                ... 
-                              }
-                            }
-                            
-                            Content: ${data.textContent}`;
-
-                            const response = await ai.models.generateContent({
-                              model: "gemini-3-flash-preview",
-                              contents: prompt
-                            });
-                            
-                            if (response.text) {
-                              const jsonMatch = response.text.match(/\{[\s\S]*\}/);
-                              if (jsonMatch) {
-                                const aiData = JSON.parse(jsonMatch[0]);
-                                // Merge AI data with scraped data (scraped data has image/media)
-                                data = { ...data, ...aiData };
-                                console.log("Gemini refinement successful (frontend)");
-                              }
-                            }
-                          }
-                        } catch (aiErr: any) {
-                          console.error("Gemini refinement failed:", aiErr);
-                        }
-                      }
-
-                      setFormData(prev => ({
-                        ...prev,
-                        name: data.name || prev.name,
-                        brand: data.brand || prev.brand,
-                        description: data.description || prev.description,
-                        price: data.price ? String(data.price).replace(/[^0-9.]/g, '') : prev.price,
-                        image: data.image || prev.image,
-                        category: data.category || prev.category,
-                        additionalImages: data.additionalImages || prev.additionalImages
-                      }));
-                      
-                      if (data.specifications) {
-                        const extractedSpecs = Object.entries(data.specifications).map(([key, value]) => ({ 
-                          key: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '), 
-                          value: String(value) 
-                        }));
-                        setSpecs(extractedSpecs);
-                      }
-                      
-                      showFeedback(`Scraped successfully using ${scrapeMode}!`);
-                      setAddUrlInput('');
-                    } catch (err: any) {
-                      showFeedback(`Scrape error: ${err.message}`);
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  className="px-6 py-3 bg-primary text-bg-dark font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
-                  disabled={loading || !addUrlInput}
-                >
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : <Database size={18} />}
-                  Fetch Data
-                </button>
-              </div>
-              {scrapeMode === 'playwright' && (
-                <p className="text-[10px] text-primary/70 mt-3 font-medium flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
-                  AI Refinement enabled: Playwright extracts content, Gemini AI builds specs.
-                </p>
-              )}
-            </div>
+            )}
 
             {/* Form */}
-
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Product Name</label>

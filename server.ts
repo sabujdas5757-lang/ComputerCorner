@@ -10,22 +10,13 @@ import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
 import FirecrawlApp from '@mendable/firecrawl-js';
-
-import { GoogleGenAI } from "@google/genai";
+import { chromium } from 'playwright';
 
 const app = express();
 const PORT = 3000;
 
 // Initialize AI SDK at top level
-const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-if (!apiKey) {
-    console.error("CRITICAL: GEMINI_API_KEY or GOOGLE_API_KEY is not set in the server environment.");
-} else {
-    // SECURITY NOTE: Only log the first few characters
-    console.log("DEBUG: API_KEY value check:", apiKey.substring(0, 5));
-}
-// Initialize the AI SDK
-const ai = null;
+// MOVED TO FRONTEND PER SDK GUIDELINES
 
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -187,10 +178,16 @@ async function startServer() {
     
     console.log(`[Storage] Check requested. Vercel: ${vercelConfigured}, Supabase: ${supabaseConfigured}`);
     
+    // Check if configuration is actually valid (not just truthy)
+    // Sometimes the tokens are placeholders or empty strings
+    const isVercelReady = vercelConfigured && process.env.BLOB_READ_WRITE_TOKEN !== '';
+    
     res.json({ 
-      configured: vercelConfigured || supabaseConfigured,
-      provider: vercelConfigured ? "Vercel Blob" : (supabaseConfigured ? "Supabase Storage" : "None"),
-      message: vercelConfigured 
+      configured: isVercelReady || supabaseConfigured,
+      provider: isVercelReady ? "Vercel Blob" : (supabaseConfigured ? "Supabase Storage" : "None"),
+      vercel: isVercelReady,
+      supabase: supabaseConfigured,
+      message: isVercelReady 
         ? "Storage is ready (Vercel Blob)" 
         : (supabaseConfigured 
             ? "Storage is ready (Supabase Fallback)" 
@@ -199,7 +196,135 @@ async function startServer() {
   });
 
 
-  // Scrape product via URL
+  // Scrape product via Playwright
+  app.post("/api/playwright-scrape", async (req, res) => {
+    const { url } = req.body;
+    if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
+
+    let browser;
+    try {
+      console.log(`[Playwright] Scraping URL: ${url}`);
+      browser = await chromium.launch({ headless: true });
+      const context = await browser.newContext({
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        viewport: { width: 1920, height: 1080 }
+      });
+      const page = await context.newPage();
+      
+      // Navigate to URL with 45s timeout
+      await page.goto(url, { waitUntil: 'load', timeout: 45000 });
+      
+      // Additional wait for network to settle and potential redirects
+      try {
+        await page.waitForLoadState('networkidle', { timeout: 10000 });
+      } catch (e) {
+        console.warn("[Playwright] Network idle timeout, proceeding anyway...");
+      }
+      
+      // Wait for at least some content to stabilize
+      await page.waitForTimeout(3000);
+
+      // Scroll to trigger lazy loading of images
+      await page.evaluate(async () => {
+        window.scrollBy(0, window.innerHeight);
+        await new Promise(r => setTimeout(r, 1000));
+        window.scrollBy(0, window.innerHeight);
+        await new Promise(r => setTimeout(r, 1000));
+      });
+
+      // Extract raw data with error handling for content retrieval
+      let content = '';
+      try {
+        content = await page.content();
+      } catch (contentErr: any) {
+        console.error("[Playwright] Failed to get content on first try, waiting and retrying...", contentErr.message);
+        await page.waitForTimeout(3000);
+        content = await page.content();
+      }
+
+      const pageTitle = await page.title();
+      const $ = cheerio.load(content);
+
+      // Basic extraction
+      const name = $('h1').first().text().trim() || pageTitle;
+      
+      // Price extraction logic remains similar but more targeted
+      const priceSelectors = [
+        '.a-price .a-offscreen',
+        '._30jeq3',
+        '.price',
+        '[data-testid="price"]',
+        '.product-price',
+        '.current-price',
+        '.price-container'
+      ];
+      let price = 'Unknown';
+      for (const sel of priceSelectors) {
+        const p = $(sel).first().text().trim();
+        if (p) {
+          price = p;
+          break;
+        }
+      }
+
+      // Return raw data and text content for frontend refinement
+      // Clean up text content to remove excessive whitespace and scripts
+      const bodyText = $('body').clone();
+      bodyText.find('script, style, noscript, iframe, .header, .footer, footer, header, nav').remove();
+      // Extract Meta Images (often the best quality)
+      const metaImages: string[] = [];
+      $('meta[property="og:image"], meta[name="twitter:image"]').each((_, el) => {
+        const content = $(el).attr('content');
+        if (content) metaImages.push(content.startsWith('/') ? new URL(content, url).toString() : content);
+      });
+
+      // Extract images with dimension analysis in the browser
+      const browserImages = await page.evaluate(() => {
+        const imgs = Array.from(document.querySelectorAll('img'));
+        return imgs
+          .map(img => ({
+            src: img.currentSrc || img.src || img.getAttribute('data-src') || img.getAttribute('data-lazy-src'),
+            width: img.naturalWidth,
+            height: img.naturalHeight,
+            alt: img.alt,
+            isVisible: img.offsetWidth > 0 && img.offsetHeight > 0
+          }))
+          .filter(img => img.src && img.isVisible && img.width > 200 && img.height > 200) // Filter tiny images
+          .sort((a, b) => (b.width * b.height) - (a.width * a.height)); // Prioritize biggest
+      });
+
+      const textContent = bodyText.text().replace(/\s\s+/g, ' ').substring(0, 45000);
+      
+      const foundImages = [
+        ...metaImages,
+        ...browserImages.map(img => img.src)
+      ].filter(src => {
+        if (!src) return false;
+        const lower = src.toLowerCase();
+        return !lower.includes('logo') && !lower.includes('icon') && !lower.includes('sprite') && !lower.includes('badge');
+      });
+
+      const uniqueImages = [...new Set(foundImages)];
+
+      res.json({
+        name,
+        price,
+        image: uniqueImages[0] || '',
+        additionalImages: uniqueImages.slice(1, 15),
+        specifications: {},
+        category: 'Uncategorized',
+        textContent
+      });
+
+    } catch (error: any) {
+      console.error("[Playwright Error]", error.message);
+      res.status(500).json({ error: "Playwright scrape failed: " + error.message });
+    } finally {
+      if (browser) await browser.close();
+    }
+  });
+
+  // Scrape product via URL (Original refined version)
   app.post("/api/scrape-product", async (req, res) => {
     const { url } = req.body;
     if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });

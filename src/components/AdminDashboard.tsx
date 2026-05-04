@@ -7,6 +7,7 @@ import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import { GoogleGenAI } from "@google/genai";
 
 const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'MacBook'];
 
@@ -500,7 +501,7 @@ export default function AdminDashboard() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [addUrlInput, setAddUrlInput] = useState('');
-  const [useFirecrawl, setUseFirecrawl] = useState(true);
+  const [scrapeMode, setScrapeMode] = useState<'standard' | 'firecrawl' | 'playwright'>('playwright');
 
   const handleAddSpec = () => {
     setSpecs([...specs, { key: '', value: '' }]);
@@ -711,12 +712,20 @@ export default function AdminDashboard() {
             <h1 className="text-4xl font-bold">Admin Portal</h1>
             <p className="text-gray-400 mt-2">Manage products and inventory</p>
           </div>
-          {storageStatus && !storageStatus.configured && (
+          {storageStatus && !storageStatus.configured ? (
             <div className="flex-1 max-w-md bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl flex items-center gap-3 text-red-500">
               <AlertCircle size={20} className="flex-shrink-0" />
               <div className="text-xs">
                 <p className="font-bold">Storage Missing</p>
                 <p className="opacity-80">Images will not be saved permanently. Please set tokens.</p>
+              </div>
+            </div>
+          ) : storageStatus && (
+            <div className="flex-1 max-w-md bg-primary/10 border border-primary/20 px-4 py-2 rounded-xl flex items-center gap-3 text-primary">
+              <Database size={20} className="flex-shrink-0" />
+              <div className="text-xs">
+                <p className="font-bold">Storage Ready</p>
+                <p className="opacity-80">Using {storageStatus.provider}</p>
               </div>
             </div>
           )}
@@ -1095,19 +1104,27 @@ export default function AdminDashboard() {
             
             
             {/* Scrape Tool */}
-            <div className="mb-6 p-6 bg-black/40 border border-white/5 rounded-2xl">
-              <div className="flex items-center justify-between mb-4">
+            <div className="mb-8 p-6 bg-black/40 border border-white/5 rounded-2xl">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <h2 className="text-lg font-bold text-white">Fetch Product Data from URL</h2>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    checked={useFirecrawl}
-                    onChange={(e) => setUseFirecrawl(e.target.checked)}
-                    className="peer h-4 w-4 rounded border-white/20 bg-bg-dark checked:bg-primary transition-all"
-                  />
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest peer-checked:text-primary transition-colors">Use Firecrawl (AI)</span>
-                </label>
+                <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
+                  {(['standard', 'firecrawl', 'playwright'] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setScrapeMode(mode)}
+                      className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all uppercase tracking-wider ${
+                        scrapeMode === mode 
+                          ? 'bg-primary text-bg-dark shadow-lg' 
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      {mode}
+                    </button>
+                  ))}
+                </div>
               </div>
+              
               <div className="flex gap-4">
                 <input
                   type="text"
@@ -1121,32 +1138,89 @@ export default function AdminDashboard() {
                     if (!addUrlInput) return;
                     setLoading(true);
                     try {
-                      const endpoint = useFirecrawl ? '/api/firecrawl-scrape' : '/api/scrape-product';
+                      showFeedback(`Fetching data using ${scrapeMode}...`);
+                      const endpoint = scrapeMode === 'firecrawl' 
+                        ? '/api/firecrawl-scrape' 
+                        : (scrapeMode === 'playwright' ? '/api/playwright-scrape' : '/api/scrape-product');
+                        
                       const res = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: addUrlInput })
                       });
-                      const data = await safeJson(res);
+                      let data = await safeJson(res);
                       if (!data || data.error) throw new Error(data?.error || "Unknown scrape error");
                       
+                      // If playwright mode and raw text is present, refine using Gemini on the client
+                      if (scrapeMode === 'playwright' && data.textContent) {
+                        try {
+                          showFeedback("Refining data with Gemini AI...");
+                          const geminiKey = process.env.GEMINI_API_KEY;
+                          if (!geminiKey) {
+                            console.warn("GEMINI_API_KEY not found in frontend environment.");
+                          } else {
+                            const ai = new GoogleGenAI({ apiKey: geminiKey });
+                            const prompt = `Extract product details from this page content. Return ONLY a valid JSON object.
+                            Include: name, price (numeric string), brand/manufacturer, description, category, and an exhaustive list of technical specifications.
+                            
+                            Be very thorough with specifications. Extract everything like Processor, RAM, GPU, Storage, Display details, Battery, OS, ports, dimensions, weight, and any specialized features.
+                            
+                            Format: {
+                              "name": "Full Product Name",
+                              "price": "1299.99",
+                              "brand": "Manufacturer Name",
+                              "description": "Short marketing description",
+                              "category": "Laptops | Accessories | etc",
+                              "specifications": { 
+                                "Processor": "Intel Core i7-1355U",
+                                "RAM": "16GB LPDDR5",
+                                "Storage": "512GB SSD",
+                                ... 
+                              }
+                            }
+                            
+                            Content: ${data.textContent}`;
+
+                            const response = await ai.models.generateContent({
+                              model: "gemini-3-flash-preview",
+                              contents: prompt
+                            });
+                            
+                            if (response.text) {
+                              const jsonMatch = response.text.match(/\{[\s\S]*\}/);
+                              if (jsonMatch) {
+                                const aiData = JSON.parse(jsonMatch[0]);
+                                // Merge AI data with scraped data (scraped data has image/media)
+                                data = { ...data, ...aiData };
+                                console.log("Gemini refinement successful (frontend)");
+                              }
+                            }
+                          }
+                        } catch (aiErr: any) {
+                          console.error("Gemini refinement failed:", aiErr);
+                        }
+                      }
+
                       setFormData(prev => ({
                         ...prev,
-                        name: data.name || '',
-                        brand: data.brand || '',
-                        description: data.description || '',
-                        price: data.price || '',
-                        image: data.image || '',
+                        name: data.name || prev.name,
+                        brand: data.brand || prev.brand,
+                        description: data.description || prev.description,
+                        price: data.price ? String(data.price).replace(/[^0-9.]/g, '') : prev.price,
+                        image: data.image || prev.image,
                         category: data.category || prev.category,
-                        additionalImages: data.additionalImages || []
+                        additionalImages: data.additionalImages || prev.additionalImages
                       }));
                       
-                      const extractedSpecs = Object.entries(data.specifications || {}).map(([key, value]) => ({ key, value: String(value) }));
-                      if (data.modelNumber) extractedSpecs.push({ key: 'Model Number', value: data.modelNumber });
-                      if (data.sku) extractedSpecs.push({ key: 'SKU', value: data.sku });
+                      if (data.specifications) {
+                        const extractedSpecs = Object.entries(data.specifications).map(([key, value]) => ({ 
+                          key: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '), 
+                          value: String(value) 
+                        }));
+                        setSpecs(extractedSpecs);
+                      }
                       
-                      setSpecs(extractedSpecs);
-                      showFeedback(`Scraped successfully using ${useFirecrawl ? 'Firecrawl' : 'standard scraper'}!`);
+                      showFeedback(`Scraped successfully using ${scrapeMode}!`);
                       setAddUrlInput('');
                     } catch (err: any) {
                       showFeedback(`Scrape error: ${err.message}`);
@@ -1154,12 +1228,19 @@ export default function AdminDashboard() {
                       setLoading(false);
                     }
                   }}
-                  className="px-6 py-3 bg-primary text-bg-dark font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2"
+                  className="px-6 py-3 bg-primary text-bg-dark font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  disabled={loading || !addUrlInput}
                 >
                   {loading ? <Loader2 size={18} className="animate-spin" /> : <Database size={18} />}
                   Fetch Data
                 </button>
               </div>
+              {scrapeMode === 'playwright' && (
+                <p className="text-[10px] text-primary/70 mt-3 font-medium flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
+                  AI Refinement enabled: Playwright extracts content, Gemini AI builds specs.
+                </p>
+              )}
             </div>
 
             {/* Form */}

@@ -1127,8 +1127,8 @@ export default function AdminDashboard() {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: addUrlInput })
                       });
-                      const data = await res.json();
-                      if (data.error) throw new Error(data.error);
+                      const data = await safeJson(res);
+                      if (!data || data.error) throw new Error(data?.error || "Unknown scrape error");
                       
                       setFormData(prev => ({
                         ...prev,

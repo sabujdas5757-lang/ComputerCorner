@@ -52,15 +52,10 @@ async function startServer() {
     next();
   });
 
-  // Proxy-save an external image to Vercel Blob
+  // Proxy-save an external image to Vercel Blob or Supabase
   app.post("/api/upload-from-url", async (req, res) => {
     const { url } = req.body;
     if (!url || !url.startsWith('http')) return res.status(400).json({ error: "Valid URL is required" });
-
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      console.warn("[Upload-From-URL] BLOB_READ_WRITE_TOKEN is missing. Skipping external upload.");
-      return res.status(503).json({ error: "Vercel Blob storage is not configured (missing token). Please set it in secrets." });
-    }
 
     try {
       console.log(`[Upload-From-URL] Processing image: ${url.substring(0, 50)}...`);
@@ -70,15 +65,33 @@ async function startServer() {
       const contentType = typeof contentTypeHeader === 'string' ? contentTypeHeader : 'image/jpeg';
       
       const rawFilename = url.split('/').pop()?.split(/[#?]/)[0] || 'scraped-image.jpg';
-      const filename = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const blob = await put(filename, buffer, {
-        access: 'public',
-        contentType: contentType,
-        addRandomSuffix: true
-      });
+      const cleanName = rawFilename.replace(/[^a-zA-Z0-9.-]/g, '_');
 
-      console.log(`[Upload-From-URL] Successfully saved to Vercel: ${blob.url}`);
-      res.json({ secure_url: blob.url });
+      if (process.env.BLOB_READ_WRITE_TOKEN) {
+        const blob = await put(cleanName, buffer, {
+          access: 'public',
+          contentType: contentType,
+          addRandomSuffix: true
+        });
+        console.log(`[Upload-From-URL] Saved to Vercel: ${blob.url}`);
+        return res.json({ secure_url: blob.url });
+      } else if (supabase) {
+        const uniqueName = `${Date.now()}-${cleanName}`;
+        const { data, error } = await supabase.storage
+          .from(supabaseBucket)
+          .upload(uniqueName, buffer, { contentType: contentType, upsert: true });
+
+        if (error) throw error;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from(supabaseBucket)
+          .getPublicUrl(uniqueName);
+
+        console.log(`[Upload-From-URL] Saved to Supabase: ${publicUrl}`);
+        return res.json({ secure_url: publicUrl });
+      } else {
+        return res.status(503).json({ error: "No storage provider configured." });
+      }
     } catch (error: any) {
       console.error("[Upload-From-URL Error]", error.message);
       res.status(500).json({ error: "Storage error: " + (error.message || "Unknown error") });
@@ -94,27 +107,37 @@ async function startServer() {
     try {
       const file = (req as any).file;
       if (!file) {
-        console.warn("[Upload] No file provided in request");
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      console.log(`[Upload] Processing file: ${file.originalname} (${file.size} bytes)`);
-
-      if (!process.env.BLOB_READ_WRITE_TOKEN) {
-        console.error("[Upload] BLOB_READ_WRITE_TOKEN is missing");
-        return res.status(503).json({ error: "Vercel Blob storage is not configured (missing token)." });
-      }
-
-      // Using Vercel Blob
+      console.log(`[Upload] Processing file: ${file.originalname}`);
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const blob = await put(sanitizedName, file.buffer, {
-        access: 'public',
-        contentType: file.mimetype,
-        addRandomSuffix: true
-      });
 
-      console.log(`[Upload] Success: ${blob.url}`);
-      res.json({ secure_url: blob.url });
+      if (process.env.BLOB_READ_WRITE_TOKEN) {
+        const blob = await put(sanitizedName, file.buffer, {
+          access: 'public',
+          contentType: file.mimetype,
+          addRandomSuffix: true
+        });
+        console.log(`[Upload] Saved to Vercel: ${blob.url}`);
+        return res.json({ secure_url: blob.url });
+      } else if (supabase) {
+        const uniqueName = `${Date.now()}-${sanitizedName}`;
+        const { data, error } = await supabase.storage
+          .from(supabaseBucket)
+          .upload(uniqueName, file.buffer, { contentType: file.mimetype, upsert: true });
+
+        if (error) throw error;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from(supabaseBucket)
+          .getPublicUrl(uniqueName);
+
+        console.log(`[Upload] Saved to Supabase: ${publicUrl}`);
+        return res.json({ secure_url: publicUrl });
+      } else {
+        return res.status(503).json({ error: "No storage provider configured." });
+      }
     } catch (error: any) {
       console.error("[Upload Error]", error.message || error);
       res.status(500).json({ error: "Upload failed: " + (error.message || "Unknown server error") });
@@ -159,11 +182,19 @@ async function startServer() {
   });
 
   app.get("/api/storage-status", (req, res) => {
-    console.log(`[Storage] Check requested. Token present: ${!!process.env.BLOB_READ_WRITE_TOKEN}`);
+    const vercelConfigured = !!process.env.BLOB_READ_WRITE_TOKEN;
+    const supabaseConfigured = !!supabase;
+    
+    console.log(`[Storage] Check requested. Vercel: ${vercelConfigured}, Supabase: ${supabaseConfigured}`);
+    
     res.json({ 
-      configured: !!process.env.BLOB_READ_WRITE_TOKEN,
-      provider: "Vercel Blob",
-      message: process.env.BLOB_READ_WRITE_TOKEN ? "Storage is ready" : "BLOB_READ_WRITE_TOKEN is missing in environment variables"
+      configured: vercelConfigured || supabaseConfigured,
+      provider: vercelConfigured ? "Vercel Blob" : (supabaseConfigured ? "Supabase Storage" : "None"),
+      message: vercelConfigured 
+        ? "Storage is ready (Vercel Blob)" 
+        : (supabaseConfigured 
+            ? "Storage is ready (Supabase Fallback)" 
+            : "No storage tokens found in environment. Please set BLOB_READ_WRITE_TOKEN or SUPABASE_ANON_KEY.")
     });
   });
 

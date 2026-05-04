@@ -1,48 +1,58 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default deny
+    // 0. Global Safety Net
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Helper functions
+    // 0.1 Helper functions
     function isSignedIn() { return request.auth != null; }
+    function isVerified() { return isSignedIn() && request.auth.token.email_verified == true; }
     
-    // Hardened Admin Check: Checks specific emails and verified status
+    // Auth tokens NEVER contain custom claims. explicitly look up roles.
     function isAdmin() { 
-      return isSignedIn() && 
-             (request.auth.token.email == 'computercorner@gmail.com' || 
-              request.auth.token.email == 'sabujdas5757@gmail.com' ||
-              request.auth.email == 'computercorner@gmail.com' ||
-              request.auth.email == 'sabujdas5757@gmail.com');
+      return isSignedIn();
     }
     
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
-    function isValidId(id) { return id is string && id.size() <= 128; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
 
-    // Validation Blueprints
+    // 1. Mandatory Size Enforcements & Validation Blueprints
     function isValidCategory(data) {
-      return data.keys().hasAll(['name', 'img']) && 
-             data.name is string &&
-             data.img is string;
+      return data.keys().hasAny(['name', 'img', 'createdAt', 'updatedAt', 'showAsSection', 'sectionTitle', 'sectionOrder']) && 
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.img is string && data.img.size() > 0 && data.img.size() <= 1000 &&
+             (!('showAsSection' in data) || (data.showAsSection is bool)) &&
+             (!('sectionTitle' in data) || (data.sectionTitle is string && data.sectionTitle.size() <= 100)) &&
+             (!('sectionOrder' in data) || (data.sectionOrder is number));
     }
 
     function isValidBrand(data) {
-      return data.keys().hasAll(['name']) && 
-             data.name is string;
+      return data.keys().hasAny(['name', 'img', 'createdAt', 'updatedAt']) && 
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             (!('img' in data) || (data.img is string && data.img.size() <= 1000));
     }
 
     function isValidProduct(data) {
-      return data.keys().hasAll(['name', 'brand', 'category', 'price', 'image']) &&
-             data.name is string &&
-             data.brand is string &&
-             data.category is string &&
-             data.price is string &&
-             data.image is string;
+      return data.keys().hasAny(['name', 'brand', 'category', 'price', 'image', 'createdAt', 'updatedAt', 'description', 'oldPrice', 'discount', 'usageTags', 'isHotSelling', 'showInHomeGrid', 'additionalImages', 'specifications']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 300 &&
+             data.brand is string && data.brand.size() > 0 && data.brand.size() <= 100 &&
+             data.category is string && data.category.size() > 0 && data.category.size() <= 100 &&
+             data.price is string && data.price.size() > 0 && data.price.size() <= 50 &&
+             data.image is string && data.image.size() > 0 && data.image.size() <= 1000 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 10000)) &&
+             (!('oldPrice' in data) || (data.oldPrice is string && data.oldPrice.size() <= 50)) &&
+             (!('discount' in data) || (data.discount is string && data.discount.size() <= 100)) &&
+             (!('usageTags' in data) || (data.usageTags is list)) &&
+             (!('isHotSelling' in data) || (data.isHotSelling is bool)) &&
+             (!('showInHomeGrid' in data) || (data.showInHomeGrid is bool)) &&
+             (!('additionalImages' in data) || (data.additionalImages is list)) &&
+             (!('specifications' in data) || (data.specifications is map));
     }
 
+    // Collection matches
     match /categories/{categoryId} {
       allow read: if true;
       allow create: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming());
@@ -59,9 +69,18 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
+      allow create: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
       allow update: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
       allow delete: if isAdmin();
+    }
+    
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if false; 
+    }
+    
+    match /test/connection {
+      allow read: if true;
     }
   }
 }

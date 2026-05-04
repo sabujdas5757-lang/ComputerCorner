@@ -14,7 +14,6 @@ import ProductDetail from './components/ProductDetail';
 import LaptopUsageHub from './components/LaptopUsageHub';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './components/AdminDashboard';
-import AmazonScraper from './components/AmazonScraper';
 import ScrollToTop from './components/ScrollToTop';
 
 import ProductSection from './components/ProductSection';
@@ -95,7 +94,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path="/admin/scraper" element={<AdminRoute><AmazonScraper /></AdminRoute>} />
           <Route path="/quick-access" element={<QuickAccess />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:categorySlug" element={<Catalog />} />

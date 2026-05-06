@@ -50,6 +50,26 @@ export const AMCFEATURES: AMCFeature[] = [
 
 export const PRODUCTS: Product[] = [
   {
+    id: 'p_asus_copilot_ultra',
+    name: 'ASUS ExpertBook Ultra Copilot+ PC Intel Core Ultra X7 358H - (64 GB/2 TB SSD/Windows 11 Home) B9406CAA-TH0934WS Thin and Light Laptop',
+    category: 'Laptops',
+    brand: 'ASUS',
+    description: 'Buy ASUS ExpertBook Ultra Copilot+ PC Intel Core Ultra X7 358H - (64 GB/2 TB SSD/Windows 11 Home) B9406CAA-TH0934WS Thin and Light Laptop Online. Only Genuine Products. 30 Day Replacement Guarantee. Free Shipping. Cash On Delivery!',
+    image: 'https://rukmini1.flixcart.com/image/1500/1500/xif0q/computer/3/c/u/-original-imahmpp8tubwwhhk.jpeg?q=70',
+    additionalImages: ["https://rukmini1.flixcart.com/image/1500/1500/xif0q/computer/l/w/z/-original-imahmw2unbrkvhm8.jpeg?q=70","https://rukmini1.flixcart.com/image/1500/1500/xif0q/computer/y/i/u/-original-imahmpfsdefq4qpp.jpeg?q=70","https://rukmini1.flixcart.com/image/1500/1500/xif0q/computer/l/t/j/-original-imahmpfsangnfnh3.jpeg?q=70","https://rukmini1.flixcart.com/image/1500/1500/xif0q/computer/k/k/c/-original-imahmpfs2vzfqsbf.jpeg?q=70"],
+    specifications: {
+      "Processor Name": "Intel Core Ultra X7 358H",
+      "RAM": "64 GB",
+      "SSD": "2 TB",
+      "Operating System": "Windows 11",
+      "Type": "Thin and Light Laptop"
+    },
+    price: '₹3,49,990',
+    oldPrice: '',
+    discount: 'New Release'
+  },
+
+  {
     id: 'p1',
     name: 'Sony a7iii',
     category: 'Cameras',

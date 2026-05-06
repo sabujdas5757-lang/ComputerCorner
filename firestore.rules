@@ -13,9 +13,7 @@ service cloud.firestore {
     function isAdmin() { 
       return isSignedIn() && 
              (request.auth.token.email == 'computercorner@gmail.com' || 
-              request.auth.token.email == 'sabujdas5757@gmail.com' ||
-              request.auth.email == 'computercorner@gmail.com' ||
-              request.auth.email == 'sabujdas5757@gmail.com');
+              request.auth.token.email == 'sabujdas5757@gmail.com');
     }
     
     function incoming() { return request.resource.data; }
@@ -35,8 +33,7 @@ service cloud.firestore {
     }
 
     function isValidProduct(data) {
-      return data.keys().hasAll(['name', 'brand', 'category', 'price', 'image']) &&
-             data.name is string &&
+      return data.name is string && data.name.size() > 0 &&
              data.brand is string &&
              data.category is string &&
              data.price is string &&
@@ -45,22 +42,19 @@ service cloud.firestore {
 
     match /categories/{categoryId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming());
-      allow update: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming());
+      allow create, update: if isAdmin() && isValidCategory(incoming());
       allow delete: if isAdmin();
     }
 
     match /brands/{brandId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidId(brandId) && isValidBrand(incoming());
-      allow update: if isAdmin() && isValidId(brandId) && isValidBrand(incoming());
+      allow create, update: if isAdmin() && isValidBrand(incoming());
       allow delete: if isAdmin();
     }
 
     match /products/{productId} {
       allow read: if true;
-      allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
-      allow update: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
+      allow create, update: if isAdmin() && isValidProduct(incoming());
       allow delete: if isAdmin();
     }
   }

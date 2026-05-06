@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, writeBatch } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { PRODUCTS as initialProducts, Product } from '../constants';
 
 interface ProductContextType {
@@ -34,10 +34,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       setFirestoreProducts(prods);
       setLoading(false);
     }, (error: any) => {
-      console.error("Firestore error onSnapshot:", error);
-      if (error.code === 'permission-denied') {
-        alert("Firestore Permission Denied.\n\nPlease go to Firebase Console -> Firestore Database -> Rules and update them to allow read/write access.");
-      }
+      handleFirestoreError(error, OperationType.GET, 'products');
       setLoading(false);
     });
 
@@ -45,15 +42,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addProduct = async (product: Omit<Product, 'id'>) => {
+    const path = 'products';
     try {
-      await addDoc(collection(db, 'products'), product);
+      await addDoc(collection(db, path), product);
     } catch (error: any) {
-      console.error("Firestore addDoc error:", error);
-      throw error;
+      handleFirestoreError(error, OperationType.WRITE, path);
     }
   };
 
   const updateProduct = async (id: string, data: Partial<Product>) => {
+    const path = `products/${id}`;
     try {
       const isInitial = initialProducts.find(p => p.id === id);
       const inFirestore = firestoreProducts.find(p => p.id === id);
@@ -64,12 +62,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         await updateDoc(doc(db, 'products', id), data);
       }
     } catch (error: any) {
-      console.error("Firestore updateDoc error:", error);
-      throw error;
+      handleFirestoreError(error, OperationType.UPDATE, path);
     }
   };
 
   const deleteProduct = async (id: string) => {
+    const path = `products/${id}`;
     const previousProducts = [...firestoreProducts];
     
     // Optimistic UI update
@@ -88,39 +86,23 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
     try {
       const isInitial = initialProducts.find(p => p.id === id);
-      const inFirestore = firestoreProducts.find(p => p.id === id);
-      
       const docRef = doc(db, 'products', id);
 
       if (isInitial) {
-        // Initial products need a tombstone in Firestore
         await setDoc(docRef, { ...isInitial, deleted: true }, { merge: true });
       } else {
-        try {
-          await deleteDoc(docRef);
-        } catch (deleteError: any) {
-          if (deleteError.code === 'permission-denied') {
-            // Fallback to soft delete if hard delete is restricted by rules
-            await updateDoc(docRef, { deleted: true });
-          } else {
-            throw deleteError;
-          }
-        }
+        await deleteDoc(docRef);
       }
     } catch (error: any) {
-      console.error("Delete failed, reverting state", error);
       setFirestoreProducts(previousProducts);
-      if (error.code === 'permission-denied') {
-        throw new Error("Firestore Permission Denied. Please check your Firestore rules.");
-      }
-      throw error;
+      handleFirestoreError(error, OperationType.DELETE, path);
     }
   };
 
   const deleteMultipleProducts = async (ids: string[]) => {
     const previousProducts = [...firestoreProducts];
 
-    // Optimistic UI update: Mark as deleted in local state immediately
+    // Optimistic UI update
     setFirestoreProducts(prev => {
       const next = [...prev];
       for (const id of ids) {
@@ -144,22 +126,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         const docRef = doc(db, 'products', id);
         
         if (isInitial) {
-          // Initial products need a tombstone in Firestore to be hidden because they are hardcoded in the app
           batch.set(docRef, { ...isInitial, deleted: true }, { merge: true });
         } else {
-          // New products can be hard-deleted from Firestore
           batch.delete(docRef);
         }
       }
       
       await batch.commit();
     } catch (error: any) {
-      console.error("Batch delete failed, reverting state", error);
       setFirestoreProducts(previousProducts);
-      if (error.code === 'permission-denied') {
-        throw new Error("Firestore Permission Denied. Please check your Firestore rules.");
-      }
-      throw error;
+      handleFirestoreError(error, OperationType.WRITE, 'products (batch)');
     }
   };
 

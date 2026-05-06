@@ -9,6 +9,11 @@ import * as cheerio from 'cheerio';
 import multer from "multer";
 import { put } from '@vercel/blob';
 import { createClient } from '@supabase/supabase-js';
+import { chromium } from 'playwright-extra';
+import stealthPlugin from 'puppeteer-extra-plugin-stealth';
+import chromiumSparticuz from '@sparticuz/chromium';
+
+chromium.use(stealthPlugin());
 
 const app = express();
 const PORT = 3000;
@@ -149,6 +154,149 @@ async function startServer() {
     }
   });
 
+  app.post("/api/scrape-flipkart-search", async (req, res) => {
+    const { query: searchQuery } = req.body;
+    if (!searchQuery) return res.status(400).json({ error: "Search query is required" });
+    
+    // Using a simpler URL or Jina AI to bypass basic blocks
+    const url = `https://www.flipkart.com/search?q=${encodeURIComponent(searchQuery)}`;
+    console.log(`[Flipkart Search] SCRAPING: "${searchQuery}"`);
+    
+    try {
+      let html = '';
+      try {
+        console.log("[Flipkart Search] Attempting Playwright...");
+        const executablePath = await chromiumSparticuz.executablePath();
+        const browser = await chromium.launch({ 
+            executablePath,
+            args: chromiumSparticuz.args,
+            headless: true
+        });
+        try {
+          const context = await browser.newContext({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+          });
+          const page = await context.newPage();
+          await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(e => console.log('Goto err:', e.message));
+          await page.waitForTimeout(2000).catch(() => {});
+          html = await page.content();
+          await browser.close().catch(() => {});
+          if (html.length < 5000 || html.includes('captcha') || html.includes('Robot Check')) {
+            throw new Error(`Flipkart blocked Playwright (HTML size: ${html.length})`);
+          }
+        } catch (e) {
+          await browser.close();
+          throw e;
+        }
+      } catch (pwError) {
+        console.log("[Flipkart Search] Playwright failed, falling back...");
+        try {
+          const response = await axios.get(`https://r.jina.ai/${url}`, { 
+            headers: { 'X-Return-Format': 'html' },
+            timeout: 10000 
+          });
+          html = response.data;
+        } catch (e) {
+          const direct = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+            timeout: 10000
+          });
+          html = direct.data;
+        }
+      }
+
+      const $ = cheerio.load(html);
+      const results: any[] = [];
+
+      $('div._1AtVbE, div._2k06S3, div._4dd8fX, div._1xHGtK, div._13oc-S, div[data-id]').each((_, el) => {
+        const $el = $(el);
+        let title = $el.find('div._4rR01T, a.s1Q9rs, a.IRpwTa, div.y6766L, div._2Wk9S9').first().text().trim();
+        let price = $el.find('div._30jeq3, div._3ut_uV, div._16016e').first().text().trim();
+        let image = $el.find('img._396cs4, img._2puEPr, img._2r_T1I').attr('src');
+        let path = $el.find('a._1fQY7K, a.s1Q9rs, a._2rpwqI, a.IRpwTa').attr('href');
+        
+        if (!path && $(el).is('a')) path = $(el).attr('href');
+
+        const link = path ? (path.startsWith('http') ? path : 'https://www.flipkart.com' + path) : '';
+
+        if (title && (price || image)) {
+          results.push({ title, price, image, url: link, store: 'Flipkart' });
+        }
+      });
+
+      res.json({ results: results.filter((v, i, a) => a.findIndex(t => t.url === v.url) === i) });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/scrape-asus-search", async (req, res) => {
+    const { query: searchQuery } = req.body;
+    if (!searchQuery) return res.status(400).json({ error: "Search query is required" });
+    
+    const url = `https://store.asus.com/in/catalogsearch/result/?q=${encodeURIComponent(searchQuery)}`;
+    
+    try {
+      let html = '';
+      try {
+        console.log("[Asus Search] Attempting Playwright...");
+        const executablePath = await chromiumSparticuz.executablePath();
+        const browser = await chromium.launch({ 
+            executablePath,
+            args: chromiumSparticuz.args,
+            headless: true
+        });
+        try {
+          const context = await browser.newContext({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+          });
+          const page = await context.newPage();
+          await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(e => console.log('Goto err:', e.message));
+          await page.waitForTimeout(2000).catch(() => {});
+          html = await page.content();
+          await browser.close().catch(() => {});
+          if (html.length < 5000 || html.includes('captcha') || html.includes('Robot Check')) {
+            throw new Error(`Asus blocked Playwright (HTML size: ${html.length})`);
+          }
+        } catch (e) {
+          await browser.close();
+          throw e;
+        }
+      } catch (pwError) {
+        console.log("[Asus Search] Playwright failed, falling back...");
+        try {
+          const response = await axios.get(`https://r.jina.ai/${url}`, { timeout: 12000 });
+          html = response.data;
+        } catch (e) {
+          const direct = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+            timeout: 10000
+          });
+          html = direct.data;
+        }
+      }
+
+      const $ = cheerio.load(html);
+      const results: any[] = [];
+
+      $('li.item.product.product-item, div.product-item-info').each((_, el) => {
+        const $el = $(el);
+        const title = $el.find('.product-item-link').text().trim();
+        const price = $el.find('.price').first().text().trim();
+        const image = $el.find('.product-image-photo').attr('src');
+        const link = $el.find('.product-item-link').attr('href');
+
+        if (title && link) {
+          results.push({ title, price, image, url: link, store: 'Asus' });
+        }
+      });
+
+      res.json({ results });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.post("/api/scrape-product", async (req, res) => {
     const { url, scraperApiKey } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
@@ -158,54 +306,54 @@ async function startServer() {
       let html = '';
       
       const fetchMethodsMap = [
-        // Method 0: Scraper API (If configured) - Using Premium Residential Proxies
+        // Method 0: Playwright (Full DOM render)
         async () => {
-           const apiKey = scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
-           if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
-           
-           // Use Structured Amazon Endpoint if possible
-           const asinMatch = url.match(/(?:\/dp\/|\/gp\/product\/)([A-Z0-9]{10})/);
-           const tldMatch = url.match(/amazon\.([a-z\.]+)/i);
-           
-           if (asinMatch && tldMatch) {
-               console.log(`[Scraper] Attempting Scraper API (Amazon Structured Endpoint) for ASIN ${asinMatch[1]} (${tldMatch[1]})...`);
-               let apiUrl = `https://api.scraperapi.com/structured/amazon/product?api_key=${apiKey}&asin=${asinMatch[1]}&tld=${tldMatch[1]}`;
-               const response = await axios.get(apiUrl, { timeout: 50000, maxContentLength: 5000000 });
-               return response.data;
-           }
+          console.log("[Scraper] Attempting Method 0 (Playwright)...");
+          const executablePath = await chromiumSparticuz.executablePath();
+          const browser = await chromium.launch({ 
+            executablePath,
+            args: chromiumSparticuz.args,
+            headless: true
+          });
+          try {
+            const context = await browser.newContext({
+              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+            });
+            const page = await context.newPage();
+            // Block heavy non-essential resources to speed up but keep scripts for DOM building
+            await page.route('**/*', async (route) => {
+              try {
+                const type = route.request().resourceType();
+                if (['media', 'font', 'websocket'].includes(type) || 
+                    (type === 'image' && !route.request().url().includes('images'))) {
+                  await route.abort().catch(() => {});
+                } else {
+                  await route.continue().catch(() => {});
+                }
+              } catch (e) {}
+            });
+            
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(e => console.log('Goto err:', e.message));
+            await page.waitForTimeout(4000).catch(() => {}); // Allow time for Vue/React to render specs and descriptions
+            
+            // Expand all content (Amazon 'See more', Flipkart 'Read more', etc)
+            try {
+              const expandButtons = await page.$$('text="Read more", text="Read More", text="Show more", text="See more"');
+              for (const btn of expandButtons) {
+                 if (await btn.isVisible()) {
+                    await btn.click({ timeout: 1000 }).catch(() => {});
+                 }
+              }
+              await page.waitForTimeout(1000);
+            } catch (e) {}
 
-           console.log("[Scraper] Attempting Scraper API (Premium Autoparse)...");
-           let apiUrl = `https://api.scraperapi.com?api_key=${apiKey}&autoparse=true&premium=true&url=${encodeURIComponent(url)}`;
-           if (url.includes('.in/')) {
-               apiUrl += '&country_code=in';
-           }
-           const response = await axios.get(apiUrl, { 
-             timeout: 50000,
-             maxContentLength: 5000000
-           });
-           return response.data;
-        },
-        // Method 1: Jina AI (Most robust for product details)
-        async () => {
-          const response = await axios.get(`https://r.jina.ai/${url}`, { 
-            headers: { 'X-Return-Format': 'html' },
-            timeout: 8000,
-            maxContentLength: 5000000 
-          });
-          return response.data;
-        },
-        // Method 2: Direct fetch with Googlebot headers
-        async () => {
-          const response = await axios.get(url, {
-            timeout: 8000,
-            maxContentLength: 5000000,
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-              'Accept-Language': 'en-US,en;q=0.5',
-            }
-          });
-          return response.data;
+            const html = await page.content();
+            await browser.close();
+            return html;
+          } catch (e) {
+             await browser.close();
+             throw e;
+          }
         }
       ];
 
@@ -261,16 +409,36 @@ async function startServer() {
 
       const $ = cheerio.load(html);
       
-      const name = $('meta[property="og:title"]').attr('content') || $('title').text() || $('h1').first().text().trim() || 'Unknown Product';
+      let ldName, ldPrice, ldBrand, ldImage, ldDescription;
+      try {
+        const ldJsonStr = $('script[type="application/ld+json"]').html();
+        if (ldJsonStr) {
+          const ldData = JSON.parse(ldJsonStr);
+          const pData = Array.isArray(ldData) ? ldData[0] : ldData;
+          if (pData) {
+            ldName = pData.name;
+            ldPrice = pData.offers?.price;
+            ldBrand = pData.brand?.name;
+            ldDescription = pData.description;
+            if (pData.image) {
+              ldImage = Array.isArray(pData.image) ? pData.image[0] : pData.image;
+            }
+          }
+        }
+      } catch(e) {}
+
+      const name = ldName || $('meta[property="og:title"]').attr('content') || 
+                   $('.B_NuE7, .yhBndX, .sku-title, .product-item-name, h1').first().text().trim() || 
+                   $('title').text() || 'Unknown Product';
       
       if (name && (name.includes('503') || name.includes('Service Unavailable') || name.includes('Page Not Found') || name === 'Unknown Product' || name.includes('Robot Check'))) {
           console.error(`[Scraper] Parsed name is ${name}. This means the scrape failed or the page isn't a product.`);
           throw new Error(`The target website returned an error page or invalid content (${name}). Please add details manually.`);
       }
       
-      const priceRaw = $('meta[property="product:price:amount"]').attr('content') || 
+      const priceRaw = ldPrice ? String(ldPrice) : ($('meta[property="product:price:amount"]').attr('content') || 
                   $('[itemprop="price"]').attr('content') ||
-                  $('.price, .product-price, .amount, .a-price-whole').first().text();
+                  $('.Nx9bqj._4b5DiR, ._30jeq3._16016e, .price, .product-price, .amount, .a-price-whole, ._30jeq3, ._16016e, .Nx9bqj').first().text());
 
       const formatPrice = (p: string | undefined) => {
         if (!p) return '';
@@ -280,34 +448,30 @@ async function startServer() {
         const num = parseFloat(cleaned);
         if (isNaN(num)) return p;
         
-        // Manual formatting to ensure it works even if Intl isn't fully supported in node env
-        const rounded = num.toFixed(2);
-        const [intPart, decimalPart] = rounded.split('.');
-        // Simple comma formatting for Indian style: last 3 digits, then every 2
-        let lastThree = intPart.substring(intPart.length - 3);
-        let otherParts = intPart.substring(0, intPart.length - 3);
-        if (otherParts !== '') {
-            lastThree = ',' + lastThree;
-        }
-        const formattedInt = otherParts.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-        return `₹${formattedInt}.${decimalPart}`;
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 0
+        }).format(num);
       };
 
       const cleanedPrice = formatPrice(priceRaw);
       const oldPriceText = $('.old-price, .a-text-strike, del').first().text();
       const oldPrice = formatPrice(oldPriceText);
       
-      const image = $('meta[property="og:image"]').attr('content') || 
+      const image = ldImage || $('meta[property="og:image"]').attr('content') || 
                     $('meta[name="twitter:image"]').attr('content') ||
                     $('img[itemprop="image"]').attr('src') ||
-                    $('#landingImage, #imgBlkFront').attr('src');
+                    $('.DByoCore img, ._396cs4, .product-image-photo, #landingImage, #imgBlkFront').first().attr('src');
                     
       const additionalImages: string[] = [];
-      $('#altImages img, .a-dynamic-image, .product-image-gallery img, .thumbnail img').each((_, el) => {
-        let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).data('src');
+      if (ldImage) additionalImages.push(ldImage);
+      const imageSelectors = ['img._2r_T1I', 'img.q6DClP', '.product-image-thumbs img', '.altImages img', '.a-button-thumbnail img', '#altImages img', '.a-dynamic-image', '.product-image-gallery img', '.thumbnail img'];
+      
+      $(imageSelectors.join(', ')).each((_, el) => {
+        let srcRaw = $(el).attr('src') || $(el).attr('data-old-hires') || $(el).attr('data-src') || $(el).attr('data-a-dynamic-image');
         if (srcRaw) {
           let src = String(srcRaw);
-          // Amazon specific: remove small image constraint to get full size
           if (src.includes('amazon.com') || src.includes('images-amazon.com')) {
             src = src.replace(/\._[A-Z0-9_]+_\./, '.');
           }
@@ -335,50 +499,31 @@ async function startServer() {
         }
       }
                     
-      const description = $('meta[property="og:description"]').attr('content') || 
+      const description = ldDescription || $('meta[property="og:description"]').attr('content') || 
                           $('meta[name="description"]').attr('content') ||
-                          $('.description, .product-description, #feature-bullets').first().text().trim();
+                          $('.y_m6H_, ._1mXo7f, #feature-bullets, .product-info-main-content, ._21l_82, #product-description').first().text().trim();
       
-      let brand = $('meta[property="product:brand"]').attr('content') || 
-                    $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
-                    $('[itemprop="brand"]').text().trim() ||
-                    $('#bylineInfo').text().trim() || '';
-
-      if (brand) {
-         if (brand.toLowerCase().startsWith('visit the ')) {
-            brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
-         }
-         if (brand.toLowerCase().startsWith('brand: ')) {
-            brand = brand.replace(/brand: /i, '').trim();
-         }
-      } else {
-         brand = 'Unknown';
-      }
-
       const category = $('meta[property="product:category"]').attr('content') || 
-                       $('[itemprop="category"]').attr('content') ||
-                       $('.nav-a-content').first().text().trim() || '';
+                       $('.nav-a-content, ._2whKao').first().text().trim() || '';
 
-      const discount = $('.savingsPercentage, .discount, .badge').first().text().trim();
+      const discount = $('.Uk_O9r, .savingsPercentage, .discount, .badge').first().text().trim();
       
       const specifications: Record<string, string> = {};
       
       const parseSpecRow = (_: any, el: any) => {
-        const key = $(el).find('th').first().text().trim() || $(el).find('td').first().text().trim();
-        const value = $(el).find('td').not(':first-child').first().text().trim() || $(el).find('td').last().text().trim();
+        const key = $(el).find('td:nth-child(1), ._1hAy30, .label, th').first().text().trim();
+        const value = $(el).find('td:nth-child(2), ._21l_82, .value, td').last().text().trim();
         
-        if (key && value && !key.toLowerCase().includes('customer reviews') && !key.toLowerCase().includes('sellers')) {
+        if (key && value && key !== value && !key.toLowerCase().includes('customer reviews')) {
           const cleanKey = key.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
           const cleanVal = value.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
-          if (cleanKey && cleanVal) {
+          if (cleanKey.length > 1 && cleanKey.length < 100) {
             specifications[cleanKey] = cleanVal;
           }
         }
       };
 
-      $('#productDetails_techSpec_section_1 tr').each(parseSpecRow);
-      $('#productDetails_techSpec_section_2 tr').each(parseSpecRow);
-      $('table.spec-table tr, table._14cfVK tr, table.a-keyvalue tr, #productOverview_feature_div tr').each(parseSpecRow);
+      $('#productDetails_techSpec_section_1 tr, #productDetails_techSpec_section_2 tr, tr._1s_Z6p, tr._1-M87M, div._14cfVK tr, ._1Kndrq, ._2RngUh tr, table.spec-table tr, table.a-keyvalue tr, #productOverview_feature_div tr').each(parseSpecRow);
 
       $('.po-row').each((_, el) => {
         const key = $(el).find('.a-span3').text().replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\n/g, ' ').trim();
@@ -396,8 +541,41 @@ async function startServer() {
         }
       });
 
-      if ((!brand || brand === 'Unknown') && specifications['Brand']) {
-        brand = specifications['Brand'];
+      let brand = ldBrand || $('meta[property="product:brand"]').attr('content') || 
+                    $('[itemprop="brand"] [itemprop="name"]').text().trim() ||
+                    $('[itemprop="brand"]').text().trim() || 
+                    $('#bylineInfo').text().trim() || 
+                    specifications['Brand'] || 
+                    specifications['Brand Name'] || '';
+
+      if (brand) {
+         if (brand.toLowerCase().startsWith('visit the ')) {
+            brand = brand.replace(/visit the /i, '').replace(/ store/i, '').trim();
+         }
+         if (brand.toLowerCase().startsWith('brand: ')) {
+            brand = brand.replace(/brand: /i, '').trim();
+         }
+      } else {
+         brand = name.split(" ")[0] || 'Unknown';
+      }
+
+      // Fallback spec extraction from title if specs are empty
+      if (Object.keys(specifications).length === 0) {
+        if (name.includes('Intel Core')) specifications['Processor Name'] = 'Intel Core ' + (name.match(/Intel Core (i[3579]|Ultra \w+ \w+)/)?.[1] || '');
+        if (name.includes('Ryzen')) specifications['Processor Name'] = 'AMD Ryzen ' + (name.match(/Ryzen \d \d{4}U?/)?.[0] || '');
+        if (name.includes('Apple M')) specifications['Processor Name'] = name.match(/Apple M\d( Pro| Max)?/)?.[0] || '';
+        
+        const ramMatch = name.match(/(\d+\s*GB)\s*(RAM|LPDDR|DDR)/i) || name.match(/\((\d+\s*GB)\//);
+        if (ramMatch) specifications['RAM'] = ramMatch[1];
+        
+        const ssdMatch = name.match(/(\d+\s*(GB|TB))\s*SSD/i);
+        if (ssdMatch) specifications['SSD'] = ssdMatch[1];
+        
+        const osMatch = name.match(/(Windows 11|Windows 10|Mac OS)/i);
+        if (osMatch) specifications['Operating System'] = osMatch[1];
+        
+        if (name.includes('Thin and Light')) specifications['Type'] = 'Thin and Light Laptop';
+        if (name.includes('Gaming')) specifications['Type'] = 'Gaming Laptop';
       }
 
       console.log(`[Scraper] Successfully parsed: ${name}`);

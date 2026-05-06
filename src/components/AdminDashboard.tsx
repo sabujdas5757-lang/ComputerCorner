@@ -7,6 +7,7 @@ import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import StoreScraperPanel from './StoreScraperPanel';
 
 const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'MacBook'];
 
@@ -1120,6 +1121,9 @@ export default function AdminDashboard() {
             </button>
           </div>
         </div>
+
+        {/* Multi-Store Scraper Section */}
+        <StoreScraperPanel />
 
         {/* Home Page Layout Management */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">

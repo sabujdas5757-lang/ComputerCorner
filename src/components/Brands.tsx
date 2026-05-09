@@ -39,9 +39,9 @@ export default function Brands() {
               key={brand}
               whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
               onClick={() => navigate('/catalog')}
-              className="h-24 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center transition-colors cursor-pointer group"
+              className="h-24 bg-black border border-white/10 rounded-2xl flex items-center justify-center transition-colors cursor-pointer group"
             >
-              <span className="text-xl font-black text-gray-500 group-hover:text-primary transition-colors italic tracking-tighter">{brand}</span>
+              <span className="text-xl font-black text-white group-hover:text-primary transition-colors italic tracking-tighter">{brand}</span>
             </motion.div>
           ))}
         </div>

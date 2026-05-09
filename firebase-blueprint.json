@@ -23,6 +23,17 @@
       },
       "required": ["name"]
     },
+    "PromoBanner": {
+      "title": "Promo Banner",
+      "description": "Customizable promotional banners for the home page",
+      "type": "object",
+      "properties": {
+        "image": { "type": "string" },
+        "link": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["image", "order"]
+    },
     "Product": {
       "title": "Product",
       "description": "Hardware product details",
@@ -43,6 +54,17 @@
         "specifications": { "type": "object" }
       },
       "required": ["name", "brand", "category", "price", "image"]
+    },
+    "VariousFilter": {
+      "title": "Various Filter",
+      "description": "Customizable filters for the catalog",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
     }
   },
   "firestore": {
@@ -54,9 +76,17 @@
       "schema": "Brand",
       "description": "Available product brands"
     },
+    "promoBanners": {
+      "schema": "PromoBanner",
+      "description": "Promotional banners for home page"
+    },
     "products": {
       "schema": "Product",
       "description": "Main product catalog"
+    },
+    "various_filters": {
+      "schema": "VariousFilter",
+      "description": "Custom filters for catalog filtering"
     }
   }
 }

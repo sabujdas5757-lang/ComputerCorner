@@ -33,6 +33,8 @@ export default function Catalog() {
   
   const [priceRange, setPriceRange] = useState({ min: 0, max: 200000 });
   const [firestoreBrands, setFirestoreBrands] = useState<string[]>([]);
+  const [variousFilters, setVariousFilters] = useState<string[]>([]);
+  const [activeVarious, setActiveVarious] = useState('All');
   
   useEffect(() => {
     const q = query(collection(db, 'categories'), orderBy('createdAt', 'asc'));
@@ -55,6 +57,20 @@ export default function Catalog() {
         setFirestoreBrands(b);
       } else {
         setFirestoreBrands([]);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, 'various_filters'), orderBy('name', 'asc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const filters = snapshot.docs.map(doc => doc.data().name);
+        setVariousFilters(filters);
+      } else {
+        // Fallback to default if no dynamic filters exist
+        setVariousFilters(['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'MacBook']);
       }
     });
     return () => unsubscribe();
@@ -128,9 +144,16 @@ export default function Catalog() {
       // Hot Selling filtering
       const hotSellingMatch = hotSellingParam === 'true' ? !!p.isHotSelling : true;
 
-      return categoryMatch && brandMatch && priceMatch && searchMatch && usageMatch && hotSellingMatch;
+      // Various filtering
+      let variousMatch = true;
+      if (activeVarious !== 'All') {
+        const productTags = Array.isArray(p.usageTags) ? p.usageTags.map((t: string) => t.toLowerCase()) : [];
+        variousMatch = productTags.includes(activeVarious.toLowerCase());
+      }
+
+      return categoryMatch && brandMatch && priceMatch && searchMatch && usageMatch && hotSellingMatch && variousMatch;
     });
-  }, [activeCategory, activeBrand, priceRange, usageParam, searchQuery, hotSellingParam]);
+  }, [activeCategory, activeBrand, priceRange, usageParam, searchQuery, hotSellingParam, activeVarious]);
 
   const groupedProducts = useMemo(() => {
     if (viewMode !== 'grouped') return [];
@@ -238,6 +261,25 @@ export default function Catalog() {
           </div>
 
           <div className="lg:border-l lg:border-white/10 lg:pl-8">
+            <div className="mb-10">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Filter by Various</span>
+              <div className="flex flex-wrap gap-2">
+                {['All', ...variousFilters].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setActiveVarious(f)}
+                    className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${
+                      activeVarious === f 
+                        ? 'bg-primary border-primary text-bg-dark' 
+                        : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
+                    }`}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 block mb-6">Price Range (₹)</span>
             <div className="space-y-6">
               <div className="flex items-center justify-between gap-4">

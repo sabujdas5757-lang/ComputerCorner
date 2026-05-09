@@ -1,15 +1,13 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Database } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Database, LayoutGrid, Flame, Filter } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { db, handleFirestoreError, OperationType } from '../firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, query, serverTimestamp, orderBy } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import StoreScraperPanel from './StoreScraperPanel';
-
-const USAGE_OPTIONS = ['Student Usage', 'Gaming', 'Editing', 'Office Usage', 'MacBook'];
 
 const formatPrice = (value: string) => {
   if (!value || value === '0') return '₹0.00';
@@ -34,6 +32,7 @@ export default function AdminDashboard() {
   const formRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [homeGridSearchQuery, setHomeGridSearchQuery] = useState('');
+  const [customTopGridSearchQuery, setCustomTopGridSearchQuery] = useState('');
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => 
@@ -69,12 +68,77 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<{id: string, name: string, img: string} | null>(null);
   const [brands, setBrands] = useState<{id: string, name: string, img: string}[]>([]);
   const [editingBrand, setEditingBrand] = useState<{id: string, name: string, img: string} | null>(null);
+  const [variousFilters, setVariousFilters] = useState<{id: string, name: string}[]>([]);
+  const [editingVarious, setEditingVarious] = useState<{id: string, name: string} | null>(null);
   const [categoryForm, setCategoryForm] = useState({ name: '', img: '', showAsSection: false, sectionTitle: '', sectionOrder: 0 });
   const [brandForm, setBrandForm] = useState({ name: '', img: '' });
+  const [variousForm, setVariousForm] = useState({ name: '' });
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
   const [isBrandLoading, setIsBrandLoading] = useState(false);
+  const [isVariousLoading, setIsVariousLoading] = useState(false);
   const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null);
   const [deletingBrandId, setDeletingBrandId] = useState<string | null>(null);
+  const [deletingVariousId, setDeletingVariousId] = useState<string | null>(null);
+  
+  const [topGridSettings, setTopGridSettings] = useState({ title: 'Top Picks', subtitle: 'Specially Curated For You' });
+  const [isSettingsLoading, setIsSettingsLoading] = useState(false);
+
+  const [hotSellingSettings, setHotSellingSettings] = useState({ title: 'Hot Selling', subtitle: 'Our most popular gear this month' });
+  const [isHotSellingSettingsLoading, setIsHotSellingSettingsLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'settings', 'topGrid'), (docSnap) => {
+      if (docSnap.exists()) {
+        setTopGridSettings(docSnap.data() as any);
+      }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'settings/topGrid');
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'settings', 'hotSelling'), (docSnap) => {
+      if (docSnap.exists()) {
+        setHotSellingSettings(docSnap.data() as any);
+      }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'settings/hotSelling');
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleSettingsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSettingsLoading(true);
+    try {
+      await setDoc(doc(db, 'settings', 'topGrid'), {
+        ...topGridSettings,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      showFeedback('Top Custom Grid settings updated!');
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, 'settings/topGrid');
+    } finally {
+      setIsSettingsLoading(false);
+    }
+  };
+
+  const handleHotSellingSettingsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsHotSellingSettingsLoading(true);
+    try {
+      await setDoc(doc(db, 'settings', 'hotSelling'), {
+        ...hotSellingSettings,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      showFeedback('Hot Selling Grid settings updated!');
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, 'settings/hotSelling');
+    } finally {
+      setIsHotSellingSettingsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const q = query(collection(db, 'categories'));
@@ -94,6 +158,17 @@ export default function AdminDashboard() {
       setBrands(b);
     }, (error) => {
       handleFirestoreError(error, OperationType.LIST, 'brands');
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, 'various_filters'), orderBy('name', 'asc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const v = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setVariousFilters(v);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'various_filters');
     });
     return () => unsubscribe();
   }, []);
@@ -169,6 +244,45 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleVariousSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsVariousLoading(true);
+    const normalizedName = variousForm.name.trim();
+    
+    const alreadyExists = variousFilters.some(v => 
+      v.name.toLowerCase() === normalizedName.toLowerCase() && 
+      (!editingVarious || v.id !== editingVarious.id)
+    );
+
+    if (alreadyExists && !editingVarious) {
+      showFeedback('This filter already exists!');
+      setIsVariousLoading(false);
+      return;
+    }
+
+    try {
+      if (editingVarious) {
+        await updateDoc(doc(db, 'various_filters', editingVarious.id), {
+          name: normalizedName,
+          updatedAt: serverTimestamp()
+        });
+        showFeedback('Filter updated!');
+      } else {
+        await addDoc(collection(db, 'various_filters'), {
+          name: normalizedName,
+          createdAt: serverTimestamp()
+        });
+        showFeedback('Filter added!');
+      }
+      setVariousForm({ name: '' });
+      setEditingVarious(null);
+    } catch (err: any) {
+      handleFirestoreError(err, editingVarious ? OperationType.UPDATE : OperationType.CREATE, 'various_filters');
+    } finally {
+      setIsVariousLoading(false);
+    }
+  };
+
   const handleEditCategory = (cat: any) => {
     setEditingCategory(cat);
     setCategoryForm({ 
@@ -183,6 +297,11 @@ export default function AdminDashboard() {
   const handleEditBrand = (brand: any) => {
     setEditingBrand(brand);
     setBrandForm({ name: brand.name, img: brand.img });
+  };
+
+  const handleEditVarious = (various: any) => {
+    setEditingVarious(various);
+    setVariousForm({ name: various.name });
   };
 
   const handleDeleteCategory = async (id: string) => {
@@ -205,13 +324,26 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteVarious = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'various_filters', id));
+      showFeedback('Filter deleted');
+      setDeletingVariousId(null);
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.DELETE, `various_filters/${id}`);
+    }
+  };
+
   useEffect(() => {
     fetch('/api/storage-status')
       .then(res => res.json())
       .then(data => {
         if (data) setStorageStatus(data);
       })
-      .catch(err => console.error("Storage status check failed:", err));
+      .catch(() => {
+        // Silently ignore storage status fetch errors to prevent error overlays
+        // as this is non-critical diagnostic info.
+      });
   }, []);
 
   const safeJson = async (response: Response) => {
@@ -878,6 +1010,7 @@ export default function AdminDashboard() {
     usageTags: [] as string[],
     isHotSelling: false,
     showInHomeGrid: false,
+    isCustomTopGrid: false,
     image: '',
     additionalImages: [] as string[]
   });
@@ -915,6 +1048,7 @@ export default function AdminDashboard() {
       usageTags: Array.isArray(product.usageTags) ? product.usageTags : [],
       isHotSelling: !!product.isHotSelling,
       showInHomeGrid: !!product.showInHomeGrid,
+      isCustomTopGrid: !!product.isCustomTopGrid,
       image: product.image || '',
       additionalImages: product.additionalImages || []
     });
@@ -943,6 +1077,7 @@ export default function AdminDashboard() {
       usageTags: [],
       isHotSelling: false,
       showInHomeGrid: false,
+      isCustomTopGrid: false,
       image: '',
       additionalImages: []
     });
@@ -1054,6 +1189,7 @@ export default function AdminDashboard() {
           additionalImages: newAdditionalImages,
           isHotSelling: !!formData.isHotSelling,
           showInHomeGrid: !!formData.showInHomeGrid,
+          isCustomTopGrid: !!formData.isCustomTopGrid,
           category: formData.category as any,
           specifications: formattedSpecs
         };
@@ -1069,6 +1205,7 @@ export default function AdminDashboard() {
           additionalImages: newAdditionalImages,
           isHotSelling: !!formData.isHotSelling,
           showInHomeGrid: !!formData.showInHomeGrid,
+          isCustomTopGrid: !!formData.isCustomTopGrid,
           category: formData.category as any,
           specifications: formattedSpecs
         });
@@ -1368,6 +1505,241 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Custom Top Grid Settings Section */}
+        <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <LayoutGrid size={24} className="text-purple-500" />
+            Top Custom Grid Settings
+          </h2>
+          <p className="text-xs text-gray-500 mb-6 uppercase tracking-widest">
+            Manage the title and subtitle for the Top Custom Grid shown on the homepage.
+          </p>
+
+          <form onSubmit={handleSettingsSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-black/40 p-6 rounded-2xl border border-white/5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Title</label>
+              <input
+                type="text"
+                required
+                value={topGridSettings.title || ''}
+                onChange={(e) => setTopGridSettings({ ...topGridSettings, title: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
+                placeholder="e.g. Top Picks"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Subtitle</label>
+              <input
+                type="text"
+                value={topGridSettings.subtitle || ''}
+                onChange={(e) => setTopGridSettings({ ...topGridSettings, subtitle: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
+                placeholder="e.g. Specially Curated For You"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={isSettingsLoading}
+                className="w-[200px] bg-purple-500 text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
+              >
+                {isSettingsLoading ? <Loader2 className="animate-spin" size={18} /> : 'Save Settings'}
+              </button>
+            </div>
+          </form>
+
+          {/* Top Custom Grid Featured Products Summary */}
+          <div className="mt-8">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <LayoutGrid size={20} className="text-purple-500" />
+              Top Custom Grid Products
+            </h3>
+            
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold" size={16} />
+                <input 
+                  type="text"
+                  placeholder="Search top custom grid featured products..."
+                  value={customTopGridSearchQuery}
+                  onChange={(e) => setCustomTopGridSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && setCustomTopGridSearchQuery((e.target as any).value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 focus:border-purple-500 transition-all outline-none text-sm placeholder:text-gray-500"
+                />
+              </div>
+              <button 
+                onClick={() => setCustomTopGridSearchQuery(customTopGridSearchQuery)}
+                className="bg-purple-500 text-bg-dark px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white transition-all flex items-center justify-center gap-2"
+              >
+                <Search size={16} />
+                Search
+              </button>
+              {customTopGridSearchQuery && (
+                <button 
+                  onClick={() => setCustomTopGridSearchQuery('')}
+                  className="px-4 py-3 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest border border-white/10 rounded-xl"
+                >
+                  Clear Results
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-6 scroll-smooth">
+              {(() => {
+                const filtered = products.filter(p => {
+                  if (!p.isCustomTopGrid) return false;
+                  
+                  const search = customTopGridSearchQuery.toLowerCase();
+                  return p.name.toLowerCase().includes(search) ||
+                         p.category.toLowerCase().includes(search) ||
+                         p.brand.toLowerCase().includes(search);
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="w-full text-center py-20 text-gray-500 italic text-sm border border-dashed border-white/10 rounded-2xl">
+                      {customTopGridSearchQuery ? "No matching products found." : "No products. Tick \"Top Custom Grid\" on a product to feature it here."}
+                    </div>
+                  );
+                }
+
+                return filtered.map(p => (
+                  <div key={p.id} className="min-w-[280px] max-w-[280px] bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col gap-3 group hover:border-purple-500/50 transition-all shrink-0">
+                    <div className="relative aspect-video bg-white rounded-xl overflow-hidden p-2">
+                      <img src={p.image} className="w-full h-full object-contain" alt="" />
+                      <div className="absolute top-2 right-2 bg-purple-500 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full shadow-lg">
+                        Custom Top Grid
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <span className="text-[8px] text-purple-400 font-black uppercase tracking-widest bg-purple-500/10 px-1.5 py-0.5 rounded">{p.category}</span>
+                        <span className="text-[8px] text-gray-400 font-bold uppercase">{p.brand}</span>
+                      </div>
+                      <p className="text-xs font-bold text-white line-clamp-2 min-h-[32px] leading-relaxed">{p.name}</p>
+                    </div>
+                    <div className="flex gap-2 mt-auto">
+                      <button 
+                        onClick={() => handleEdit(p)}
+                        className="flex-1 py-2 bg-white/5 text-white hover:bg-purple-500 hover:text-white transition-all rounded-lg font-bold uppercase tracking-widest text-[9px] flex items-center justify-center gap-2"
+                      >
+                        <Edit2 size={12} />
+                        Edit Product
+                      </button>
+                    </div>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        </div>
+
+        {/* Hot Selling Grid Settings Section */}
+        <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <Flame size={24} className="text-primary" />
+            Hot Selling Grid Settings
+          </h2>
+          <p className="text-xs text-gray-500 mb-6 uppercase tracking-widest">
+            Manage the title and subtitle for the Hot Selling Grid shown on the homepage.
+          </p>
+
+          <form onSubmit={handleHotSellingSettingsSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-black/40 p-6 rounded-2xl border border-white/5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Title</label>
+              <input
+                type="text"
+                required
+                value={hotSellingSettings.title || ''}
+                onChange={(e) => setHotSellingSettings({ ...hotSellingSettings, title: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                placeholder="e.g. Hot Selling"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Subtitle</label>
+              <input
+                type="text"
+                value={hotSellingSettings.subtitle || ''}
+                onChange={(e) => setHotSellingSettings({ ...hotSellingSettings, subtitle: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                placeholder="e.g. Our most popular gear this month"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={isHotSellingSettingsLoading}
+                className="w-[200px] bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
+              >
+                {isHotSellingSettingsLoading ? <Loader2 className="animate-spin" size={18} /> : 'Save Settings'}
+              </button>
+            </div>
+          </form>
+
+          {/* Hot Selling Featured Products Summary */}
+          <div className="mt-8">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Flame size={20} className="text-primary" />
+              Hot Selling Products
+            </h3>
+            
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold" size={16} />
+                <input 
+                  type="text"
+                  placeholder="Search hot selling featured products..."
+                  value={homeGridSearchQuery} // Using same search query var or we can reuse homeGridSearchQuery since it's just local to render but let's decouple
+                  onChange={(e) => setHomeGridSearchQuery(e.target.value)} // wait, better to use separate state
+                  onKeyPress={(e) => e.key === 'Enter' && setHomeGridSearchQuery((e.target as any).value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 focus:border-primary transition-all outline-none text-sm placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 overflow-x-auto no-scrollbar pb-6 scroll-smooth">
+              {(() => {
+                const filtered = products.filter(p => p.isHotSelling);
+                if (filtered.length === 0) {
+                  return (
+                    <div className="w-full text-center py-20 text-gray-500 italic text-sm border border-dashed border-white/10 rounded-2xl">
+                      No products. Tick "Hot Selling" on a product to feature it here.
+                    </div>
+                  );
+                }
+
+                return filtered.map(p => (
+                  <div key={p.id} className="min-w-[280px] max-w-[280px] bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col gap-3 group hover:border-primary/50 transition-all shrink-0">
+                    <div className="relative aspect-video bg-white rounded-xl overflow-hidden p-2">
+                      <img src={p.image} className="w-full h-full object-contain" alt="" />
+                      <div className="absolute top-2 right-2 bg-primary text-black text-[8px] font-black uppercase px-2 py-0.5 rounded-full shadow-lg">
+                        Hot Selling
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <span className="text-[8px] text-primary font-black uppercase tracking-widest bg-primary/10 px-1.5 py-0.5 rounded">{p.category}</span>
+                        <span className="text-[8px] text-gray-400 font-bold uppercase">{p.brand}</span>
+                      </div>
+                      <p className="text-xs font-bold text-white line-clamp-2 min-h-[32px] leading-relaxed">{p.name}</p>
+                    </div>
+                    <div className="flex gap-2 mt-auto">
+                      <button 
+                        onClick={() => handleEdit(p)}
+                        className="flex-1 py-2 bg-white/5 text-white hover:bg-primary hover:text-black transition-all rounded-lg font-bold uppercase tracking-widest text-[9px] flex items-center justify-center gap-2"
+                      >
+                        <Edit2 size={12} />
+                        Edit Product
+                      </button>
+                    </div>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        </div>
+
         {/* Brand Management Section */}
         <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -1456,6 +1828,81 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Various Filter Management Section */}
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 mb-16">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <Filter size={24} className="text-primary" />
+            Manage Various Filters (Catalog Filter)
+          </h2>
+          
+          <form onSubmit={handleVariousSubmit} className="grid grid-cols-1 gap-6 mb-8 bg-black/40 p-6 rounded-2xl border border-white/5">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Filter Name</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  required
+                  value={variousForm.name || ''}
+                  onChange={(e) => setVariousForm({ name: e.target.value })}
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
+                  placeholder="e.g. Budget Choice"
+                />
+                <button
+                  type="submit"
+                  disabled={isVariousLoading}
+                  className="w-[120px] bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
+                >
+                  {isVariousLoading ? <Loader2 className="animate-spin" size={18} /> : (editingVarious ? 'Update' : 'Add')}
+                </button>
+                {editingVarious && (
+                  <button
+                    type="button"
+                    onClick={() => { setEditingVarious(null); setVariousForm({ name: '' }); }}
+                    className="bg-white/10 text-white h-[50px] px-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all"
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
+
+          <div className="flex flex-wrap gap-3">
+            {variousFilters.map((v) => (
+              <div key={v.id} className={`group relative bg-black/40 border ${editingVarious?.id === v.id ? 'border-primary' : 'border-white/5'} rounded-full px-5 py-2 flex items-center gap-3 hover:border-primary/50 transition-all`}>
+                <span className="text-[10px] font-black uppercase tracking-widest">{v.name}</span>
+                
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => handleEditVarious(v)} className="p-1 bg-blue-500/20 text-blue-400 rounded-full hover:bg-blue-500/40 transition-all">
+                    <Filter size={10} />
+                  </button>
+                  {deletingVariousId === v.id ? (
+                    <div className="flex gap-1">
+                      <button 
+                        onClick={() => handleDeleteVarious(v.id)}
+                        className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-bold rounded-full hover:bg-red-600 transition-all"
+                      >
+                        ✔
+                      </button>
+                      <button 
+                        onClick={() => setDeletingVariousId(null)}
+                        className="px-2 py-0.5 bg-white/10 text-white text-[8px] font-bold rounded-full hover:bg-white/20 transition-all"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setDeletingVariousId(v.id)} className="p-1 bg-red-500/20 text-red-400 rounded-full hover:bg-red-500/40 transition-all">
+                      <Trash2 size={10} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            {variousFilters.length === 0 && <p className="text-xs text-gray-500 italic">No filters added yet.</p>}
           </div>
         </div>
 
@@ -1680,24 +2127,86 @@ export default function AdminDashboard() {
               </div>
               
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Usage Tags</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {USAGE_OPTIONS.map(tag => (
-                    <label key={tag} className="flex items-center gap-2 cursor-pointer text-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm text-gray-400">Various Filters</label>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Select tags for catalog filtering</p>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                  {variousFilters.map(filter => (
+                    <label key={filter.id} className="flex items-center gap-2 cursor-pointer text-sm">
                       <input 
                         type="checkbox" 
-                        checked={formData.usageTags.some(t => t.toLowerCase() === tag.toLowerCase())}
+                        checked={formData.usageTags.some(t => t.toLowerCase() === filter.name.toLowerCase())}
                         onChange={(e) => {
                           const newTags = e.target.checked 
-                            ? [...formData.usageTags, tag]
-                            : formData.usageTags.filter(t => t.toLowerCase() !== tag.toLowerCase());
+                            ? [...formData.usageTags, filter.name]
+                            : formData.usageTags.filter(t => t.toLowerCase() !== filter.name.toLowerCase());
                           setFormData({...formData, usageTags: newTags});
                         }}
                         className="rounded border-white/10 text-primary focus:ring-primary bg-bg-dark"
                       />
-                      {tag}
+                      {filter.name}
                     </label>
                   ))}
+                  {variousFilters.length === 0 && (
+                    <p className="text-[10px] text-gray-500 italic md:col-span-3">No dynamic filters found. Add them below.</p>
+                  )}
+                </div>
+                
+                {/* Quick Add Filter */}
+                <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5">
+                  <input 
+                    type="text"
+                    id="product-form-new-filter"
+                    placeholder="Quick add new filter tag..."
+                    className="flex-1 bg-transparent border-none text-[10px] focus:outline-none placeholder:text-gray-600"
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const val = (e.target as HTMLInputElement).value.trim();
+                        if (val) {
+                          try {
+                            const exists = variousFilters.some(v => v.name.toLowerCase() === val.toLowerCase());
+                            if (!exists) {
+                              await addDoc(collection(db, 'various_filters'), {
+                                name: val,
+                                createdAt: serverTimestamp()
+                              });
+                              showFeedback(`"${val}" added to filters!`);
+                            }
+                            (e.target as HTMLInputElement).value = '';
+                          } catch (err) {
+                            console.error("Failed to quick add filter:", err);
+                          }
+                        }
+                      }
+                    }}
+                  />
+                  <button 
+                    type="button"
+                    onClick={async () => {
+                      const input = document.getElementById('product-form-new-filter') as HTMLInputElement;
+                      const val = input.value.trim();
+                      if (val) {
+                        try {
+                          const exists = variousFilters.some(v => v.name.toLowerCase() === val.toLowerCase());
+                          if (!exists) {
+                            await addDoc(collection(db, 'various_filters'), {
+                              name: val,
+                              createdAt: serverTimestamp()
+                            });
+                            showFeedback(`"${val}" added to filters!`);
+                          }
+                          input.value = '';
+                        } catch (err) {
+                          console.error("Failed to quick add filter:", err);
+                        }
+                      }
+                    }}
+                    className="text-[10px] font-black text-primary uppercase bg-primary/10 px-2 py-1 rounded hover:bg-primary/20 transition-all"
+                  >
+                    + Create Tag
+                  </button>
                 </div>
               </div>
 
@@ -1779,6 +2288,24 @@ export default function AdminDashboard() {
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-blue-400 group-hover:text-white transition-colors uppercase tracking-widest">Home Grid</span>
                       <span className="text-[10px] text-gray-500 font-medium">Feature in Home Category Grid</span>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="flex flex-col gap-2 p-3 bg-purple-500/5 border border-purple-500/20 rounded-xl mb-4">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className="relative flex items-center">
+                        <input 
+                          type="checkbox" 
+                          checked={!!formData.isCustomTopGrid}
+                          onChange={(e) => setFormData({...formData, isCustomTopGrid: e.target.checked})}
+                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-white/20 bg-bg-dark checked:border-purple-500 checked:bg-purple-500 transition-all"
+                      />
+                      <Plus size={14} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-purple-400 group-hover:text-white transition-colors uppercase tracking-widest">Top Custom Grid</span>
+                      <span className="text-[10px] text-gray-500 font-medium">Show in the Custom Top Grid</span>
                     </div>
                   </label>
                 </div>

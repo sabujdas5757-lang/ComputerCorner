@@ -32,12 +32,26 @@ service cloud.firestore {
              data.name is string;
     }
 
+    function isValidPromoBanner(data) {
+      return data.keys().hasAll(['image', 'order']) &&
+             data.image is string &&
+             data.order is number;
+    }
+
+    function isValidSetting(data) {
+      return true; // We can make it more specific if needed, but for now just allow admins
+    }
+
     function isValidProduct(data) {
       return data.name is string && data.name.size() > 0 &&
              data.brand is string &&
              data.category is string &&
              data.price is string &&
              data.image is string;
+    }
+
+    function isValidVariousFilter(data) {
+      return data.name is string && data.name.size() > 0;
     }
 
     match /categories/{categoryId} {
@@ -50,6 +64,23 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if isAdmin() && isValidBrand(incoming());
       allow delete: if isAdmin();
+    }
+
+    match /various_filters/{filterId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidVariousFilter(incoming());
+      allow delete: if isAdmin();
+    }
+
+    match /promoBanners/{bannerId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidPromoBanner(incoming());
+      allow delete: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     match /products/{productId} {

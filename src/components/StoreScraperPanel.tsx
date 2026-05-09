@@ -29,7 +29,8 @@ export default function StoreScraperPanel() {
     category: '',
     brand: '',
     isHotSelling: false,
-    showInHomeGrid: true
+    showInHomeGrid: true,
+    isCustomTopGrid: false
   });
 
   useEffect(() => {
@@ -169,6 +170,7 @@ export default function StoreScraperPanel() {
         description: String(scrapedData.description || `Source: ${scrapedData.sourceUrl}`),
         isHotSelling: Boolean(addForm.isHotSelling),
         showInHomeGrid: Boolean(addForm.showInHomeGrid),
+        isCustomTopGrid: Boolean(addForm.isCustomTopGrid),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -514,6 +516,18 @@ export default function StoreScraperPanel() {
                               <div className={`w-5 h-5 rounded-full bg-white transition-all shadow-xl ${addForm.showInHomeGrid ? 'translate-x-5' : 'translate-x-0'}`} />
                            </div>
                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 group-hover:text-white transition-colors">Showcase on Nexus</span>
+                        </label>
+                        <label className="flex items-center gap-4 cursor-pointer group">
+                           <div className={`w-12 h-7 rounded-full transition-all relative p-1 ${addForm.isCustomTopGrid ? 'bg-primary' : 'bg-white/10'}`}>
+                              <input 
+                                type="checkbox" 
+                                className="hidden" 
+                                checked={addForm.isCustomTopGrid}
+                                onChange={(e) => setAddForm(prev => ({ ...prev, isCustomTopGrid: e.target.checked }))}
+                              />
+                              <div className={`w-5 h-5 rounded-full bg-white transition-all shadow-xl ${addForm.isCustomTopGrid ? 'translate-x-5' : 'translate-x-0'}`} />
+                           </div>
+                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-400 group-hover:text-purple-300 transition-colors">Top Custom Grid</span>
                         </label>
                       </div>
 

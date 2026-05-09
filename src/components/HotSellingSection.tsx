@@ -1,13 +1,31 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, ShoppingCart, Flame } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
+import { db, handleFirestoreError, OperationType } from '../firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 export default function HotSellingSection() {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
+  const [settings, setSettings] = useState({ title: 'Hot Selling', subtitle: 'Our most popular gear this month' });
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'settings', 'hotSelling'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setSettings({
+          title: data.title || 'Hot Selling',
+          subtitle: data.subtitle || 'Our most popular gear this month'
+        });
+      }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'settings/hotSelling');
+    });
+    return () => unsubscribe();
+  }, []);
 
   const products = PRODUCTS.filter(p => p.isHotSelling).slice(0, 15);
 
@@ -37,8 +55,8 @@ export default function HotSellingSection() {
               <Flame className="text-bg-dark" size={28} />
             </div>
             <div>
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">Hot Selling</h2>
-              <p className="text-gray-400 text-xs md:text-sm font-medium uppercase tracking-widest mt-1">Our most popular gear this month</p>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white">{settings.title}</h2>
+              <p className="text-gray-400 text-xs md:text-sm font-medium uppercase tracking-widest mt-1">{settings.subtitle}</p>
             </div>
           </div>
           <button 
@@ -78,7 +96,7 @@ export default function HotSellingSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="min-w-[280px] md:min-w-[340px] bg-white rounded-[2rem] overflow-hidden shadow-2xl snap-start flex flex-col group/card cursor-pointer border border-white/10 relative"
+                className="min-w-[280px] md:min-w-[340px] bg-black rounded-[2rem] overflow-hidden shadow-2xl snap-start flex flex-col group/card cursor-pointer border border-white/10 relative"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 {/* Hot Badge */}
@@ -87,17 +105,14 @@ export default function HotSellingSection() {
                   Trending
                 </div>
 
-                {/* Price Tag Overlay */}
-                <div className="absolute top-6 right-6 z-20 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl flex flex-col items-center">
-                   <span className="text-black font-black text-lg">{product.price.split(' ')[0]}</span>
-                </div>
+
 
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#f8f8f8] flex items-center justify-center p-8 group-hover/card:bg-primary/5 transition-colors duration-500">
+                <div className="relative aspect-[4/3] overflow-hidden bg-white/5 flex items-center justify-center p-8 group-hover/card:bg-primary/5 transition-colors duration-500">
                   <img 
                     src={product.image} 
                     alt={product.name}
-                    className="w-full h-full object-contain mix-blend-multiply group-hover/card:scale-110 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-700 ease-out"
                   />
                   
                   {/* Quick Action */}
@@ -110,18 +125,21 @@ export default function HotSellingSection() {
                 </div>
 
                 {/* Content */}
-                <div className="p-8 flex flex-col flex-1 bg-white">
+                <div className="p-8 flex flex-col flex-1 bg-black">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{product.brand}</span>
                     <span className="w-1 h-1 bg-gray-300 rounded-full" />
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.category}</span>
                   </div>
                   
-                  <h3 className="text-xl font-bold text-gray-900 line-clamp-2 leading-tight group-hover/card:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-white line-clamp-3 leading-tight group-hover/card:text-primary transition-colors duration-300">
                     {product.name}
                   </h3>
+                  <div className="mt-2 text-2xl font-black text-white">
+                    {product.price.split(' ')[0]}
+                  </div>
                   
-                  <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-6">
+                  <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-6">
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Live Deal</span>
                       {product.oldPrice && (

@@ -26,6 +26,7 @@ export interface Product {
   usageTags?: string[];
   isHotSelling?: boolean;
   showInHomeGrid?: boolean;
+  isCustomTopGrid?: boolean;
 }
 
 export interface Testimonial {

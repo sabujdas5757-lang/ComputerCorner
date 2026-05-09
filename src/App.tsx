@@ -19,6 +19,7 @@ import ScrollToTop from './components/ScrollToTop';
 
 import ProductSection from './components/ProductSection';
 import HotSellingSection from './components/HotSellingSection';
+import CustomTopGridSection from './components/CustomTopGridSection';
 import UsageSection from './components/UsageSection';
 import MapSection from './components/MapSection';
 
@@ -53,6 +54,7 @@ function HomePage() {
       </header>
       <main className="pt-16 md:pt-24">
         <CategoryGrid />
+        <CustomTopGridSection />
         <HotSellingSection />
         
         {hasLoadedCategories && featuredCategories.length > 0 ? (

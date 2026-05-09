@@ -361,10 +361,11 @@ async function startServer() {
       for (let i = 0; i < fetchMethodsMap.length; i++) {
         try {
           console.log(`[Scraper] Attempting Method ${i + 1}...`);
-          const fetchedData = await fetchMethodsMap[i]();
-          if (fetchedData && typeof fetchedData === 'object' && !fetchedData.includes && !fetchedData.error) {
+          const rawData = await fetchMethodsMap[i]();
+          if (rawData && typeof rawData === 'object' && !(rawData as any).includes && !(rawData as any).error) {
              // ScraperAPI AutoParse / Spider returned JSON directly!
              console.log(`[Scraper] Success with Method ${i + 1} (JSON)`);
+             const fetchedData = rawData as any;
              
              // Format price from ScraperAPI format
              let parsedPrice = fetchedData.pricing || fetchedData.price || '';
@@ -384,12 +385,12 @@ async function startServer() {
                usageTags: []
              });
           }
-          if (fetchedData && typeof fetchedData === 'string' && fetchedData.includes('<html') && !fetchedData.includes('Robot Check') && fetchedData.length > 500) {
-            if (fetchedData.includes('503 - Service Unavailable') || fetchedData.includes('503 Service Unavailable') || fetchedData.includes('captcha')) {
+          if (rawData && typeof rawData === 'string' && rawData.includes('<html') && !rawData.includes('Robot Check') && rawData.length > 500) {
+            if (rawData.includes('503 - Service Unavailable') || rawData.includes('503 Service Unavailable') || rawData.includes('captcha')) {
               console.warn(`[Scraper] Method ${i + 1} returned a blocked/error page. Skipping.`);
               continue;
             }
-            html = fetchedData;
+            html = rawData;
             console.log(`[Scraper] Success with Method ${i + 1}`);
             break;
           }

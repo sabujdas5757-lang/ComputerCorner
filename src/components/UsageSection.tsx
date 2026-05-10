@@ -72,7 +72,7 @@ export default function UsageSection() {
 
   return (
     <section className="w-full bg-black py-16 border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <div className="w-full px-4 md:px-6">
         <div className="flex flex-col items-center text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-white mb-2">Shop by <span className="text-primary italic">Usage.</span></h2>
           <div className="h-1 w-20 bg-primary rounded-full" />

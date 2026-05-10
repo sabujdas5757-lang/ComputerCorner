@@ -167,7 +167,7 @@ export default function Catalog() {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-12">
-      <div className="max-w-7xl mx-auto pt-24 md:pt-32">
+      <div className="w-full pt-24 md:pt-32">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-8 border-b border-white/5 pb-4">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>

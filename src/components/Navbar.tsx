@@ -30,7 +30,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-black border-b border-white/10 relative">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center h-16 md:h-24">
+      <div className="w-full px-4 md:px-6 py-3 flex justify-between items-center h-16 md:h-24">
         {/* Logo Section */}
         <div className="flex flex-col items-start relative z-20">
           <Link to="/" className="flex items-center gap-3 cursor-pointer group">
@@ -164,7 +164,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -20 }}
             className="absolute top-full left-0 right-0 bg-black border-b border-white/10 z-10 shadow-2xl"
           >
-            <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="w-full px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <h3 className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4">Quick Links</h3>
                 <div className="flex flex-col gap-3">

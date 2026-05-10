@@ -21,7 +21,7 @@ import { MapPin, Navigation } from 'lucide-react';
 export default function MapSection() {
   return (
     <section className="w-full bg-black py-20 overflow-hidden border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <div className="w-full px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
           {/* Info Side */}
           <div className="lg:col-span-1">

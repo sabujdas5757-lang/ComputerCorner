@@ -186,7 +186,7 @@ export default function AmazonScraper() {
   return (
     <div className="min-h-screen bg-[#050505] text-[#00ff41] font-mono p-4 md:p-8">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="w-full mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tighter flex items-center gap-2 text-white">
             <Cpu className="text-[#00ff41]" /> SCRAPY_DASHBOARD <span className="text-xs bg-[#00ff41] text-black px-2 py-0.5 rounded ml-2">v2.0_BETA</span>
@@ -198,7 +198,7 @@ export default function AmazonScraper() {
         </Link>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar: Control Panel */}
         <div className="lg:col-span-1 space-y-6">
           <div className="border border-[#00ff41]/20 bg-[#0a0a0a] p-6 rounded-sm shadow-[0_0_20px_rgba(0,255,65,0.05)]">

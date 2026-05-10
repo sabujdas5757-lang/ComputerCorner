@@ -23,14 +23,19 @@
       },
       "required": ["name"]
     },
-    "PromoBanner": {
-      "title": "Promo Banner",
-      "description": "Customizable promotional banners for the home page",
+    "Banner": {
+      "title": "Home Banner",
+      "description": "Customizable hero banners/ads for the top of the home page",
       "type": "object",
       "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
         "image": { "type": "string" },
         "link": { "type": "string" },
-        "order": { "type": "number" }
+        "active": { "type": "boolean" },
+        "order": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["image", "order"]
     },
@@ -76,9 +81,9 @@
       "schema": "Brand",
       "description": "Available product brands"
     },
-    "promoBanners": {
-      "schema": "PromoBanner",
-      "description": "Promotional banners for home page"
+    "banners": {
+      "schema": "Banner",
+      "description": "Hero banners/ads for home page top"
     },
     "products": {
       "schema": "Product",

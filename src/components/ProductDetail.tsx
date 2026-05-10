@@ -42,7 +42,7 @@ export default function ProductDetail() {
       <Navbar />
       
       <main className="pt-24 pb-20">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="w-full px-6">
           <div className="flex items-center gap-6 mb-8">
             <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors group">
               <Home size={18} className="group-hover:-translate-y-0.5 transition-transform" />

@@ -10,7 +10,7 @@ const categories = [
 export default function CategoryBar() {
   return (
     <div className="w-full bg-[#0a0a0a] border-b border-white/5 transition-all duration-300 py-2 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <div className="w-full px-4 md:px-6">
         <div className="flex items-center gap-6 md:gap-10 overflow-x-auto no-scrollbar py-1">
           {categories.map((category, index) => (
             <Link

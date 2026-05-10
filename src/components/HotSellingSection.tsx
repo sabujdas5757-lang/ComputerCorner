@@ -31,13 +31,16 @@ export default function HotSellingSection() {
     const interval = setInterval(() => {
       if (scrollRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        const firstChild = scrollRef.current.children[0] as HTMLElement;
+        const scrollAmount = firstChild ? firstChild.clientWidth + 24 : clientWidth;
+        
         if (scrollLeft + clientWidth >= scrollWidth - 10) {
           scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
-          scrollRef.current.scrollTo({ left: scrollLeft + clientWidth, behavior: 'smooth' });
+          scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
       }
-    }, 1000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -45,8 +48,11 @@ export default function HotSellingSection() {
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      const firstChild = scrollRef.current.children[0] as HTMLElement;
+      const scrollAmount = firstChild ? firstChild.clientWidth + 24 : scrollRef.current.clientWidth;
+      const scrollTo = direction === 'left' 
+        ? scrollRef.current.scrollLeft - scrollAmount 
+        : scrollRef.current.scrollLeft + scrollAmount;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
@@ -61,7 +67,7 @@ export default function HotSellingSection() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[60%] bg-purple-500/10 blur-[120px] rounded-full" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+      <div className="w-full px-4 md:px-6 relative z-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
           <div className="flex items-center gap-4">

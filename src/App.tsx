@@ -19,6 +19,7 @@ import ScrollToTop from './components/ScrollToTop';
 
 import ProductSection from './components/ProductSection';
 import HotSellingSection from './components/HotSellingSection';
+import TopBanners from './components/TopBanners';
 import CustomTopGridSection from './components/CustomTopGridSection';
 import UsageSection from './components/UsageSection';
 import MapSection from './components/MapSection';
@@ -53,6 +54,7 @@ function HomePage() {
         <Navbar />
       </header>
       <main className="pt-16 md:pt-24">
+        <TopBanners />
         <CategoryGrid />
         <CustomTopGridSection />
         <HotSellingSection />

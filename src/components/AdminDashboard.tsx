@@ -8,6 +8,7 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, quer
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import StoreScraperPanel from './StoreScraperPanel';
+import BannersAdminSection from './BannersAdminSection';
 
 const formatPrice = (value: string) => {
   if (!value || value === '0') return '₹0.00';
@@ -1227,7 +1228,7 @@ export default function AdminDashboard() {
           {feedbackMsg}
         </div>
       )}
-      <div className="max-w-7xl mx-auto pt-24">
+      <div className="w-full pt-24">
         <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
           <div>
             <h1 className="text-4xl font-bold">Admin Portal</h1>
@@ -1504,6 +1505,9 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Banners & Ads Section */}
+        <BannersAdminSection />
 
         {/* Custom Top Grid Settings Section */}
         <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">

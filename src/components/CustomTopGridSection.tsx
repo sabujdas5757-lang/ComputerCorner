@@ -31,13 +31,16 @@ export default function CustomTopGridSection() {
     const interval = setInterval(() => {
       if (scrollRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        const firstChild = scrollRef.current.children[0] as HTMLElement;
+        const scrollAmount = firstChild ? firstChild.clientWidth + 24 : clientWidth;
+        
         if (scrollLeft + clientWidth >= scrollWidth - 10) {
           scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
-          scrollRef.current.scrollTo({ left: scrollLeft + clientWidth, behavior: 'smooth' });
+          scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
       }
-    }, 1000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -45,8 +48,11 @@ export default function CustomTopGridSection() {
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      const firstChild = scrollRef.current.children[0] as HTMLElement;
+      const scrollAmount = firstChild ? firstChild.clientWidth + 24 : scrollRef.current.clientWidth;
+      const scrollTo = direction === 'left' 
+        ? scrollRef.current.scrollLeft - scrollAmount 
+        : scrollRef.current.scrollLeft + scrollAmount;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
@@ -55,7 +61,7 @@ export default function CustomTopGridSection() {
 
   return (
     <section className="w-full bg-black py-12 border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <div className="w-full px-4 md:px-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8 bg-gradient-to-r from-[#d8b4fe] via-[#e879f9] to-[#c084fc] p-4 rounded-lg shadow-xl">
           <div className="flex items-center gap-4">

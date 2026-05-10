@@ -33,7 +33,7 @@ export default function Brands() {
           <h3 className="text-2xl font-bold text-gray-400">Leading tech brands available in store</h3>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-6 xl:grid-cols-8 gap-4 max-w-full mx-auto">
           {brands.map((brand) => (
             <motion.div
               key={brand}

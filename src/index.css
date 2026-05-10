@@ -35,6 +35,6 @@
   }
 
   .section-container {
-    @apply max-w-7xl mx-auto px-6 py-20 md:py-32;
+    @apply w-full px-6 py-20 md:py-32;
   }
 }

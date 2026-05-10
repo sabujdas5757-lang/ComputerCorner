@@ -27,6 +27,20 @@ export default function HotSellingSection() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          scrollRef.current.scrollTo({ left: scrollLeft + clientWidth, behavior: 'smooth' });
+        }
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const products = PRODUCTS.filter(p => p.isHotSelling).slice(0, 15);
 
   const scroll = (direction: 'left' | 'right') => {

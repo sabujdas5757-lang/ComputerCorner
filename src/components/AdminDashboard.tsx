@@ -44,7 +44,7 @@ export default function AdminDashboard() {
   }, [products, searchQuery]);
 
   const [scrapeUrl, setScrapeUrl] = useState('');
-  const [scraperApiKey, setScraperApiKey] = useState(localStorage.getItem('scraperApiKey') || '5d5e88487260af181c9730311f19d12a');
+  const [scraperApiKey, setScraperApiKey] = useState(localStorage.getItem('scraperApiKey') || 'b89e7d7893decec1d7c9c71dfc8e5398');
 
   // Save to localStorage when changed
   useEffect(() => {
@@ -382,7 +382,7 @@ export default function AdminDashboard() {
       {
         name: 'ScraperAPI',
         fn: async () => {
-          const proxyKey = scraperApiKey || "5d5e88487260af181c9730311f19d12a";
+          const proxyKey = scraperApiKey || "b89e7d7893decec1d7c9c71dfc8e5398";
            if (!proxyKey) throw new Error("ScraperAPI key not provided");
            
            // Use Structured Amazon Endpoint if possible

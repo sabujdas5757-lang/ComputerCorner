@@ -54,7 +54,7 @@ async function startServer() {
       const fetchMethods = [
         // Method 0: Scraper API (If configured)
         async () => {
-           const apiKey = req.body.scraperApiKey || process.env.SCRAPER_API_KEY || "5d5e88487260af181c9730311f19d12a";
+           const apiKey = req.body.scraperApiKey || process.env.SCRAPER_API_KEY || "b89e7d7893decec1d7c9c71dfc8e5398";
            if (!apiKey) throw new Error("SCRAPER_API_KEY is not configured");
            console.log("[Search Scraper] Attempting Scraper API...");
            let apiUrl = `https://api.scraperapi.com?api_key=${apiKey}&premium=true&url=${encodeURIComponent(url)}`;

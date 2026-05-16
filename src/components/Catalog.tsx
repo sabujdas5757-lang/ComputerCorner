@@ -160,7 +160,7 @@ export default function Catalog() {
         <div className="flex items-center gap-3 text-xs font-bold tracking-widest text-gray-500 mb-6">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <span className="opacity-40">❯</span>
-          <span className="text-black capitalize">
+          <span className="text-white capitalize">
             {hotSellingParam === 'true' ? 'Hot Selling' : (activeCategory === 'All' ? 'Catalog' : activeCategory)}
           </span>
         </div>
@@ -171,9 +171,9 @@ export default function Catalog() {
              <div className="fixed inset-0 z-40 bg-black/60 lg:hidden" onClick={() => setIsFiltersOpen(false)} />
           )}
           {/* Left Sidebar Filters */}
-          <div className={`fixed inset-y-0 left-0 w-[280px] bg-white border-r border-gray-200 p-6 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64 lg:shrink-0 lg:bg-white lg:border lg:rounded-2xl lg:sticky lg:top-24 max-h-screen lg:max-h-[85vh] overflow-y-auto custom-scrollbar shadow-sm ${isFiltersOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-              <h3 className="font-bold text-lg text-black">Filters</h3>
+          <div className={`fixed inset-y-0 left-0 w-[280px] bg-[#0A0A0A] border-r border-white/10 p-6 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 lg:w-64 lg:shrink-0 lg:bg-[#151515] lg:border lg:border-white/10 lg:rounded-2xl lg:sticky lg:top-24 max-h-screen lg:max-h-[85vh] overflow-y-auto custom-scrollbar shadow-2xl ${isFiltersOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-white/5">
+              <h3 className="font-bold text-lg text-white">Filters</h3>
               <div className="flex items-center gap-4">
                 <button 
                   onClick={clearAllFilters}
@@ -196,14 +196,14 @@ export default function Catalog() {
                     <button
                       onClick={() => setActiveCategory(cat)}
                       className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                        activeCategory === cat ? 'border-primary' : 'border-gray-300'
+                        activeCategory === cat ? 'border-primary' : 'border-white/20'
                       }`}
                     >
                       {activeCategory === cat && <div className="w-2 h-2 bg-primary rounded-full" />}
                     </button>
                     <button 
                       onClick={() => setActiveCategory(cat)}
-                      className={`text-sm ${activeCategory === cat ? 'text-black font-bold' : 'text-gray-600 hover:text-black'} uppercase`}
+                      className={`text-sm ${activeCategory === cat ? 'text-primary font-bold' : 'text-gray-400 hover:text-white'} uppercase`}
                     >
                       {cat}
                     </button>
@@ -221,15 +221,15 @@ export default function Catalog() {
                   placeholder="Min"
                   value={priceRange.min || ''}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-primary"
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
                 />
-                <span className="text-gray-400">-</span>
+                <span className="text-gray-600">-</span>
                 <input 
                   type="number"
                   placeholder="Max"
                   value={priceRange.max || ''}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:border-primary"
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
                 />
               </div>
             </div>
@@ -242,7 +242,7 @@ export default function Catalog() {
                 placeholder="Filter by brand..."
                 value={activeBrand === 'AllBrands' ? '' : activeBrand}
                 onChange={(e) => setActiveBrand(e.target.value ? e.target.value : 'AllBrands')}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-black mb-4 focus:outline-none focus:border-primary"
+                className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white mb-4 focus:outline-none focus:border-primary"
               />
               <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
                 {brands.filter(b => b !== 'AllBrands').map((brand) => (
@@ -250,14 +250,14 @@ export default function Catalog() {
                     <button
                       onClick={() => setActiveBrand(brand)}
                       className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                        activeBrand === brand ? 'border-primary' : 'border-gray-300'
+                        activeBrand === brand ? 'border-primary' : 'border-white/20'
                       }`}
                     >
                       {activeBrand === brand && <div className="w-2 h-2 bg-primary rounded-full" />}
                     </button>
                     <button 
                       onClick={() => setActiveBrand(brand)}
-                      className={`text-sm ${activeBrand === brand ? 'text-black font-bold' : 'text-gray-600 hover:text-black'} uppercase`}
+                      className={`text-sm ${activeBrand === brand ? 'text-primary font-bold' : 'text-gray-400 hover:text-white'} uppercase`}
                     >
                       {brand}
                     </button>
@@ -271,7 +271,7 @@ export default function Catalog() {
           {/* Right Product Grid */}
           <div className="flex-1 w-full">
             {/* Top Bar for Sort */}
-            <div className="bg-white rounded-xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 z-20 relative text-black shadow-sm">
+            <div className="bg-[#151515] border border-white/10 rounded-xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 z-20 relative text-white shadow-xl">
               <h1 className="text-lg md:text-xl font-bold uppercase mb-4 sm:mb-0">
                 {hotSellingParam === 'true' ? 'Hot Selling Products' : (activeCategory === 'All' ? (searchQuery || 'Catalog') : activeCategory)}
                 <span className="text-sm font-normal text-gray-500 normal-case ml-2 block sm:inline mt-1 sm:mt-0">
@@ -281,15 +281,15 @@ export default function Catalog() {
               
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setIsFiltersOpen(true)}
-                  className="lg:hidden flex items-center justify-center gap-2 flex-1 px-4 py-2 border border-black rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                   onClick={() => setIsFiltersOpen(true)}
+                   className="lg:hidden flex items-center justify-center gap-2 flex-1 px-4 py-2 border border-white/20 rounded-lg text-sm font-medium hover:bg-white/5 transition-colors"
                 >
                   <Filter size={16} /> Filters
                 </button>
                 <div className="hidden sm:block">
                   <button 
                     onClick={() => setViewMode(viewMode === 'grid' ? 'grouped' : 'grid')}
-                    className="p-2 border border-black rounded-lg hover:bg-gray-50 transition-all text-black h-10 w-10 flex items-center justify-center"
+                    className="p-2 border border-white/20 rounded-lg hover:bg-white/5 transition-all text-white h-10 w-10 flex items-center justify-center"
                     title="Toggle View Mode"
                   >
                     {viewMode === 'grid' ? <List size={18} /> : <LayoutGrid size={18} />}
@@ -299,12 +299,12 @@ export default function Catalog() {
                 <div className="relative flex-1 sm:flex-none">
                   <button 
                     onClick={() => setIsSortOpen(!isSortOpen)}
-                    className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 py-2 border border-black rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors bg-white h-10"
+                    className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 py-2 border border-white/20 rounded-lg text-sm font-medium hover:bg-white/5 transition-colors bg-[#151515] h-10"
                   >
                     <span className="truncate">Sort By: {sortOrder}</span> <ChevronDown size={14} className={`shrink-0 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {isSortOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-full sm:w-56 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-50">
+                    <div className="absolute top-full right-0 mt-2 w-full sm:w-56 bg-[#1A1A1A] border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50">
                       {['Relevance', 'Price: Low to High', 'Price: High to Low', 'Newest First'].map(option => (
                         <button
                           key={option}
@@ -312,7 +312,7 @@ export default function Catalog() {
                             setSortOrder(option);
                             setIsSortOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors ${sortOrder === option ? 'text-black font-bold bg-gray-50' : 'text-gray-600'}`}
+                          className={`w-full text-left px-4 py-3 text-sm hover:bg-white/5 transition-colors ${sortOrder === option ? 'text-primary font-bold bg-white/5' : 'text-gray-400'}`}
                         >
                           {option === 'Relevance' && sortOrder !== 'Relevance' ? 'Sort By: Relevance' : option}
                         </button>

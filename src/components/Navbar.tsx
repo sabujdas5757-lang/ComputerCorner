@@ -18,6 +18,8 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -34,7 +36,7 @@ export default function Navbar() {
         {/* Logo Section */}
         <div className="flex flex-col items-start relative z-20">
           <Link to="/" className="flex items-center gap-3 cursor-pointer group">
-            <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-white/10 group-hover:border-primary transition-colors">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-white/10 group-hover:border-primary transition-colors">
               <img 
                 src="/logo.jpg" 
                 alt="Computer Corner" 
@@ -49,8 +51,8 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col leading-none">
               <div className="flex flex-row">
-                <span className="text-sm md:text-lg font-extrabold tracking-tight text-white group-hover:text-primary transition-colors" style={{ fontFamily: 'Inter, sans-serif' }}>Computer</span>
-                <span className="text-sm md:text-lg font-extrabold tracking-tight text-[#5eb133] group-hover:text-green-400 transition-colors ml-1" style={{ fontFamily: 'Inter, sans-serif' }}>Corner</span>
+                <span className="text-lg md:text-2xl font-extrabold tracking-tight text-white group-hover:text-primary transition-colors" style={{ fontFamily: 'Inter, sans-serif' }}>Computer</span>
+                <span className="text-lg md:text-2xl font-extrabold tracking-tight text-[#5eb133] group-hover:text-green-400 transition-colors ml-1" style={{ fontFamily: 'Inter, sans-serif' }}>Corner</span>
               </div>
             </div>
           </Link>
@@ -62,7 +64,7 @@ export default function Navbar() {
             className="hidden sm:flex items-center gap-1.5 mt-2 px-2 py-0.5 bg-white/5 border border-white/10 rounded-full hover:border-primary/50 transition-all hover:bg-white/10 group ml-0"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-[8px] font-bold uppercase tracking-widest text-[#888] group-hover:text-primary transition-colors whitespace-nowrap">Jhargram's Trusted Tech Hub</span>
+            <span className="text-[8px] font-bold uppercase tracking-widest text-[#888] group-hover:text-primary transition-colors whitespace-nowrap">The Ultimate Solution</span>
           </a>
         </div>
 
@@ -85,7 +87,7 @@ export default function Navbar() {
         {/* Right Actions */}
         <div className="flex items-center gap-3 md:gap-4 relative z-20">
           {/* Admin Icon for Mobile */}
-          {(user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com') && (
+          {isAdmin && (
             <Link 
               to="/admin"
               className="md:hidden p-2 text-primary hover:bg-white/10 rounded-full transition-colors"
@@ -103,10 +105,8 @@ export default function Navbar() {
             <Search size={22} />
           </button>
 
-          {/* Cart Icon - Removed per user request */}
-
           <div className="hidden md:flex items-center gap-4">
-            {(user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com') && (
+            {isAdmin && (
               <Link 
                 to="/admin"
                 className="text-primary hover:text-white transition-colors flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest border border-primary/20 px-3 py-1.5 rounded-lg bg-primary/5"
@@ -127,6 +127,15 @@ export default function Navbar() {
           {/* Auth Button */}
           {user ? (
             <div className="flex items-center gap-2">
+              {!isAdmin && (
+                <Link
+                  to="/profile"
+                  className="bg-primary/10 text-primary border border-primary/20 font-bold px-3 py-2 md:px-5 md:py-2 rounded-full text-[10px] md:text-xs hover:bg-primary hover:text-black transition-all shadow-sm flex items-center gap-2"
+                >
+                  <UserIcon size={14} />
+                  <span className="hidden sm:inline">Profile</span>
+                </Link>
+              )}
               <button
                 onClick={logout}
                 className="bg-white/10 text-white border border-white/10 font-bold px-3 py-2 md:px-5 md:py-2 rounded-full text-[10px] md:text-xs hover:bg-white/20 transition-all shadow-sm flex items-center gap-2"
@@ -169,11 +178,16 @@ export default function Navbar() {
                 <h3 className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4">Quick Links</h3>
                 <div className="flex flex-col gap-3">
                   <Link to="/catalog" onClick={() => setIsOpen(false)} className="text-white hover:text-primary transition-colors font-bold uppercase tracking-widest text-sm">Products Catalog</Link>
+                  {user && !isAdmin && (
+                    <Link to="/profile" onClick={() => setIsOpen(false)} className="text-white hover:text-primary transition-colors font-bold uppercase tracking-widest text-sm text-green-400">My Profile</Link>
+                  )}
                   <Link to="/quick-access" onClick={() => setIsOpen(false)} className="text-white hover:text-primary transition-colors font-bold uppercase tracking-widest text-sm">Contact Us & Support</Link>
-                  <Link to="/admin" onClick={() => setIsOpen(false)} className="text-primary hover:text-white transition-colors font-bold uppercase tracking-widest text-sm flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                    Admin Panel
-                  </Link>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setIsOpen(false)} className="text-primary hover:text-white transition-colors font-bold uppercase tracking-widest text-sm flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      Admin Panel
+                    </Link>
+                  )}
                 </div>
               </div>
               <div>

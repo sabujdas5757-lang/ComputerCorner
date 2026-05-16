@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
-import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Database, LayoutGrid, Flame, Filter } from 'lucide-react';
+import { Trash2, Edit2, Plus, Save, Search, Upload, Image as ImageIcon, Loader2, AlertCircle, Database, LayoutGrid, Flame, Filter, Package, QrCode } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '../constants';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot, query, serverTimestamp, orderBy } from 'firebase/firestore';
@@ -309,9 +309,10 @@ export default function AdminDashboard() {
     try {
       await deleteDoc(doc(db, 'categories', id));
       showFeedback('Category deleted');
-      setDeletingCategoryId(null);
     } catch (err: any) {
       handleFirestoreError(err, OperationType.DELETE, `categories/${id}`);
+    } finally {
+      setDeletingCategoryId(null);
     }
   };
 
@@ -319,9 +320,10 @@ export default function AdminDashboard() {
     try {
       await deleteDoc(doc(db, 'brands', id));
       showFeedback('Brand deleted');
-      setDeletingBrandId(null);
     } catch (err: any) {
       handleFirestoreError(err, OperationType.DELETE, `brands/${id}`);
+    } finally {
+      setDeletingBrandId(null);
     }
   };
 
@@ -329,9 +331,10 @@ export default function AdminDashboard() {
     try {
       await deleteDoc(doc(db, 'various_filters', id));
       showFeedback('Filter deleted');
-      setDeletingVariousId(null);
     } catch (err: any) {
       handleFirestoreError(err, OperationType.DELETE, `various_filters/${id}`);
+    } finally {
+      setDeletingVariousId(null);
     }
   };
 
@@ -368,8 +371,9 @@ export default function AdminDashboard() {
     }
   };
 
-  const showFeedback = (msg: string) => {
+  const showFeedback = (msg: string, type: 'success' | 'error' = 'success') => {
     setFeedbackMsg(msg);
+    // Note: AdminDashboard currently only supports a message string, ignoring type for now to avoid breaking UI
     setTimeout(() => setFeedbackMsg(null), 3000);
   };
 
@@ -932,7 +936,7 @@ export default function AdminDashboard() {
       });
       showFeedback('Product deleted successfully');
     } catch (e: any) {
-      showFeedback(`Save failed: ${e.message}`);
+      showFeedback(`Delete failed: ${e.message}`, 'error');
     }
   };
 
@@ -1243,10 +1247,14 @@ export default function AdminDashboard() {
               </div>
             </div>
           )}
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Link to="/admin/scraper" className="px-6 py-2 bg-[#00ff41]/20 text-[#00ff41] border border-[#00ff41]/20 rounded-xl hover:bg-[#00ff41]/30 transition-colors flex items-center gap-2 font-mono text-sm">
               <Database size={16} />
               Spiders
+            </Link>
+            <Link to="/admin/usage-hub" className="px-6 py-2 bg-purple-500/20 text-purple-400 border border-purple-500/20 rounded-xl hover:bg-purple-500/30 transition-colors flex items-center gap-2 font-mono text-sm">
+              <LayoutGrid size={16} />
+              Usage Hubs
             </Link>
             <Link to="/" className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
               Back to Home
@@ -1638,6 +1646,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+
         {/* Hot Selling Grid Settings Section */}
         <div className="mb-16 bg-white/5 border border-white/10 rounded-3xl p-8">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -1835,80 +1844,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Various Filter Management Section */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 mb-16">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Filter size={24} className="text-primary" />
-            Manage Various Filters (Catalog Filter)
-          </h2>
-          
-          <form onSubmit={handleVariousSubmit} className="grid grid-cols-1 gap-6 mb-8 bg-black/40 p-6 rounded-2xl border border-white/5">
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Filter Name</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  required
-                  value={variousForm.name || ''}
-                  onChange={(e) => setVariousForm({ name: e.target.value })}
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary"
-                  placeholder="e.g. Budget Choice"
-                />
-                <button
-                  type="submit"
-                  disabled={isVariousLoading}
-                  className="w-[120px] bg-primary text-bg-dark h-[50px] rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-white transition-all disabled:opacity-50"
-                >
-                  {isVariousLoading ? <Loader2 className="animate-spin" size={18} /> : (editingVarious ? 'Update' : 'Add')}
-                </button>
-                {editingVarious && (
-                  <button
-                    type="button"
-                    onClick={() => { setEditingVarious(null); setVariousForm({ name: '' }); }}
-                    className="bg-white/10 text-white h-[50px] px-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-white/20 transition-all"
-                  >
-                    X
-                  </button>
-                )}
-              </div>
-            </div>
-          </form>
 
-          <div className="flex flex-wrap gap-3">
-            {variousFilters.map((v) => (
-              <div key={v.id} className={`group relative bg-black/40 border ${editingVarious?.id === v.id ? 'border-primary' : 'border-white/5'} rounded-full px-5 py-2 flex items-center gap-3 hover:border-primary/50 transition-all`}>
-                <span className="text-[10px] font-black uppercase tracking-widest">{v.name}</span>
-                
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEditVarious(v)} className="p-1 bg-blue-500/20 text-blue-400 rounded-full hover:bg-blue-500/40 transition-all">
-                    <Filter size={10} />
-                  </button>
-                  {deletingVariousId === v.id ? (
-                    <div className="flex gap-1">
-                      <button 
-                        onClick={() => handleDeleteVarious(v.id)}
-                        className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-bold rounded-full hover:bg-red-600 transition-all"
-                      >
-                        ✔
-                      </button>
-                      <button 
-                        onClick={() => setDeletingVariousId(null)}
-                        className="px-2 py-0.5 bg-white/10 text-white text-[8px] font-bold rounded-full hover:bg-white/20 transition-all"
-                      >
-                        X
-                      </button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setDeletingVariousId(v.id)} className="p-1 bg-red-500/20 text-red-400 rounded-full hover:bg-red-500/40 transition-all">
-                      <Trash2 size={10} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-            {variousFilters.length === 0 && <p className="text-xs text-gray-500 italic">No filters added yet.</p>}
-          </div>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Add/Edit Product Form */}
@@ -2131,87 +2067,18 @@ export default function AdminDashboard() {
               </div>
               
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm text-gray-400">Various Filters</label>
-                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Select tags for catalog filtering</p>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
-                  {variousFilters.map(filter => (
-                    <label key={filter.id} className="flex items-center gap-2 cursor-pointer text-sm">
-                      <input 
-                        type="checkbox" 
-                        checked={formData.usageTags.some(t => t.toLowerCase() === filter.name.toLowerCase())}
-                        onChange={(e) => {
-                          const newTags = e.target.checked 
-                            ? [...formData.usageTags, filter.name]
-                            : formData.usageTags.filter(t => t.toLowerCase() !== filter.name.toLowerCase());
-                          setFormData({...formData, usageTags: newTags});
-                        }}
-                        className="rounded border-white/10 text-primary focus:ring-primary bg-bg-dark"
-                      />
-                      {filter.name}
-                    </label>
-                  ))}
-                  {variousFilters.length === 0 && (
-                    <p className="text-[10px] text-gray-500 italic md:col-span-3">No dynamic filters found. Add them below.</p>
-                  )}
-                </div>
-                
-                {/* Quick Add Filter */}
-                <div className="flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5">
-                  <input 
-                    type="text"
-                    id="product-form-new-filter"
-                    placeholder="Quick add new filter tag..."
-                    className="flex-1 bg-transparent border-none text-[10px] focus:outline-none placeholder:text-gray-600"
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const val = (e.target as HTMLInputElement).value.trim();
-                        if (val) {
-                          try {
-                            const exists = variousFilters.some(v => v.name.toLowerCase() === val.toLowerCase());
-                            if (!exists) {
-                              await addDoc(collection(db, 'various_filters'), {
-                                name: val,
-                                createdAt: serverTimestamp()
-                              });
-                              showFeedback(`"${val}" added to filters!`);
-                            }
-                            (e.target as HTMLInputElement).value = '';
-                          } catch (err) {
-                            console.error("Failed to quick add filter:", err);
-                          }
-                        }
-                      }
-                    }}
-                  />
-                  <button 
-                    type="button"
-                    onClick={async () => {
-                      const input = document.getElementById('product-form-new-filter') as HTMLInputElement;
-                      const val = input.value.trim();
-                      if (val) {
-                        try {
-                          const exists = variousFilters.some(v => v.name.toLowerCase() === val.toLowerCase());
-                          if (!exists) {
-                            await addDoc(collection(db, 'various_filters'), {
-                              name: val,
-                              createdAt: serverTimestamp()
-                            });
-                            showFeedback(`"${val}" added to filters!`);
-                          }
-                          input.value = '';
-                        } catch (err) {
-                          console.error("Failed to quick add filter:", err);
-                        }
-                      }
-                    }}
-                    className="text-[10px] font-black text-primary uppercase bg-primary/10 px-2 py-1 rounded hover:bg-primary/20 transition-all"
-                  >
-                    + Create Tag
-                  </button>
-                </div>
+                <label className="block text-sm text-gray-400 mb-1">Usage Hub Tags (Comma-separated)</label>
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">Controls which Usage Hubs (e.g. student, gaming) this product appears in.</p>
+                <input 
+                  type="text" 
+                  placeholder="e.g. student, gaming, office" 
+                  value={(formData.usageTags || []).join(', ')} 
+                  onChange={e => {
+                    const tags = e.target.value.split(',').map(t => t.trim()).filter(Boolean);
+                    setFormData({...formData, usageTags: tags});
+                  }} 
+                  className="w-full bg-bg-dark border border-white/10 rounded-xl px-4 py-3 focus:border-primary transition-colors outline-none" 
+                />
               </div>
 
               {/* Specifications Section */}

@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Flame } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageSquare, Flame } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
+import { useAuth } from '../contexts/AuthContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -10,6 +11,8 @@ export default function HotSellingSection() {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
+  const { user } = useAuth();
+  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
   const [settings, setSettings] = useState({ title: 'Hot Selling', subtitle: 'Our most popular gear this month' });
 
   useEffect(() => {
@@ -25,23 +28,6 @@ export default function HotSellingSection() {
       handleFirestoreError(error, OperationType.GET, 'settings/hotSelling');
     });
     return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        const firstChild = scrollRef.current.children[0] as HTMLElement;
-        const scrollAmount = firstChild ? firstChild.clientWidth + 24 : clientWidth;
-        
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        }
-      }
-    }, 3000);
-    return () => clearInterval(interval);
   }, []);
 
   const products = PRODUCTS.filter(p => p.isHotSelling).slice(0, 15);
@@ -116,19 +102,19 @@ export default function HotSellingSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="min-w-[280px] md:min-w-[340px] bg-black rounded-[2rem] overflow-hidden shadow-2xl snap-start flex flex-col group/card cursor-pointer border border-white/10 relative"
+                className="min-w-[280px] md:min-w-[340px] bg-white rounded-[2rem] overflow-hidden shadow-xl snap-start flex flex-col group/card cursor-pointer border border-gray-100 relative"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 {/* Hot Badge */}
-                <div className="absolute top-6 left-6 z-20 bg-black text-primary text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-primary/30 flex items-center gap-1.5 backdrop-blur-sm shadow-xl">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+                <div className="absolute top-6 left-6 z-20 bg-white text-[#ff5722] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-[#ff5722]/30 flex items-center gap-1.5 backdrop-blur-sm shadow-md">
+                  <span className="w-1.5 h-1.5 bg-[#ff5722] rounded-full animate-pulse" />
                   Trending
                 </div>
 
 
 
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-white/5 flex items-center justify-center p-8 group-hover/card:bg-primary/5 transition-colors duration-500">
+                <div className="relative aspect-[4/3] overflow-hidden bg-white flex items-center justify-center p-8 group-hover/card:bg-gray-50 transition-colors duration-500 border-b border-gray-100">
                   <img 
                     src={product.image} 
                     alt={product.name}
@@ -136,32 +122,40 @@ export default function HotSellingSection() {
                   />
                   
                   {/* Quick Action */}
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                    <div className="bg-white text-black px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transform translate-y-4 group-hover/card:translate-y-0 transition-transform duration-500 shadow-2xl">
-                      <ShoppingCart size={16} />
-                      View Details
-                    </div>
+                  <div className="absolute inset-0 bg-[#25D366]/20 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px] z-10 pointer-events-none">
+                    {!isAdmin && (
+                      <a 
+                        href={`https://wa.me/917501090919?text=I'm interested in checking availability for: ${product.name}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-[#25D366] text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transform translate-y-4 group-hover/card:translate-y-0 transition-transform duration-500 shadow-2xl pointer-events-auto hover:bg-[#128C7E] active:scale-95"
+                      >
+                        <MessageSquare size={16} />
+                        WhatsApp
+                      </a>
+                    )}
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-8 flex flex-col flex-1 bg-black">
+                <div className="p-8 flex flex-col flex-1 bg-white">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{product.brand}</span>
+                    <span className="text-[10px] font-black text-[#5eb133] uppercase tracking-[0.2em]">{product.brand}</span>
                     <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.category}</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{product.category}</span>
                   </div>
                   
-                  <h3 className="text-xl font-bold text-white line-clamp-3 leading-tight group-hover/card:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-black line-clamp-3 leading-tight group-hover/card:text-primary transition-colors duration-300">
                     {product.name}
                   </h3>
-                  <div className="mt-2 text-2xl font-black text-white">
+                  <div className="mt-2 text-2xl font-black text-black">
                     {product.price.split(' ')[0]}
                   </div>
                   
-                  <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-6">
+                  <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-6">
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Live Deal</span>
+                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Live Deal</span>
                       {product.oldPrice && (
                         <span className="text-xs text-red-500/60 line-through font-bold">
                           {product.oldPrice}
@@ -169,7 +163,7 @@ export default function HotSellingSection() {
                       )}
                     </div>
                     {product.discount && (
-                      <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-primary/20">
+                      <div className="bg-[#5eb133]/10 text-[#5eb133] px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[#5eb133]/20">
                         {product.discount}
                       </div>
                     )}

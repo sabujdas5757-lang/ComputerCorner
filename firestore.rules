@@ -9,18 +9,18 @@ service cloud.firestore {
     // Helper functions
     function isSignedIn() { return request.auth != null; }
     
-    // Hardened Admin Check: Checks specific emails and verified status
+    // Hardened Admin Check: Checks specific admins collection (consistent with AdminRoute)
     function isAdmin() { 
       return isSignedIn() && 
-             (request.auth.token.email == 'computercorner@gmail.com' || 
-              request.auth.token.email == 'sabujdas5757@gmail.com');
+             (exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+              request.auth.token.email.matches('(?i)computercorner@gmail.com') || 
+              request.auth.token.email.matches('(?i)sabujdas5757@gmail.com'));
     }
     
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
     function isValidId(id) { return id is string && id.size() <= 128; }
 
-    // Validation Blueprints
     function isValidCategory(data) {
       return data.keys().hasAll(['name', 'img']) && 
              data.name is string &&
@@ -83,9 +83,51 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /usageHubs/{hubId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     match /products/{productId} {
       allow read: if true;
       allow create, update: if isAdmin() && isValidProduct(incoming());
+      allow delete: if isAdmin();
+    }
+
+    function isValidReview(data) {
+      return data.keys().hasAll(['productId', 'userId', 'rating', 'comment']) &&
+             data.productId is string &&
+             data.userId == request.auth.uid &&
+             data.rating is number &&
+             data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidReview(incoming());
+      allow update, delete: if isAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['firstName', 'phone', 'cartTotal', 'transactionId', 'userId', 'createdAt', 'status']) &&
+             data.firstName is string &&
+             data.phone is string &&
+             data.cartTotal is number &&
+             data.transactionId is string &&
+             data.status in ['pending', 'confirmed', 'shipping', 'shipped', 'delivered', 'cancelled', 'cancellation requested'];
+    }
+
+    match /orders/{orderId} {
+      allow create: if isValidOrder(incoming());
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow update: if isAdmin() || (
+        isSignedIn() && 
+        existing().userId == request.auth.uid && 
+        (incoming().status == 'cancelled' || incoming().status == 'cancellation requested') &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt', 'cancelledAt', 'cancellationReason']) &&
+        (existing().createdAt == null || (request.time < existing().createdAt + duration.value(24, 'h')))
+      );
       allow delete: if isAdmin();
     }
   }

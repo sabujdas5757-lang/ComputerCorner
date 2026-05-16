@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="bg-bg-dark border-t border-white/5 py-20">
       <div className="section-container">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center border border-white/10">
@@ -54,10 +54,43 @@ export default function Footer() {
           </div>
 
           <div>
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Visit Our Store</h4>
+            <div className="space-y-4">
+              <p className="text-sm font-bold text-white uppercase">Located in the Heart of Jhargram.</p>
+              <div>
+                <p className="text-sm font-bold text-gray-400">Address</p>
+                <p className="text-sm text-gray-400">COMPUTER CORNER</p>
+                <p className="text-sm text-gray-400">Raghunathpur, Jhargram</p>
+                <p className="text-sm text-gray-400">West Bengal - 721507</p>
+              </div>
+              <a 
+                href="https://maps.app.goo.gl/PuAk8PHYzr4zCgxt7" 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-block px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-primary/20 transition-all"
+              >
+                Get Directions
+              </a>
+            </div>
+          </div>
+
+          <div>
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Navigation</h4>
             <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-white">
               <li><Link to="/quick-access" className="hover:text-primary transition-colors">Quick Access Hub</Link></li>
             </ul>
+            <div className="mt-8 h-[200px] w-full rounded-lg overflow-hidden border border-white/10">
+              <iframe 
+                src="https://maps.google.com/maps?width=100%25&height=100%25&hl=en&q=COMPUTER%20CORNER,%20Raghunathpur,%20Jhargram,%20West%20Bengal%20-%20721507&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={true} 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                className="grayscale"
+              />
+            </div>
           </div>
 
           <div>

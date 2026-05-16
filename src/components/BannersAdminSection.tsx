@@ -65,8 +65,9 @@ export default function BannersAdminSection() {
       await deleteDoc(doc(db, 'banners', id));
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, 'banners');
+    } finally {
+      setDeletingId(null);
     }
-    setDeletingId(null);
   };
 
   return (

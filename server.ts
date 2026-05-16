@@ -13,14 +13,24 @@ import { chromium } from 'playwright-extra';
 import stealthPlugin from 'puppeteer-extra-plugin-stealth';
 import chromiumSparticuz from '@sparticuz/chromium';
 
-chromium.use(stealthPlugin());
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function startServer() {
+  // Lazy-load stealth plugin
+  try {
+    chromium.use(stealthPlugin());
+  } catch (e) {
+    console.warn("Failed to initialize stealth plugin:", e);
+  }
+
   // Supabase Configuration (Used for any other future client needs)
   const rawSupabaseUrl = process.env.SUPABASE_URL || "https://zrvduoxsaqtiixsknpnv.supabase.co";
   let supabaseUrl = rawSupabaseUrl.split('/rest/v1')[0].split('/storage/v1')[0].replace(/\/+$/, "");
@@ -746,7 +756,12 @@ async function startServer() {
       }
     });
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = path.resolve(process.cwd(), 'dist');
+    
+    if (!fs.existsSync(distPath)) {
+      console.warn(`Warning: dist folder not found at ${distPath}. Static file serving will likely fail.`);
+    }
+
     app.use(express.static(distPath));
     
     // Support SPA routing in production
@@ -755,7 +770,13 @@ async function startServer() {
       if (req.path.startsWith('/api')) {
         return res.status(404).json({ error: "API route not found" });
       }
-      res.sendFile(path.join(distPath, 'index.html'));
+      
+      const indexPath = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(404).send("Internal Error: Application dist/index.html missing. Please ensure the build process completed successfully.");
+      }
     });
   }
 

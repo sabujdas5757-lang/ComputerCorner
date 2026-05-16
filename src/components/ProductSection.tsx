@@ -17,8 +17,9 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Product } from '../constants';
 
 interface ProductSectionProps {
@@ -31,6 +32,8 @@ export default function ProductSection({ title, category }: ProductSectionProps)
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
+  const { user } = useAuth();
+  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
 
   const products = PRODUCTS
     .filter(p => {
@@ -100,11 +103,11 @@ export default function ProductSection({ title, category }: ProductSectionProps)
               <motion.div
                 key={product.id}
                 whileHover={{ y: -5 }}
-                className="min-w-[240px] md:min-w-[300px] bg-black border border-white/10 rounded-2xl overflow-hidden shadow-2xl snap-start flex flex-col group/card cursor-pointer"
+                className="min-w-[240px] md:min-w-[300px] bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-lg snap-start flex flex-col group/card cursor-pointer"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 {/* Image Container */}
-                <div className="relative aspect-square overflow-hidden bg-white/5 p-4">
+                <div className="relative aspect-square overflow-hidden bg-white border-b border-gray-100 p-4">
                   {/* Discount Badge */}
                   <div className="absolute top-4 left-4 z-10 bg-[#5eb133] text-white text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
                     {product.discount || '30% OFF'}
@@ -116,18 +119,26 @@ export default function ProductSection({ title, category }: ProductSectionProps)
                     className="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-500"
                   />
                   
-                  {/* Cart Icon (like in image) */}
-                  <div className="absolute bottom-4 right-4 bg-black text-white p-2 rounded-full shadow-lg opacity-0 group-hover/card:opacity-100 transition-opacity">
-                    <ShoppingCart size={18} />
-                  </div>
+                  {/* WhatsApp Action */}
+                  {!isAdmin && (
+                    <a 
+                      href={`https://wa.me/917501090919?text=I'm interested in: ${product.name}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute bottom-4 right-4 bg-[#25D366] text-white p-2 rounded-full shadow-lg opacity-0 group-hover/card:opacity-100 transition-opacity hover:bg-[#128C7E] z-20"
+                    >
+                      <MessageSquare size={18} fill="currentColor" />
+                    </a>
+                  )}
                 </div>
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-1">
-                  <h3 className="text-sm md:text-base font-bold text-white line-clamp-3 mb-1 group-hover/card:text-primary transition-colors">
+                  <h3 className="text-sm md:text-base font-bold text-black line-clamp-3 mb-1 group-hover/card:text-primary transition-colors">
                     {product.name}
                   </h3>
-                  <span className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+                  <span className="text-[10px] md:text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">
                     {product.brand}
                   </span>
                   
@@ -138,7 +149,7 @@ export default function ProductSection({ title, category }: ProductSectionProps)
                           {product.oldPrice}
                         </span>
                       )}
-                      <span className="text-lg md:text-xl font-black text-white">
+                      <span className="text-lg md:text-xl font-black text-black">
                         {product.price.split(' ')[0]}
                       </span>
                     </div>

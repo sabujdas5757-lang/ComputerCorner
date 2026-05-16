@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageSquare, Star } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
+import { useAuth } from '../contexts/AuthContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
@@ -10,6 +11,8 @@ export default function CustomTopGridSection() {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
+  const { user } = useAuth();
+  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
   const [settings, setSettings] = useState({ title: 'Top Picks', subtitle: 'Specially Curated For You' });
 
   useEffect(() => {
@@ -25,23 +28,6 @@ export default function CustomTopGridSection() {
       handleFirestoreError(error, OperationType.GET, 'settings/topGrid');
     });
     return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        const firstChild = scrollRef.current.children[0] as HTMLElement;
-        const scrollAmount = firstChild ? firstChild.clientWidth + 24 : clientWidth;
-        
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        }
-      }
-    }, 3000);
-    return () => clearInterval(interval);
   }, []);
 
   const products = PRODUCTS.filter(p => p.isCustomTopGrid).slice(0, 15);
@@ -123,10 +109,18 @@ export default function CustomTopGridSection() {
                     className="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-500"
                   />
                   
-                  {/* Cart Icon */}
-                  <div className="absolute bottom-4 right-4 bg-purple-500 text-white p-2 rounded-full shadow-lg opacity-0 group-hover/card:opacity-100 transition-opacity">
-                    <ShoppingCart size={18} />
-                  </div>
+                  {/* WhatsApp Action */}
+                  {!isAdmin && (
+                    <a 
+                      href={`https://wa.me/917501090919?text=I'm interested in checking availability for: ${product.name}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute bottom-4 right-4 bg-[#25D366] text-white p-2 rounded-full shadow-lg opacity-0 group-hover/card:opacity-100 transition-opacity hover:bg-[#128C7E] z-20"
+                    >
+                      <MessageSquare size={18} fill="currentColor" />
+                    </a>
+                  )}
                 </div>
 
                 {/* Content */}

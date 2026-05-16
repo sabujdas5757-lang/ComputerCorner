@@ -21,12 +21,23 @@ export default function ScrollToTop() {
   const { pathname, search } = useLocation();
 
   useEffect(() => {
-    // Standard window scroll reset
-    window.scrollTo(0, 0);
-    
-    // Safety check for parent containers if any have overflow
-    document.documentElement.scrollTo(0, 0);
-    document.body.scrollTo(0, 0);
+    const scrollUp = () => {
+      window.scrollTo(0, 0);
+      document.body.scrollTo(0, 0);
+      document.documentElement.scrollTo(0, 0);
+    };
+
+    // Instant scroll
+    scrollUp();
+
+    // Secondary scroll to capture components that render asynchronously
+    const frameId = requestAnimationFrame(scrollUp);
+    const timeoutId = setTimeout(scrollUp, 10);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(timeoutId);
+    };
   }, [pathname, search]);
 
   return null;

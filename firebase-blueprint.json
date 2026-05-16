@@ -70,9 +70,51 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "User checkout order",
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "houseNumber": { "type": "string" },
+        "streetAddress": { "type": "string" },
+        "city": { "type": "string" },
+        "zipCode": { "type": "string" },
+        "userId": { "type": "string" },
+        "transactionId": { "type": "string" },
+        "cartTotal": { "type": "number" },
+        "items": { "type": "array" }
+      },
+      "required": ["firstName", "phone", "cartTotal", "transactionId"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Product review left by a user who ordered the product",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "userId", "rating", "comment"]
     }
   },
   "firestore": {
+    "reviews": {
+      "schema": "Review",
+      "description": "Product reviews"
+    },
+    "orders": {
+      "schema": "Order",
+      "description": "Customer orders from checkout"
+    },
     "categories": {
       "schema": "Category",
       "description": "Categories for navigation and home page grid"

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import CategoryGrid from './components/CategoryGrid';
@@ -14,17 +15,18 @@ import ProductDetail from './components/ProductDetail';
 import LaptopUsageHub from './components/LaptopUsageHub';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './components/AdminDashboard';
+import AdminUsageHub from './components/AdminUsageHub';
 import AmazonScraper from './components/AmazonScraper';
 import ScrollToTop from './components/ScrollToTop';
+import Profile from './components/Profile';
+import Contact from './components/Contact';
+import CategoryHub from './components/CategoryHub';
 
 import ProductSection from './components/ProductSection';
 import HotSellingSection from './components/HotSellingSection';
 import TopBanners from './components/TopBanners';
 import CustomTopGridSection from './components/CustomTopGridSection';
-import UsageSection from './components/UsageSection';
-import MapSection from './components/MapSection';
 
-import { useEffect, useState } from 'react';
 import { db } from './firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
@@ -82,9 +84,7 @@ function HomePage() {
           )
         )}
         
-        <UsageSection />
         <Hero />
-        <MapSection />
       </main>
       <Footer />
     </>
@@ -95,16 +95,20 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="min-h-screen bg-bg-dark text-white selection:bg-primary selection:text-bg-dark">
+      <div className="min-h-screen bg-black text-white">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin/scraper" element={<AdminRoute><AmazonScraper /></AdminRoute>} />
+          <Route path="/admin/usage-hub" element={<AdminRoute><AdminUsageHub /></AdminRoute>} />
           <Route path="/quick-access" element={<QuickAccess />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/catalog/:categorySlug" element={<Catalog />} />
           <Route path="/laptops" element={<LaptopUsageHub />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/category-hub/:categoryName" element={<CategoryHub />} />
         </Routes>
       </div>
     </Router>

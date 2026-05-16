@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { db } from '../firebase';
@@ -47,6 +47,7 @@ const DEFAULT_CATEGORIES = [
 
 export default function CategoryGrid() {
   const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<{name: string, img: string}[]>(DEFAULT_CATEGORIES);
 
   useEffect(() => {
@@ -65,18 +66,35 @@ export default function CategoryGrid() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        const firstChild = scrollRef.current.children[0] as HTMLElement;
+        const scrollAmount = firstChild ? firstChild.clientWidth + 40 : clientWidth; // gap is 40px (gap-10)
+        
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="w-full bg-black py-12 overflow-hidden border-b border-white/5">
       <div className="w-full px-4 md:px-6">
-        <div className="flex items-start gap-10 md:gap-14 overflow-x-auto no-scrollbar pb-4">
+        <div ref={scrollRef} className="flex items-start gap-10 md:gap-14 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
           {categories.map((cat, index) => (
             <motion.button
               key={cat.name}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.02 }}
-              onClick={() => navigate(`/catalog/${cat.name}`)}
-              className="flex flex-col items-center gap-4 group shrink-0"
+              onClick={() => navigate(`/category-hub/${cat.name.toLowerCase()}`)}
+              className="flex flex-col items-center gap-4 group shrink-0 snap-start"
             >
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-white/10 overflow-hidden bg-black shadow-2xl group-hover:border-primary group-hover:scale-105 transition-all duration-300 relative">
                 <img 

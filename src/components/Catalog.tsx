@@ -14,6 +14,7 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { checkIfAdmin } from '../utils/admin';
 
 const getNumericPrice = (priceStr: string) => {
   const match = priceStr.replace(/,/g, '').match(/\d+/);
@@ -389,7 +390,7 @@ export default function Catalog() {
 
 function ProductCard({ product, index }: { product: any; index: number; key?: React.Key }) {
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = checkIfAdmin(user?.email);
   
   return (
     <div className="group block relative">

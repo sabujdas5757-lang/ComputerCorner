@@ -21,6 +21,7 @@ import { ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { useProducts } from '../contexts/ProductContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Product } from '../constants';
+import { checkIfAdmin } from '../utils/admin';
 
 interface ProductSectionProps {
   title: string;
@@ -33,7 +34,7 @@ export default function ProductSection({ title, category }: ProductSectionProps)
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = checkIfAdmin(user?.email);
 
   const products = PRODUCTS
     .filter(p => {

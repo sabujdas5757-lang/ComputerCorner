@@ -6,13 +6,14 @@ import { useProducts } from '../contexts/ProductContext';
 import { useAuth } from '../contexts/AuthContext';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { checkIfAdmin } from '../utils/admin';
 
 export default function CustomTopGridSection() {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = checkIfAdmin(user?.email);
   const [settings, setSettings] = useState({ title: 'Top Picks', subtitle: 'Specially Curated For You' });
 
   useEffect(() => {

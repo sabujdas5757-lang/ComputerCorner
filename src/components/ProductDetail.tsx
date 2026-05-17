@@ -13,6 +13,7 @@ import { db, handleFirestoreError, OperationType } from '../firebase';
 import { collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { checkIfAdmin } from '../utils/admin';
 
 const getNumericPrice = (priceStr: string) => {
   const match = priceStr.replace(/,/g, '').match(/\d+/);
@@ -25,7 +26,7 @@ export default function ProductDetail() {
   const { user } = useAuth();
   const { productId } = useParams();
   
-  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = checkIfAdmin(user?.email);
   const product = PRODUCTS.find(p => p.id === productId);
   const [activeImage, setActiveImage] = useState(product?.image || '');
   const [qty, setQty] = useState(1);

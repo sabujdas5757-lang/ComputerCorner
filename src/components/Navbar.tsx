@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from './AuthModal';
 
+import { checkIfAdmin } from '../utils/admin';
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -18,7 +20,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = checkIfAdmin(user?.email);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

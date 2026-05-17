@@ -5,6 +5,7 @@ import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, serv
 import { Package, ArrowLeft, Loader2, CheckCircle2, Truck, Home, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { checkIfAdmin } from '../utils/admin';
 
 export default function AdminOrders() {
   const { user } = useAuth();
@@ -20,7 +21,7 @@ export default function AdminOrders() {
   };
 
   // Check admin rights
-  if (!user || (user.email !== 'computercorner15@yahoo.com' && user.email !== 'sabujdas5757@gmail.com')) {
+  if (!checkIfAdmin(user?.email)) {
     navigate('/');
     return null;
   }

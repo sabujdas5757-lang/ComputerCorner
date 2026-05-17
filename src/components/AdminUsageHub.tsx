@@ -182,7 +182,7 @@ export default function AdminUsageHub() {
             
             {cards.length === 0 ? (
               <div className="text-center p-8 bg-white/5 rounded-2xl text-gray-400 border border-white/10 border-dashed">
-                No cards defined for this category. It will use the "default" configuration fallback in the UI.
+                No cards defined for this category. The usage hub will be hidden for this category.
               </div>
             ) : (
               cards.map((card) => {

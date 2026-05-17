@@ -45,7 +45,7 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8">Store Inventory</h4>
             <ul className="space-y-4 text-sm font-bold uppercase tracking-wider text-white">
-              <li><Link to="/laptops" className="hover:text-primary transition-colors">Gaming Desktops & Laptops</Link></li>
+              <li><Link to="/category-hub/laptops" className="hover:text-primary transition-colors">Gaming Desktops & Laptops</Link></li>
               <li><Link to="/catalog/CCTV" className="hover:text-primary transition-colors">CCTV & DSLR Cameras</Link></li>
               <li><Link to="/catalog/Printers" className="hover:text-primary transition-colors">Printers & Xerox</Link></li>
               <li><Link to="/catalog" className="hover:text-primary transition-colors">TV, AC & Sound Systems</Link></li>

@@ -30,7 +30,7 @@ export default function ProductGallery() {
             return (
               <Link
                 key={category.title}
-                to={isLaptops ? '/laptops' : `/catalog/${encodeURIComponent(category.title)}`}
+                to={`/category-hub/laptops`}
                 className="block"
               >
               <motion.div

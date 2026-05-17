@@ -7,32 +7,6 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 
 // Define the generic configuration for sub-categories as a fallback.
-const FALLBACK_CATEGORIES: Record<string, any[]> = {
-  laptops: [
-    { id: 'student', title: 'STUDENT USAGE', sub: 'LIGHTWEIGHT &\nRELIABLE', iconName: 'GraduationCap', color: 'bg-[#06152a]', iconColor: 'text-[#5ea2f0]', iconBg: 'bg-[#0f2a4a]', circle: 'bg-[#0a2347]' },
-    { id: 'office', title: 'OFFICE USAGE', sub: 'HIGH PERFORMANCE\n& PRODUCTIVITY', iconName: 'Briefcase', color: 'bg-[#062416]', iconColor: 'text-[#4de090]', iconBg: 'bg-[#0a3822]', circle: 'bg-[#093521]' },
-    { id: 'gaming', title: 'GAMING', sub: 'UNLEASH ULTIMATE\nPOWER', iconName: 'Gamepad2', color: 'bg-[#290d2f]', iconColor: 'text-[#d783e8]', iconBg: 'bg-[#3b1544]', circle: 'bg-[#381140]' },
-    { id: 'editing', title: 'EDITING', sub: 'PRECISION FOR\nCREATORS', iconName: 'Video', color: 'bg-[#3a2002]', iconColor: 'text-[#fcb221]', iconBg: 'bg-[#4f2a03]', circle: 'bg-[#4d2c05]' },
-    { id: 'macbook', title: 'MACBOOK', sub: 'THE APPLE\nECOSYSTEM', iconName: 'Apple', color: 'bg-[#1a1b20]', iconColor: 'text-[#ffffff]', iconBg: 'bg-[#2a2c33]', circle: 'bg-[#24252a]' },
-  ],
-  monitors: [
-    { id: 'office', title: 'OFFICE USAGE', sub: 'ERGONOMIC &\nCRISP', iconName: 'Briefcase', color: 'bg-[#06152a]', iconColor: 'text-[#5ea2f0]', iconBg: 'bg-[#0f2a4a]', circle: 'bg-[#0a2347]' },
-    { id: 'gaming', title: 'GAMING', sub: 'HIGH REFRESH\nRATE', iconName: 'Gamepad2', color: 'bg-[#290d2f]', iconColor: 'text-[#d783e8]', iconBg: 'bg-[#3b1544]', circle: 'bg-[#381140]' },
-    { id: 'creators', title: 'CREATORS', sub: 'COLOR\nACCURATE', iconName: 'Palette', color: 'bg-[#3a2002]', iconColor: 'text-[#fcb221]', iconBg: 'bg-[#4f2a03]', circle: 'bg-[#4d2c05]' },
-    { id: 'ultrawide', title: 'ULTRAWIDE', sub: 'MAXIMUM\nPRODUCTIVITY', iconName: 'MonitorPlay', color: 'bg-[#062416]', iconColor: 'text-[#4de090]', iconBg: 'bg-[#0a3822]', circle: 'bg-[#093521]' },
-  ],
-  printers: [
-    { id: 'office', title: 'OFFICE USAGE', sub: 'HIGH VOLUME\nPRINTING', iconName: 'Briefcase', color: 'bg-[#062416]', iconColor: 'text-[#4de090]', iconBg: 'bg-[#0a3822]', circle: 'bg-[#093521]' },
-    { id: 'home', title: 'HOME USAGE', sub: 'COMPACT &\nEFFICIENT', iconName: 'GraduationCap', color: 'bg-[#06152a]', iconColor: 'text-[#5ea2f0]', iconBg: 'bg-[#0f2a4a]', circle: 'bg-[#0a2347]' },
-  ],
-  default: [
-    { id: 'premium', title: 'PREMIUM', sub: 'TOP TIER\nQUALITY', iconName: 'Crown', color: 'bg-[#290d2f]', iconColor: 'text-[#d783e8]', iconBg: 'bg-[#3b1544]', circle: 'bg-[#381140]' },
-    { id: 'bestseller', title: 'BEST SELLERS', sub: 'POPULAR\nCHOICES', iconName: 'Star', color: 'bg-[#062416]', iconColor: 'text-[#4de090]', iconBg: 'bg-[#0a3822]', circle: 'bg-[#093521]' },
-    { id: 'new', title: 'NEW ARRIVALS', sub: 'LATEST\nINNOVATIONS', iconName: 'Sparkles', color: 'bg-[#06152a]', iconColor: 'text-[#5ea2f0]', iconBg: 'bg-[#0f2a4a]', circle: 'bg-[#0a2347]' },
-    { id: 'budget', title: 'BUDGET', sub: 'VALUE FOR\nMONEY', iconName: 'Wallet', color: 'bg-[#3a2002]', iconColor: 'text-[#fcb221]', iconBg: 'bg-[#4f2a03]', circle: 'bg-[#4d2c05]' },
-  ]
-};
-
 export default function CategoryHub() {
   const { categoryName } = useParams<{ categoryName: string }>();
   const navigate = useNavigate();
@@ -40,7 +14,8 @@ export default function CategoryHub() {
   const rawCat = categoryName || '';
   const currentCategory = rawCat.toLowerCase();
   
-  const [cards, setCards] = useState<any[]>(FALLBACK_CATEGORIES[currentCategory] || FALLBACK_CATEGORIES['default']);
+  const [cards, setCards] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!currentCategory) return;
@@ -49,14 +24,26 @@ export default function CategoryHub() {
     const unsubscribe = onSnapshot(doc(db, 'usageHubs', currentCategory), (docSnap) => {
       if (docSnap.exists() && docSnap.data().cards && docSnap.data().cards.length > 0) {
         setCards(docSnap.data().cards);
+        setIsLoading(false);
       } else {
-        // Fallback to default config
-        setCards(FALLBACK_CATEGORIES[currentCategory] || FALLBACK_CATEGORIES['default']);
+        // If no dynamic cards, redirect to catalog for this category
+        navigate(`/catalog/${rawCat}`, { replace: true });
       }
+    }, (error) => {
+      console.error("Hub fetch error:", error);
+      navigate(`/catalog/${rawCat}`, { replace: true });
     });
 
     return () => unsubscribe();
-  }, [currentCategory]);
+  }, [currentCategory, navigate, rawCat]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

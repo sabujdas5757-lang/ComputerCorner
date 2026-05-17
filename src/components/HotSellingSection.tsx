@@ -12,7 +12,7 @@ export default function HotSellingSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
   const [settings, setSettings] = useState({ title: 'Hot Selling', subtitle: 'Our most popular gear this month' });
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function HotSellingSection() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[60%] bg-purple-500/10 blur-[120px] rounded-full" />
       </div>
 
-      <div className="w-full px-4 md:px-6 relative z-10">
+      <div className="w-full px-4 md:px-6 max-w-[1920px] mx-auto relative z-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
           <div className="flex items-center gap-4">

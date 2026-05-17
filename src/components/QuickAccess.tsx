@@ -12,7 +12,7 @@ export default function QuickAccess() {
   const { products: PRODUCTS } = useProducts();
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white p-6 md:p-12">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Navigation back to Home */}
         <div className="flex justify-between items-center mb-12">
           <Link to="/" className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
@@ -146,7 +146,7 @@ export default function QuickAccess() {
             <MapPin size={14} className="text-primary" />
             <span className="text-xs text-gray-400">Near Spandan Diagnostic, Jhargram</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-600">Established 2024</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-600">Established 2016</p>
         </div>
       </div>
     </div>

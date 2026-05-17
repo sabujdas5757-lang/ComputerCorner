@@ -31,8 +31,10 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-bg-dark flex flex-col">
-      <Navbar />
-      <main className="flex-1 pt-24">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </header>
+      <main className="flex-1 pt-16 md:pt-24">
         <section id="contact" className="py-20 md:py-32">
           <div className="section-container">
             <div className="grid lg:grid-cols-2 gap-20">
@@ -88,7 +90,7 @@ export default function Contact() {
                     </div>
                     <div>
                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Email Support</p>
-                       <p className="text-lg font-bold text-white">computercorner15@yahoo.in</p>
+                       <p className="text-lg font-bold text-white">computercorner15@yahoo.com</p>
                     </div>
                   </div>
 

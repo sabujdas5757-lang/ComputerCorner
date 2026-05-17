@@ -25,7 +25,7 @@ export default function ProductDetail() {
   const { user } = useAuth();
   const { productId } = useParams();
   
-  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
   const product = PRODUCTS.find(p => p.id === productId);
   const [activeImage, setActiveImage] = useState(product?.image || '');
   const [qty, setQty] = useState(1);
@@ -126,11 +126,13 @@ export default function ProductDetail() {
   const similarProducts = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Navbar />
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </header>
       
-      <main className="pt-24 pb-20">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+      <main className="flex-1 pt-16 md:pt-20 pb-20">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 text-sm text-gray-300 mb-6 flex-wrap">
             <Link to="/" className="text-gray-300 hover:text-primary transition-colors">Home</Link>

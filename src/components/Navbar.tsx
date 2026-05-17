@@ -18,7 +18,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-black border-b border-white/10 relative">
-      <div className="w-full px-4 md:px-6 py-3 flex justify-between items-center h-16 md:h-24">
+      <div className="w-full max-w-[1920px] mx-auto px-4 md:px-6 py-2 flex justify-between items-center h-16 md:h-20">
         {/* Logo Section */}
         <div className="flex flex-col items-start relative z-20">
           <Link to="/" className="flex items-center gap-3 cursor-pointer group">
@@ -69,7 +69,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-2xl mx-12">
+        <div className="hidden md:flex flex-1 max-w-4xl mx-12">
           <form onSubmit={handleSearch} className="w-full relative group">
             <input 
               type="text" 
@@ -194,8 +194,8 @@ export default function Navbar() {
                 <h3 className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4">Contact Info</h3>
                 <div className="flex flex-col gap-3">
                   <span className="text-gray-400 text-sm">Raghunathpur, Jhargram</span>
-                  <span className="text-gray-400 text-sm">+91 9434112233</span>
-                  <span className="text-gray-400 text-sm">computercorner@gmail.com</span>
+                  <span className="text-gray-400 text-sm">+91 75010 90919</span>
+                  <span className="text-gray-400 text-sm">computercorner15@yahoo.com</span>
                 </div>
               </div>
               <div className="flex flex-col justify-end">

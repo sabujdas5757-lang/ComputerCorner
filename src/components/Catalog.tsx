@@ -12,6 +12,8 @@ import { useProducts } from '../contexts/ProductContext';
 import { db } from '../firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const getNumericPrice = (priceStr: string) => {
   const match = priceStr.replace(/,/g, '').match(/\d+/);
@@ -154,10 +156,15 @@ export default function Catalog() {
   }, [filteredProducts, viewMode]);
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-6 py-12">
-      <div className="w-full pt-24 md:pt-32 max-w-7xl mx-auto">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-3 text-xs font-bold tracking-widest text-gray-500 mb-6">
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </header>
+      
+      <main className="flex-1 w-full pt-16 md:pt-20 pb-20 px-4 md:px-6">
+        <div className="w-full max-w-[1920px] mx-auto">
+          {/* Breadcrumbs */}
+        <div className="flex items-center gap-3 text-xs font-bold tracking-widest text-gray-500 mb-3">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <span className="opacity-40">❯</span>
           <span className="text-white capitalize">
@@ -331,7 +338,7 @@ export default function Catalog() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6"
+                  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-6"
                 >
                   {filteredProducts.map((product, index) => (
                     <ProductCard key={product.id} product={product} index={index} />
@@ -352,7 +359,7 @@ export default function Catalog() {
                         <div className="h-[1px] flex-1 bg-white/20" />
                         <span className="text-xs font-bold text-gray-500">{products.length} Products</span>
                       </div>
-                      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-6">
                         {products.map((product, index) => (
                           <ProductCard key={product.id} product={product} index={index} />
                         ))}
@@ -374,13 +381,15 @@ export default function Catalog() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </main>
+    <Footer />
+  </div>
+);
 }
 
 function ProductCard({ product, index }: { product: any; index: number; key?: React.Key }) {
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
   
   return (
     <div className="group block relative">

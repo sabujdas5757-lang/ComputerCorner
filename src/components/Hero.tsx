@@ -26,7 +26,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-3xl w-full"
+          className="max-w-5xl w-full"
         >
           {/* Hero text and search moved to Navbar/removed per user request */}
         </motion.div>

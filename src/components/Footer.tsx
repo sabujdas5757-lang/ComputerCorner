@@ -27,7 +27,7 @@ export default function Footer() {
               Your one-stop destination for premium hardware sales and expert service in Jhargram. Authorized partners for industry-leading brands.
             </p>
             <div className="flex gap-4">
-              <a href="mailto:contact@computercornerjgm.com" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
+              <a href="mailto:computercorner15@yahoo.com" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">
                 <Mail size={18} />
               </a>
               <a href="https://www.facebook.com/computercornerjgm/" target="_blank" rel="noreferrer" className="p-2 border border-white/10 rounded-lg text-gray-400 hover:text-primary hover:border-primary/50 transition-all">

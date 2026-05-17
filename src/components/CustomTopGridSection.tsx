@@ -12,7 +12,7 @@ export default function CustomTopGridSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
   const [settings, setSettings] = useState({ title: 'Top Picks', subtitle: 'Specially Curated For You' });
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function CustomTopGridSection() {
 
   return (
     <section className="w-full bg-black py-12 border-b border-white/5">
-      <div className="w-full px-4 md:px-6">
+      <div className="w-full px-4 md:px-6 max-w-[1920px] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8 bg-gradient-to-r from-[#d8b4fe] via-[#e879f9] to-[#c084fc] p-4 rounded-lg shadow-xl">
           <div className="flex items-center gap-4">

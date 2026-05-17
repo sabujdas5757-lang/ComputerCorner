@@ -38,7 +38,7 @@ export default function TopBanners() {
   if (banners.length === 0) return null;
 
   return (
-    <section className="w-full relative px-4 md:px-6 pt-6 pb-6 max-w-7xl mx-auto">
+    <section className="w-full relative px-4 md:px-6 pb-6 max-w-[1920px] mx-auto">
       <div className="w-full relative h-[200px] sm:h-[300px] md:h-[400px] rounded-2xl overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-black">
         <AnimatePresence initial={false}>
           {banners.map((banner, idx) => (

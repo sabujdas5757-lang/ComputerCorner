@@ -82,9 +82,11 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-bg-dark flex flex-col">
-      <Navbar />
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </header>
 
-      <main className="flex-1 max-w-[1200px] w-[98%] mx-auto px-4 md:px-6 pt-32 pb-24">
+      <main className="flex-1 max-w-[1200px] w-[98%] mx-auto px-4 md:px-6 pt-16 md:pt-24 pb-24">
         <button 
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"

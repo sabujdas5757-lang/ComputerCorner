@@ -58,10 +58,12 @@ const usageCategories = [
 
 export default function LaptopUsageHub() {
   return (
-    <div className="min-h-screen bg-bg-dark text-white">
-      <Navbar />
+    <div className="min-h-screen bg-bg-dark text-white flex flex-col">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </header>
       
-      <main className="pt-32 pb-24">
+      <main className="flex-1 pt-16 md:pt-24 pb-24">
         <div className="section-container relative">
           {/* Back to Home Button */}
           <Link 

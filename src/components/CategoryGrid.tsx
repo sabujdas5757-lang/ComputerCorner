@@ -85,7 +85,7 @@ export default function CategoryGrid() {
 
   return (
     <section className="w-full bg-black py-12 overflow-hidden border-b border-white/5">
-      <div className="w-full px-4 md:px-6">
+      <div className="w-full px-4 md:px-6 max-w-[1920px] mx-auto">
         <div ref={scrollRef} className="flex items-start gap-10 md:gap-14 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
           {categories.map((cat, index) => (
             <motion.button

@@ -61,6 +61,6 @@
   }
 
   .section-container {
-    @apply w-full px-6 py-20 md:py-32;
+    @apply w-full max-w-[1920px] mx-auto px-6 py-20 md:py-32;
   }
 }

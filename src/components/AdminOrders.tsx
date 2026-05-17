@@ -20,7 +20,7 @@ export default function AdminOrders() {
   };
 
   // Check admin rights
-  if (!user || (user.email !== 'computercorner@gmail.com' && user.email !== 'sabujdas5757@gmail.com')) {
+  if (!user || (user.email !== 'computercorner15@yahoo.com' && user.email !== 'sabujdas5757@gmail.com')) {
     navigate('/');
     return null;
   }

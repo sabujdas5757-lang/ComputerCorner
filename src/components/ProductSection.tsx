@@ -33,7 +33,7 @@ export default function ProductSection({ title, category }: ProductSectionProps)
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products: PRODUCTS } = useProducts();
   const { user } = useAuth();
-  const isAdmin = user?.email === 'computercorner@gmail.com' || user?.email === 'sabujdas5757@gmail.com';
+  const isAdmin = user?.email === 'computercorner15@yahoo.com' || user?.email === 'sabujdas5757@gmail.com';
 
   const products = PRODUCTS
     .filter(p => {
@@ -65,7 +65,7 @@ export default function ProductSection({ title, category }: ProductSectionProps)
 
   return (
     <section className="w-full bg-black py-12 border-b border-white/5">
-      <div className="w-full px-4 md:px-6">
+      <div className="w-full px-4 md:px-6 max-w-[1920px] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8 bg-gradient-to-r from-[#fdf2a7] via-[#fdf2a7] to-[#fac1ff] p-4 rounded-lg shadow-xl">
           <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-black">{title}</h2>

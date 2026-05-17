@@ -7,7 +7,7 @@ export default function AdminRoute({ children }: { children: ReactNode }) {
 
   if (loading) return null;
 
-  const admins = ['computercorner@gmail.com', 'sabujdas5757@gmail.com'];
+  const admins = ['computercorner15@yahoo.com', 'sabujdas5757@gmail.com'];
 
   if (!user || !admins.includes(user.email || '')) {
     return <Navigate to="/" replace />;
